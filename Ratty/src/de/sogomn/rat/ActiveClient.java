@@ -3,6 +3,8 @@ package de.sogomn.rat;
 import java.net.Socket;
 
 import de.sogomn.engine.net.TCPConnection;
+import de.sogomn.rat.packet.IPacket;
+import de.sogomn.rat.packet.PacketType;
 
 
 public final class ActiveClient extends TCPConnection {

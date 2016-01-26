@@ -1,6 +1,8 @@
-package de.sogomn.rat;
+package de.sogomn.rat.packet;
 
 import javax.swing.JOptionPane;
+
+import de.sogomn.rat.ActiveClient;
 
 
 

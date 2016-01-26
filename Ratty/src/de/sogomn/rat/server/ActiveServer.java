@@ -1,9 +1,12 @@
-package de.sogomn.rat;
+package de.sogomn.rat.server;
 
 import java.net.Socket;
 import java.util.ArrayList;
 
 import de.sogomn.engine.net.TCPServer;
+import de.sogomn.rat.ActiveClient;
+import de.sogomn.rat.IClientObserver;
+import de.sogomn.rat.packet.IPacket;
 
 public final class ActiveServer extends TCPServer implements IClientObserver {
 	

@@ -1,8 +1,10 @@
-package de.sogomn.rat;
+package de.sogomn.rat.packet;
 
 import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
+
+import de.sogomn.rat.ActiveClient;
 
 public final class KeyEventPacket implements IPacket {
 	

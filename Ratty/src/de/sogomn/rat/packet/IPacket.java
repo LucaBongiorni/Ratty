@@ -1,4 +1,6 @@
-package de.sogomn.rat;
+package de.sogomn.rat.packet;
+
+import de.sogomn.rat.ActiveClient;
 
 
 

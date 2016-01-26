@@ -1,5 +1,7 @@
 package de.sogomn.rat;
 
+import de.sogomn.rat.packet.IPacket;
+
 public final class Trojan implements IClientObserver {
 	
 	public Trojan() {

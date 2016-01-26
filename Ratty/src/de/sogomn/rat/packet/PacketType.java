@@ -1,4 +1,4 @@
-package de.sogomn.rat;
+package de.sogomn.rat.packet;
 
 public enum PacketType {
 	
