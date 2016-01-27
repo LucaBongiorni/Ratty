@@ -1,12 +1,14 @@
-package de.sogomn.rat.server;
+package de.sogomn.rat.server.gui;
 
 import java.util.ArrayList;
 
 import de.sogomn.rat.ActiveClient;
 import de.sogomn.rat.IClientObserver;
 import de.sogomn.rat.packet.IPacket;
+import de.sogomn.rat.server.ActiveServer;
+import de.sogomn.rat.server.IServerObserver;
 
-public final class ServerGuiController implements IServerObserver, IClientObserver {
+public final class ServerGuiController implements IServerObserver, IClientObserver, IGuiController {
 	
 	private ArrayList<ActiveClient> clients;
 	
@@ -36,6 +38,11 @@ public final class ServerGuiController implements IServerObserver, IClientObserv
 	@Override
 	public void closed(final ActiveServer server) {
 		System.out.println("Server closed");
+	}
+	
+	@Override
+	public void userInput(final String actionCommand) {
+		System.out.println("User input: " + actionCommand);
 	}
 	
 }
