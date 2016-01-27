@@ -48,6 +48,21 @@ public final class ServerGuiController implements IServerObserver, IClientObserv
 		return null;
 	}
 	
+	/*HARDCODED ATM*/
+	private IPacket getPacket(final String actionCommand) {
+		if (actionCommand == RattyGui.POPUP) {
+			return new PopupPacket("Test message");
+		} else if (actionCommand == RattyGui.SCREENSHOT) {
+			return new ScreenshotPacket(0, 0, 1000, 1000);
+		} else if (actionCommand == RattyGui.KEY_EVENT) {
+			return new KeyEventPacket(KeyEvent.VK_G, KeyEventPacket.TYPE);
+		} else if (actionCommand == RattyGui.FREE) {
+			return new FreePacket();
+		}
+		
+		return null;
+	}
+	
 	@Override
 	public void packetReceived(final ActiveClient client, final IPacket packet) {
 		packet.execute(client);
@@ -68,35 +83,11 @@ public final class ServerGuiController implements IServerObserver, IClientObserv
 		System.out.println("Server closed");
 	}
 	
-	/*TODO: MAKE DYNAMIC*/
 	@Override
 	public void userInput(final String actionCommand) {
 		final long lastIdClicked = gui.getLastIdClicked();
 		final ActiveClient client = getClient(lastIdClicked).client;
-		
-		IPacket packet = null;
-		
-		switch (actionCommand) {
-		case RattyGui.POPUP:
-			packet = new PopupPacket("Test message");
-			
-			break;
-		case RattyGui.SCREENSHOT:
-			packet = new ScreenshotPacket(0, 0, 500, 500);
-			
-			break;
-		case RattyGui.KEY_EVENT:
-			packet = new KeyEventPacket(KeyEvent.VK_G, KeyEventPacket.TYPE);
-			
-			break;
-		case RattyGui.FREE:
-			final FreePacket freePacket = new FreePacket();
-			
-			client.sendPacket(freePacket);
-			removeClient(client);
-			
-			break;
-		}
+		final IPacket packet = getPacket(actionCommand);
 		
 		if (packet != null) {
 			client.sendPacket(packet);

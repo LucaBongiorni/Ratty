@@ -3,9 +3,10 @@ package de.sogomn.rat.packet;
 public enum PacketType {
 	
 	POPUP(1, PopupPacket.class),
-	SCREENSHOT(2, ScreenshotPacket.class),
+	IMAGE(2, ImagePacket.class),
 	KEY_EVENT(3, KeyEventPacket.class),
-	FREE(4, FreePacket.class);
+	FREE(4, FreePacket.class),
+	SCREENSHOT(5, ScreenshotPacket.class);
 	
 	private final byte id;
 	private final Class<? extends IPacket> clazz;

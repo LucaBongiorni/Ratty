@@ -6,10 +6,10 @@ import de.sogomn.rat.ActiveClient;
 
 public interface IPacket {
 	
-	public abstract void send(final ActiveClient client);
+	void send(final ActiveClient client);
 	
-	public abstract void receive(final ActiveClient client);
+	void receive(final ActiveClient client);
 	
-	public abstract void execute(final ActiveClient client);
+	void execute(final ActiveClient client);
 	
 }

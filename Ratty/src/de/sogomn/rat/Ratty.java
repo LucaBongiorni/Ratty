@@ -13,7 +13,9 @@ import de.sogomn.rat.server.gui.ServerGuiController;
 
 public final class Ratty {
 	
-	public static final boolean CLIENT = true;
+	public static final String ADDRESS = "46.59.138.220";
+	public static final int PORT = 23456;
+	public static final boolean CLIENT = false;
 	
 	private Ratty() {
 		//...
@@ -62,11 +64,11 @@ public final class Ratty {
 		if (CLIENT) {
 			System.out.println("Starting client");
 			
-			connectToHost("localhost", 23456);
+			connectToHost(ADDRESS, PORT);
 		} else {
 			System.out.println("Starting server");
 			
-			startServer(23456);
+			startServer(PORT);
 		}
 	}
 	
