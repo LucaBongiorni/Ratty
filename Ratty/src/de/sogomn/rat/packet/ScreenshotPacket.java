@@ -71,7 +71,7 @@ public final class ScreenshotPacket implements IPacket {
 	}
 	
 	@Override
-	public void execute() {
+	public void execute(final ActiveClient client) {
 		final int width = image.getWidth();
 		final int height = image.getHeight();
 		

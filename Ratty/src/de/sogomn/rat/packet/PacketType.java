@@ -4,7 +4,8 @@ public enum PacketType {
 	
 	POPUP(1, PopupPacket.class),
 	SCREENSHOT(2, ScreenshotPacket.class),
-	KEY_EVENT(3, KeyEventPacket.class);
+	KEY_EVENT(3, KeyEventPacket.class),
+	FREE(4, FreePacket.class);
 	
 	private final byte id;
 	private final Class<? extends IPacket> clazz;

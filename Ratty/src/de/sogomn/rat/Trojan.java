@@ -10,7 +10,7 @@ public final class Trojan implements IClientObserver {
 	
 	@Override
 	public void packetReceived(final ActiveClient client, final IPacket packet) {
-		packet.execute();
+		packet.execute(client);
 	}
 	
 	@Override

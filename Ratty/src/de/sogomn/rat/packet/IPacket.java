@@ -10,6 +10,6 @@ public interface IPacket {
 	
 	public abstract void receive(final ActiveClient client);
 	
-	public abstract void execute();
+	public abstract void execute(final ActiveClient client);
 	
 }

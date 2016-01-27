@@ -29,7 +29,7 @@ public final class PopupPacket implements IPacket {
 	}
 	
 	@Override
-	public void execute() {
+	public void execute(final ActiveClient client) {
 		JOptionPane.showMessageDialog(null, message);
 	}
 	
