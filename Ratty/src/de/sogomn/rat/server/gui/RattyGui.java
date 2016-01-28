@@ -32,15 +32,19 @@ public final class RattyGui {
 		"Version"
 	};
 	
-	public static final String POPUP = "Popup";
-	public static final String SCREENSHOT = "Screenshot";
-	public static final String KEY_EVENT = "Key event";
-	public static final String FREE = "Free";
+	public static final String POPUP = "Open popup";
+	public static final String SCREENSHOT = "Take screenshot";
+	public static final String DESKTOP = "View desktop";
+	public static final String FILES = "Browse files";
+	public static final String SHUTDOWN = "Shutdown device";
+	public static final String FREE = "Free client";
 	
 	public static final String[] ACTION_COMMANDS = {
 		POPUP,
 		SCREENSHOT,
-		KEY_EVENT,
+		DESKTOP,
+		FILES,
+		SHUTDOWN,
 		FREE
 	};
 	

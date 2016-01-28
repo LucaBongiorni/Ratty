@@ -1,15 +1,21 @@
 package de.sogomn.rat.packet;
 
+import de.sogomn.rat.packet.request.InformationRequestPacket;
+import de.sogomn.rat.packet.request.ScreenshotRequestPacket;
+
 public enum PacketType {
 	
 	POPUP(1, PopupPacket.class),
 	IMAGE(2, ImagePacket.class),
 	KEY_EVENT(3, KeyEventPacket.class),
 	FREE(4, FreePacket.class),
-	SCREENSHOT(5, ScreenshotPacket.class);
+	INFORMATION(5, InformationPacket.class),
 	
-	private final byte id;
-	private final Class<? extends IPacket> clazz;
+	SCREENSHOT(6, ScreenshotRequestPacket.class),
+	INFORMATION_REQUEST(7, InformationRequestPacket.class);
+	
+	public final byte id;
+	public final Class<? extends IPacket> clazz;
 	
 	PacketType(final byte id, final Class<? extends IPacket> clazz) {
 		this.id = id;
@@ -42,6 +48,12 @@ public enum PacketType {
 		}
 		
 		return 0;
+	}
+	
+	public static byte getId(final IPacket packet) {
+		final Class<? extends IPacket> clazz = packet.getClass();
+		
+		return getId(clazz);
 	}
 	
 }

@@ -15,13 +15,13 @@ public final class KeyEventPacket implements IPacket {
 	public static final byte RELEASE = 1;
 	public static final byte TYPE = 2;
 	
-	public KeyEventPacket() {
-		key = KeyEvent.VK_UNDEFINED;
-	}
-	
 	public KeyEventPacket(final int key, final byte strokeType) {
 		this.key = key;
 		this.strokeType = strokeType;
+	}
+	
+	public KeyEventPacket() {
+		this(KeyEvent.VK_UNDEFINED, TYPE);
 	}
 	
 	@Override

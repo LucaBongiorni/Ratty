@@ -42,4 +42,11 @@ public final class PopupPacket implements IPacket {
 		return message;
 	}
 	
+	public static PopupPacket create() {
+		final String input = JOptionPane.showInputDialog(null);
+		final PopupPacket packet = new PopupPacket(input);
+		
+		return packet;
+	}
+	
 }
