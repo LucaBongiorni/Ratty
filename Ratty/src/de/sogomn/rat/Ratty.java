@@ -8,7 +8,7 @@ import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 
 import de.sogomn.rat.server.ActiveServer;
 import de.sogomn.rat.server.gui.RattyGui;
-import de.sogomn.rat.server.gui.ServerGuiController;
+import de.sogomn.rat.server.gui.RattyGuiController;
 
 
 public final class Ratty {
@@ -53,7 +53,7 @@ public final class Ratty {
 	public static void startServer(final int port) {
 		final ActiveServer server = new ActiveServer(port);
 		final RattyGui gui = new RattyGui();
-		final ServerGuiController controller = new ServerGuiController(gui);
+		final RattyGuiController controller = new RattyGuiController(gui);
 		
 		server.setObserver(controller);
 		server.start();

