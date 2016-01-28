@@ -1,18 +1,13 @@
 package de.sogomn.rat.packet;
 
-import de.sogomn.rat.packet.request.InformationRequestPacket;
-import de.sogomn.rat.packet.request.ScreenshotRequestPacket;
 
 public enum PacketType {
 	
 	POPUP(1, PopupPacket.class),
-	IMAGE(2, ImagePacket.class),
+	SCREENSHOT(2, ScreenshotPacket.class),
 	KEY_EVENT(3, KeyEventPacket.class),
 	FREE(4, FreePacket.class),
-	INFORMATION(5, InformationPacket.class),
-	
-	SCREENSHOT(6, ScreenshotRequestPacket.class),
-	INFORMATION_REQUEST(7, InformationRequestPacket.class);
+	INFORMATION(5, InformationPacket.class);
 	
 	public final byte id;
 	public final Class<? extends IPacket> clazz;

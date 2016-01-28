@@ -82,7 +82,9 @@ public final class ActiveClient extends TCPConnection {
 			reader = null;
 		}
 		
-		packetQueue.clear();
+		if (packetQueue != null) {
+			packetQueue.clear();
+		}
 		
 		if (observer != null) {
 			observer.disconnected(this);
