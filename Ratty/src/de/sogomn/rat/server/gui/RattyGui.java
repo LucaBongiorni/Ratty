@@ -1,9 +1,11 @@
 package de.sogomn.rat.server.gui;
 
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
@@ -11,6 +13,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+
+import de.sogomn.engine.Screen;
 
 public final class RattyGui {
 	
@@ -22,6 +26,9 @@ public final class RattyGui {
 	
 	private JPopupMenu menu;
 	
+	private Screen screen;
+	private BufferedImage image;
+	
 	private IGuiController controller;
 	
 	private static final String[] HEADERS = {
@@ -31,6 +38,8 @@ public final class RattyGui {
 		"OS",
 		"Version"
 	};
+	private static final int SCREEN_WIDTH = 800;
+	private static final int SCREEN_HEIGHT = 600;
 	
 	public static final String POPUP = "Open popup";
 	public static final String SCREENSHOT = "Take screenshot";
@@ -38,7 +47,6 @@ public final class RattyGui {
 	public static final String FILES = "Browse files";
 	public static final String SHUTDOWN = "Shutdown device";
 	public static final String FREE = "Free client";
-	
 	public static final String[] ACTION_COMMANDS = {
 		POPUP,
 		SCREENSHOT,
@@ -98,6 +106,10 @@ public final class RattyGui {
 		controller.userInput(command);
 	}
 	
+	private void drawImage(final Graphics2D g) {
+		g.drawImage(image, 0, 0, null);
+	}
+	
 	public void addRow(final long id, final String name, final String address, final String os, final String version) {
 		final Object[] data = {id, name, address, os, version};
 		
@@ -116,6 +128,22 @@ public final class RattyGui {
 				return;
 			}
 		}
+	}
+	
+	public void showImage(final BufferedImage image) {
+		this.image = image;
+		
+		final int width = image.getWidth();
+		final int height = image.getHeight();
+		
+		if (screen == null || screen.getInitialWidth() != width || screen.getInitialHeight() != height) {
+			screen = new Screen(width, height);
+			screen.addListener(this::drawImage);
+			screen.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+		}
+		
+		screen.show();
+		screen.redraw();
 	}
 	
 	public void setController(final IGuiController controller) {

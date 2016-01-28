@@ -21,8 +21,8 @@ public final class ScreenshotPacket extends AbstractPingPongPacket {
 	private BufferedImage image;
 	
 	private static final BufferedImage NO_IMAGE = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
-	private static final int SCREEN_WIDTH = 500;
-	private static final int SCREEN_HEIGHT = 500;
+	private static final int SCREEN_WIDTH = 800;
+	private static final int SCREEN_HEIGHT = 600;
 	
 	public ScreenshotPacket(final BufferedImage image) {
 		this.image = image;
@@ -107,7 +107,7 @@ public final class ScreenshotPacket extends AbstractPingPongPacket {
 		final Screen screen = new Screen(width, height);
 		
 		screen.addListener(g -> {
-			g.drawImage(image, 0, 0, width, height, null);
+			g.drawImage(image, 0, 0, null);
 		});
 		screen.setResizeBehavior(ResizeBehavior.KEEP_ASPECT_RATIO);
 		screen.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
