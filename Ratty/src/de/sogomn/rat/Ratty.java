@@ -29,8 +29,8 @@ public final class Ratty {
 		defaults.put("control", Color.GRAY);
 		defaults.put("nimbusBase", Color.BLACK);
 		defaults.put("text", Color.WHITE);
-		defaults.put("Table:\"Table.cellRenderer\".background", Color.GRAY);
-		defaults.put("Table.alternateRowColor", Color.LIGHT_GRAY);
+		defaults.put("Table:\"Table.cellRenderer\".background", new Color(50, 50, 50));
+		defaults.put("Table.alternateRowColor", new Color(75, 75, 75));
 		defaults.put("TextField.foreground", Color.BLACK);
 		
 		try {

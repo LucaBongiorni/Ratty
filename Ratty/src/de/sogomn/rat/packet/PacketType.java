@@ -7,7 +7,8 @@ public enum PacketType {
 	SCREENSHOT(2, ScreenshotPacket.class),
 	KEY_EVENT(3, KeyEventPacket.class),
 	FREE(4, FreePacket.class),
-	INFORMATION(5, InformationPacket.class);
+	INFORMATION(5, InformationPacket.class),
+	COMMAND(6, CommandPacket.class);
 	
 	public final byte id;
 	public final Class<? extends IPacket> clazz;
