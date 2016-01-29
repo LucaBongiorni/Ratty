@@ -20,7 +20,7 @@ public final class ScreenshotPacket extends AbstractPingPongPacket {
 	
 	private BufferedImage image;
 	
-	private static final BufferedImage NO_IMAGE = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
+	private static final BufferedImage NO_IMAGE = new BufferedImage(10, 10, BufferedImage.TYPE_INT_RGB);
 	private static final int SCREEN_WIDTH = 800;
 	private static final int SCREEN_HEIGHT = 600;
 	
@@ -82,18 +82,11 @@ public final class ScreenshotPacket extends AbstractPingPongPacket {
 	
 	@Override
 	protected void executeRequest(final ActiveClient client) {
-		final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-		final Rectangle screenRect = new Rectangle(screen);
+		type = DATA;
+		image = takeScreenshot();
 		
-		try {
-			final Robot robot = new Robot();
-			
-			type = DATA;
-			image = robot.createScreenCapture(screenRect);
-		} catch (final AWTException ex) {
+		if (image == null) {
 			image = NO_IMAGE;
-			
-			ex.printStackTrace();
 		}
 		
 		client.addPacket(this);
@@ -117,6 +110,22 @@ public final class ScreenshotPacket extends AbstractPingPongPacket {
 	
 	public BufferedImage getImage() {
 		return image;
+	}
+	
+	public static BufferedImage takeScreenshot() {
+		final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+		final Rectangle screenRect = new Rectangle(screen);
+		
+		try {
+			final Robot robot = new Robot();
+			final BufferedImage image = robot.createScreenCapture(screenRect);
+			
+			return image;
+		} catch (final AWTException ex) {
+			ex.printStackTrace();
+			
+			return null;
+		}
 	}
 	
 }
