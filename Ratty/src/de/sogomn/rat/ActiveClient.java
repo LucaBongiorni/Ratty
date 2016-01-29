@@ -130,4 +130,8 @@ public final class ActiveClient extends TCPConnection {
 		this.observer = observer;
 	}
 	
+	public boolean isIdling() {
+		return packetQueue.isEmpty();
+	}
+	
 }
