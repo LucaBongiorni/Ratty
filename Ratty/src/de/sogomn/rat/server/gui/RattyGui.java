@@ -1,5 +1,6 @@
 package de.sogomn.rat.server.gui;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -7,6 +8,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -30,6 +32,7 @@ public final class RattyGui {
 	private JTable table;
 	private DefaultTableModel tableModel;
 	private long lastIdClicked;
+	private JScrollPane scrollPane;
 	
 	private JPopupMenu menu;
 	
@@ -43,26 +46,33 @@ public final class RattyGui {
 		"Name",
 		"IP address",
 		"OS",
-		"Version"
+		"Version",
+		"Streaming"
 	};
+	
 	private static final int SCREEN_WIDTH = 800;
 	private static final int SCREEN_HEIGHT = 600;
-	private static final BufferedImage ICON = ImageUtils.scaleImage(ImageUtils.loadImage("/gui_icon.png"), 64, 64);
-	private static final BufferedImage[] MENU_ICONS = new SpriteSheet("/icons.png", 16, 16).getSprites();
+	
+	private static final BufferedImage GUI_ICON = ImageUtils.scaleImage(ImageUtils.loadImage("/gui_icon.png"), 64, 64);
+	private static final BufferedImage[] MENU_ICONS = new SpriteSheet("/menu_icons.png", 16, 16).getSprites();
 	
 	public static final String POPUP = "Open popup";
 	public static final String SCREENSHOT = "Take screenshot";
-	public static final String DESKTOP = "View desktop";
+	public static final String DESKTOP = "Start desktop stream";
 	public static final String DESKTOP_STOP = "Stop desktop stream";
 	public static final String FILES = "Browse files";
 	public static final String COMMAND = "Execute command";
+	public static final String CLIPBOARD = "Get clipboard content";
 	public static final String FREE = "Free client";
-	public static final String[] ACTION_COMMANDS = {
+	
+	public static final String[] COMMANDS = {
 		POPUP,
 		SCREENSHOT,
 		DESKTOP,
+		DESKTOP_STOP,
 		FILES,
 		COMMAND,
+		CLIPBOARD,
 		FREE
 	};
 	
@@ -70,18 +80,14 @@ public final class RattyGui {
 		frame = new JFrame();
 		table = new JTable();
 		tableModel = (DefaultTableModel)table.getModel();
+		scrollPane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		menu = new JPopupMenu();
 		
-		for (int i = 0; i < ACTION_COMMANDS.length && i < MENU_ICONS.length; i++) {
-			final String command = ACTION_COMMANDS[i];
-			final JMenuItem item = new JMenuItem(command);
+		for (int i = 0; i < COMMANDS.length && i < MENU_ICONS.length; i++) {
+			final String command = COMMANDS[i];
 			final ImageIcon icon = new ImageIcon(MENU_ICONS[i]);
 			
-			item.setActionCommand(command);
-			item.addActionListener(this::menuItemClicked);
-			item.setIcon(icon);
-			
-			menu.add(item);
+			addMenuItem(command, icon);
 		}
 		
 		final MouseAdapter mouseAdapter = new MouseAdapter() {
@@ -94,22 +100,42 @@ public final class RattyGui {
 			}
 		};
 		
+		scrollPane.setBorder(null);
 		tableModel.setColumnIdentifiers(HEADERS);
 		table.setEnabled(false);
 		table.setComponentPopupMenu(menu);
 		table.addMouseListener(mouseAdapter);
 		
-		final JScrollPane scrollPane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		
-		scrollPane.setBorder(null);
-		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setContentPane(scrollPane);
 		frame.pack();
 		frame.setLocationByPlatform(true);
-		frame.setIconImage(ICON);
+		frame.setIconImage(GUI_ICON);
 		frame.setVisible(true);
 		frame.requestFocus();
+	}
+	
+	private Screen createScreen(final int width, final int height) {
+		final Screen screen = new Screen(width, height);
+		
+		screen.setResizeBehavior(ResizeBehavior.KEEP_ASPECT_RATIO);
+		screen.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+		screen.setBackgroundColor(Color.BLACK);
+		screen.addListener(g -> {
+			g.drawImage(image, 0, 0, null);
+		});
+		
+		return screen;
+	}
+	
+	private void addMenuItem(final String name, final Icon icon) {
+		final JMenuItem item = new JMenuItem(name);
+		
+		item.setActionCommand(name);
+		item.addActionListener(this::menuItemClicked);
+		item.setIcon(icon);
+		
+		menu.add(item);
 	}
 	
 	private void menuItemClicked(final ActionEvent a) {
@@ -131,47 +157,17 @@ public final class RattyGui {
 		g.dispose();
 	}
 	
-	private void drawToScreenImage(final IFrame frame) {
-		drawToScreenImage(frame.image, frame.x, frame.y);
-	}
-	
-	private void openScreen(final int width, final int height) {
+	public void openScreen(final int width, final int height) {
 		if (screen == null || screen.getInitialWidth() != width || screen.getInitialHeight() != height || !screen.isOpen()) {
 			if (screen != null) {
 				screen.close();
 			}
 			
-			screen = new Screen(width, height);
-			
-			screen.addListener(g -> {
-				g.drawImage(image, 0, 0, null);
-			});
-			screen.setResizeBehavior(ResizeBehavior.KEEP_ASPECT_RATIO);
-			screen.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+			screen = createScreen(width, height);
 		}
 		
 		screen.show();
 		screen.redraw();
-	}
-	
-	public void addRow(final long id, final String name, final String address, final String os, final String version) {
-		final Object[] data = {id, name, address, os, version};
-		
-		tableModel.addRow(data);
-	}
-	
-	public void removeRow(final long id) {
-		final int rows = tableModel.getRowCount();
-		
-		for (int i = 0; i < rows; i++) {
-			final long rowId = (Long)tableModel.getValueAt(i, 0);
-			
-			if (rowId == id) {
-				tableModel.removeRow(i);
-				
-				return;
-			}
-		}
 	}
 	
 	public void showImage(final BufferedImage image) {
@@ -188,8 +184,40 @@ public final class RattyGui {
 			image = new BufferedImage(screenWidth, screenHeight, BufferedImage.TYPE_INT_RGB);
 		}
 		
-		drawToScreenImage(frame);
+		drawToScreenImage(frame.image, frame.x, frame.y);
 		openScreen(screenWidth, screenHeight);
+	}
+	
+	public void addTableRow(final long id, final String name, final String address, final String os, final String version) {
+		final Object[] data = {id, name, address, os, version, false};
+		
+		tableModel.addRow(data);
+	}
+	
+	public void removeTableRow(final long id) {
+		final int rows = tableModel.getRowCount();
+		
+		for (int i = 0; i < rows; i++) {
+			final long rowId = (Long)tableModel.getValueAt(i, 0);
+			
+			if (rowId == id) {
+				tableModel.removeRow(i);
+				
+				return;
+			}
+		}
+	}
+	
+	public void setStreaming(final long id, final boolean state) {
+		final int rows = tableModel.getRowCount();
+		
+		for (int i = 0; i < rows; i++) {
+			final long rowId = (Long)tableModel.getValueAt(i, 0);
+			
+			if (rowId == id) {
+				tableModel.setValueAt(state, i, 5);	//Column 5 = Streaming
+			}
+		}
 	}
 	
 	public void setController(final IGuiController controller) {
@@ -198,6 +226,10 @@ public final class RattyGui {
 	
 	public long getLastIdClicked() {
 		return lastIdClicked;
+	}
+	
+	public boolean isScreenVisible() {
+		return screen.isVisible();
 	}
 	
 	public static void showMessage(final String message) {

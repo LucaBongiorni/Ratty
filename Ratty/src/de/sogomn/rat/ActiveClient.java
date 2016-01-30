@@ -101,6 +101,7 @@ public final class ActiveClient extends TCPConnection {
 				}
 			}
 		};
+		
 		final Runnable readingRunnable = () -> {
 			while (isOpen()) {
 				final IPacket packet = readPacket();

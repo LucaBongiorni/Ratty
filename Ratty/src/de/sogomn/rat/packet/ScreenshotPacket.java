@@ -20,16 +20,9 @@ public final class ScreenshotPacket extends AbstractPingPongPacket {
 	private static final int SCREEN_WIDTH = 800;
 	private static final int SCREEN_HEIGHT = 600;
 	
-	public ScreenshotPacket(final BufferedImage image) {
-		this.image = image;
-		
-		type = DATA;
-	}
-	
 	public ScreenshotPacket() {
-		this(NO_IMAGE);
-		
 		type = REQUEST;
+		image = NO_IMAGE;
 	}
 	
 	@Override

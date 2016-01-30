@@ -9,7 +9,8 @@ public enum PacketType {
 	FREE(4, FreePacket.class),
 	INFORMATION(5, InformationPacket.class),
 	COMMAND(6, CommandPacket.class),
-	DESKTOP(7, DesktopStreamPacket.class);
+	DESKTOP(7, DesktopStreamPacket.class),
+	CLIPBOARD(8, ClipboardPacket.class);
 	
 	public final byte id;
 	public final Class<? extends IPacket> clazz;
