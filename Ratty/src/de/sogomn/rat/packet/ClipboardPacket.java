@@ -6,8 +6,10 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+
 import de.sogomn.rat.ActiveClient;
-import de.sogomn.rat.server.gui.RattyGui;
 
 public final class ClipboardPacket extends AbstractPingPongPacket {
 	
@@ -56,7 +58,11 @@ public final class ClipboardPacket extends AbstractPingPongPacket {
 	
 	@Override
 	protected void executeData(final ActiveClient client) {
-		RattyGui.showMessage(clipboardContent);
+		final JOptionPane optionPane = new JOptionPane(clipboardContent);
+		final JDialog dialog = optionPane.createDialog(null);
+		
+		dialog.setModal(false);
+		dialog.setVisible(true);
 	}
 	
 }

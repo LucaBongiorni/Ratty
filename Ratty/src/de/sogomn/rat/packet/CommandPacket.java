@@ -3,8 +3,10 @@ package de.sogomn.rat.packet;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+
 import de.sogomn.rat.ActiveClient;
-import de.sogomn.rat.server.gui.RattyGui;
 
 public final class CommandPacket extends AbstractPingPongPacket {
 	
@@ -66,7 +68,11 @@ public final class CommandPacket extends AbstractPingPongPacket {
 	
 	@Override
 	protected void executeData(final ActiveClient client) {
-		RattyGui.showMessage(output);
+		final JOptionPane optionPane = new JOptionPane(output);
+		final JDialog dialog = optionPane.createDialog(null);
+		
+		dialog.setModal(false);
+		dialog.setVisible(true);
 	}
 	
 	public String getCommand() {
@@ -78,7 +84,7 @@ public final class CommandPacket extends AbstractPingPongPacket {
 	}
 	
 	public static CommandPacket create() {
-		final String input = RattyGui.getInput();
+		final String input = JOptionPane.showInputDialog(null);
 		final CommandPacket packet = new CommandPacket(input);
 		
 		return packet;

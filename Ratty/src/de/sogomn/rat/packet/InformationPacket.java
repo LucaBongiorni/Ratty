@@ -64,7 +64,7 @@ public final class InformationPacket extends AbstractPingPongPacket {
 		return name;
 	}
 	
-	public String getOS() {
+	public String getOs() {
 		return os;
 	}
 	

@@ -1,7 +1,5 @@
 package de.sogomn.rat.server.gui;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
@@ -10,20 +8,15 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-import de.sogomn.engine.Screen;
-import de.sogomn.engine.Screen.ResizeBehavior;
 import de.sogomn.engine.fx.SpriteSheet;
 import de.sogomn.engine.util.ImageUtils;
-import de.sogomn.rat.util.FrameEncoder.IFrame;
 
 public final class RattyGui {
 	
@@ -36,9 +29,6 @@ public final class RattyGui {
 	
 	private JPopupMenu menu;
 	
-	private Screen screen;
-	private BufferedImage image;
-	
 	private IGuiController controller;
 	
 	private static final String[] HEADERS = {
@@ -49,9 +39,6 @@ public final class RattyGui {
 		"Version",
 		"Streaming"
 	};
-	
-	private static final int SCREEN_WIDTH = 800;
-	private static final int SCREEN_HEIGHT = 600;
 	
 	private static final BufferedImage GUI_ICON = ImageUtils.scaleImage(ImageUtils.loadImage("/gui_icon.png"), 64, 64);
 	private static final BufferedImage[] MENU_ICONS = new SpriteSheet("/menu_icons.png", 16, 16).getSprites();
@@ -115,19 +102,6 @@ public final class RattyGui {
 		frame.requestFocus();
 	}
 	
-	private Screen createScreen(final int width, final int height) {
-		final Screen screen = new Screen(width, height);
-		
-		screen.setResizeBehavior(ResizeBehavior.KEEP_ASPECT_RATIO);
-		screen.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
-		screen.setBackgroundColor(Color.BLACK);
-		screen.addListener(g -> {
-			g.drawImage(image, 0, 0, null);
-		});
-		
-		return screen;
-	}
-	
 	private void addMenuItem(final String name, final Icon icon) {
 		final JMenuItem item = new JMenuItem(name);
 		
@@ -148,44 +122,18 @@ public final class RattyGui {
 		controller.userInput(command);
 	}
 	
-	private void drawToScreenImage(final BufferedImage imagePart, final int x, final int y) {
-		final Graphics2D g = image.createGraphics();
+	private int getRowIndex(final long id) {
+		final int rows = tableModel.getRowCount();
 		
-		ImageUtils.applyHighGraphics(g);
-		
-		g.drawImage(imagePart, x, y, null);
-		g.dispose();
-	}
-	
-	public void openScreen(final int width, final int height) {
-		if (screen == null || screen.getInitialWidth() != width || screen.getInitialHeight() != height || !screen.isOpen()) {
-			if (screen != null) {
-				screen.close();
-			}
+		for (int i = 0; i < rows; i++) {
+			final long rowId = (Long)tableModel.getValueAt(i, 0);
 			
-			screen = createScreen(width, height);
+			if (rowId == id) {
+				return i;
+			}
 		}
 		
-		screen.show();
-		screen.redraw();
-	}
-	
-	public void showImage(final BufferedImage image) {
-		this.image = image;
-		
-		final int width = image.getWidth();
-		final int height = image.getHeight();
-		
-		openScreen(width, height);
-	}
-	
-	public void showFrame(final IFrame frame, final int screenWidth, final int screenHeight) {
-		if (image == null || image.getWidth() != screenWidth || image.getHeight() != screenHeight) {
-			image = new BufferedImage(screenWidth, screenHeight, BufferedImage.TYPE_INT_RGB);
-		}
-		
-		drawToScreenImage(frame.image, frame.x, frame.y);
-		openScreen(screenWidth, screenHeight);
+		return -1;
 	}
 	
 	public void addTableRow(final long id, final String name, final String address, final String os, final String version) {
@@ -195,28 +143,18 @@ public final class RattyGui {
 	}
 	
 	public void removeTableRow(final long id) {
-		final int rows = tableModel.getRowCount();
+		final int rowIndex = getRowIndex(id);
 		
-		for (int i = 0; i < rows; i++) {
-			final long rowId = (Long)tableModel.getValueAt(i, 0);
-			
-			if (rowId == id) {
-				tableModel.removeRow(i);
-				
-				return;
-			}
+		if (rowIndex != -1) {
+			tableModel.removeRow(rowIndex);
 		}
 	}
 	
 	public void setStreaming(final long id, final boolean state) {
-		final int rows = tableModel.getRowCount();
+		final int rowIndex = getRowIndex(id);
 		
-		for (int i = 0; i < rows; i++) {
-			final long rowId = (Long)tableModel.getValueAt(i, 0);
-			
-			if (rowId == id) {
-				tableModel.setValueAt(state, i, 5);	//Column 5 = Streaming
-			}
+		if (rowIndex != -1) {
+			tableModel.setValueAt(state, rowIndex, 5);	//Column 5 = Streaming
 		}
 	}
 	
@@ -226,24 +164,6 @@ public final class RattyGui {
 	
 	public long getLastIdClicked() {
 		return lastIdClicked;
-	}
-	
-	public boolean isScreenVisible() {
-		return screen.isVisible();
-	}
-	
-	public static void showMessage(final String message) {
-		final JOptionPane optionPane = new JOptionPane(message);
-		final JDialog dialog = optionPane.createDialog(null);
-		
-		dialog.setModal(false);
-		dialog.setVisible(true);
-	}
-	
-	public static String getInput() {
-		final String input = JOptionPane.showInputDialog(null);
-		
-		return input;
 	}
 	
 }
