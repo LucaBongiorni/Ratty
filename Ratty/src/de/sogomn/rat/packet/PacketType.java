@@ -8,7 +8,8 @@ public enum PacketType {
 	KEY_EVENT(3, KeyEventPacket.class),
 	FREE(4, FreePacket.class),
 	INFORMATION(5, InformationPacket.class),
-	COMMAND(6, CommandPacket.class);
+	COMMAND(6, CommandPacket.class),
+	DESKTOP(7, DesktopStreamPacket.class);
 	
 	public final byte id;
 	public final Class<? extends IPacket> clazz;

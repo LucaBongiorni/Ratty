@@ -2,6 +2,7 @@ package de.sogomn.rat;
 
 import java.awt.Color;
 
+import javax.swing.JOptionPane;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
@@ -67,13 +68,20 @@ public final class Ratty {
 		setLookAndFeel();
 		
 		if (CLIENT) {
-			System.out.println("Starting client");
-			
 			connectToHost(ADDRESS, PORT);
 		} else {
-			System.out.println("Starting server");
+			final String[] options = {"Server", "Client"};
+			final int input = JOptionPane.showOptionDialog(null, "Server or client?", "Choose", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null);
 			
-			startServer(PORT);
+			if (input == JOptionPane.YES_OPTION) {
+				System.out.println("Starting server");
+				
+				startServer(PORT);
+			} else if (input == JOptionPane.NO_OPTION) {
+				System.out.println("Starting client");
+				
+				connectToHost(ADDRESS, PORT);
+			}
 		}
 	}
 	

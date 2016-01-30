@@ -18,8 +18,10 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import de.sogomn.engine.Screen;
+import de.sogomn.engine.Screen.ResizeBehavior;
 import de.sogomn.engine.fx.SpriteSheet;
 import de.sogomn.engine.util.ImageUtils;
+import de.sogomn.rat.util.FrameEncoder.IFrame;
 
 public final class RattyGui {
 	
@@ -51,9 +53,9 @@ public final class RattyGui {
 	public static final String POPUP = "Open popup";
 	public static final String SCREENSHOT = "Take screenshot";
 	public static final String DESKTOP = "View desktop";
+	public static final String DESKTOP_STOP = "Stop desktop stream";
 	public static final String FILES = "Browse files";
 	public static final String COMMAND = "Execute command";
-	public static final String SHUTDOWN = "Shutdown device";
 	public static final String FREE = "Free client";
 	public static final String[] ACTION_COMMANDS = {
 		POPUP,
@@ -61,7 +63,6 @@ public final class RattyGui {
 		DESKTOP,
 		FILES,
 		COMMAND,
-		SHUTDOWN,
 		FREE
 	};
 	
@@ -121,8 +122,36 @@ public final class RattyGui {
 		controller.userInput(command);
 	}
 	
-	private void drawImage(final Graphics2D g) {
-		g.drawImage(image, 0, 0, null);
+	private void drawToScreenImage(final BufferedImage imagePart, final int x, final int y) {
+		final Graphics2D g = image.createGraphics();
+		
+		ImageUtils.applyHighGraphics(g);
+		
+		g.drawImage(imagePart, x, y, null);
+		g.dispose();
+	}
+	
+	private void drawToScreenImage(final IFrame frame) {
+		drawToScreenImage(frame.image, frame.x, frame.y);
+	}
+	
+	private void openScreen(final int width, final int height) {
+		if (screen == null || screen.getInitialWidth() != width || screen.getInitialHeight() != height || !screen.isOpen()) {
+			if (screen != null) {
+				screen.close();
+			}
+			
+			screen = new Screen(width, height);
+			
+			screen.addListener(g -> {
+				g.drawImage(image, 0, 0, null);
+			});
+			screen.setResizeBehavior(ResizeBehavior.KEEP_ASPECT_RATIO);
+			screen.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+		}
+		
+		screen.show();
+		screen.redraw();
 	}
 	
 	public void addRow(final long id, final String name, final String address, final String os, final String version) {
@@ -151,14 +180,16 @@ public final class RattyGui {
 		final int width = image.getWidth();
 		final int height = image.getHeight();
 		
-		if (screen == null || screen.getInitialWidth() != width || screen.getInitialHeight() != height) {
-			screen = new Screen(width, height);
-			screen.addListener(this::drawImage);
-			screen.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+		openScreen(width, height);
+	}
+	
+	public void showFrame(final IFrame frame, final int screenWidth, final int screenHeight) {
+		if (image == null || image.getWidth() != screenWidth || image.getHeight() != screenHeight) {
+			image = new BufferedImage(screenWidth, screenHeight, BufferedImage.TYPE_INT_RGB);
 		}
 		
-		screen.show();
-		screen.redraw();
+		drawToScreenImage(frame);
+		openScreen(screenWidth, screenHeight);
 	}
 	
 	public void setController(final IGuiController controller) {
