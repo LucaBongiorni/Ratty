@@ -14,6 +14,8 @@ public final class DisplayPanel {
 	private Screen screen;
 	private BufferedImage image;
 	
+	private IGuiController controller;
+	
 	private static final int SCREEN_WIDTH = 1920 / 2;
 	private static final int SCREEN_HEIGHT = 1080 / 2;
 	
@@ -72,6 +74,10 @@ public final class DisplayPanel {
 		
 		drawToScreenImage(frame.image, frame.x, frame.y);
 		openScreen(screenWidth, screenHeight);
+	}
+	
+	public void setController(final IGuiController controller) {
+		this.controller = controller;
 	}
 	
 }

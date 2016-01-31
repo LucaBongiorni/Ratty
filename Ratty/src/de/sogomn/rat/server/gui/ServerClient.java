@@ -35,6 +35,11 @@ public final class ServerClient {
 		this.streamingDesktop = streamingDesktop;
 	}
 	
+	public void setController(final IGuiController controller) {
+		displayPanel.setController(controller);
+		treePanel.setController(controller);
+	}
+	
 	public String getName() {
 		return name;
 	}

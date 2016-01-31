@@ -33,6 +33,7 @@ public final class Ratty {
 		defaults.put("Table:\"Table.cellRenderer\".background", new Color(50, 50, 50));
 		defaults.put("Table.alternateRowColor", new Color(75, 75, 75));
 		defaults.put("TextField.foreground", Color.BLACK);
+		defaults.put("Tree.background", Color.GRAY);
 		
 		try {
 			UIManager.setLookAndFeel(nimbus);

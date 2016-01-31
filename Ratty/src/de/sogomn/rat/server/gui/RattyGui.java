@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -40,7 +41,10 @@ public final class RattyGui {
 		"Streaming"
 	};
 	
-	private static final BufferedImage GUI_ICON = ImageUtils.scaleImage(ImageUtils.loadImage("/gui_icon.png"), 64, 64);
+	private static final BufferedImage GUI_ICON_SMALL = ImageUtils.loadImage("/gui_icon.png");
+	private static final BufferedImage GUI_ICON_MEDIUM = ImageUtils.scaleImage(ImageUtils.loadImage("/gui_icon.png"), 64, 64);
+	private static final BufferedImage GUI_ICON_LARGE = ImageUtils.scaleImage(ImageUtils.loadImage("/gui_icon.png"), 128, 128);
+	private static final ArrayList<BufferedImage> GUI_ICONS = new ArrayList<BufferedImage>(3);
 	private static final BufferedImage[] MENU_ICONS = new SpriteSheet("/menu_icons.png", 16, 16).getSprites();
 	
 	public static final String POPUP = "Open popup";
@@ -63,6 +67,12 @@ public final class RattyGui {
 		FREE
 	};
 	
+	static {
+		GUI_ICONS.add(GUI_ICON_SMALL);
+		GUI_ICONS.add(GUI_ICON_MEDIUM);
+		GUI_ICONS.add(GUI_ICON_LARGE);
+	}
+	
 	public RattyGui() {
 		frame = new JFrame();
 		table = new JTable();
@@ -81,9 +91,9 @@ public final class RattyGui {
 			@Override
 			public void mousePressed(final MouseEvent m) {
 				final Point mousePoint = m.getPoint();
-				final int row = table.rowAtPoint(mousePoint);
+				final int rowIndex = table.rowAtPoint(mousePoint);
 				
-				lastIdClicked = (Long)tableModel.getValueAt(row, 0);
+				lastIdClicked = (Long)tableModel.getValueAt(rowIndex, 0);
 			}
 		};
 		
@@ -97,7 +107,7 @@ public final class RattyGui {
 		frame.setContentPane(scrollPane);
 		frame.pack();
 		frame.setLocationByPlatform(true);
-		frame.setIconImage(GUI_ICON);
+		frame.setIconImages(GUI_ICONS);
 		frame.setVisible(true);
 		frame.requestFocus();
 	}

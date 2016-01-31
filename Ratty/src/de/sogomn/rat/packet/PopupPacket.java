@@ -1,5 +1,7 @@
 package de.sogomn.rat.packet;
 
+import java.awt.image.BufferedImage;
+
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
@@ -10,6 +12,8 @@ import de.sogomn.rat.ActiveClient;
 public final class PopupPacket implements IPacket {
 	
 	private String message;
+	
+	private static final BufferedImage NO_IMAGE = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
 	
 	public PopupPacket(final String message) {
 		this.message = message;
@@ -34,6 +38,7 @@ public final class PopupPacket implements IPacket {
 		final JOptionPane optionPane = new JOptionPane(message);
 		final JDialog dialog = optionPane.createDialog(null);
 		
+		dialog.setIconImage(NO_IMAGE);
 		dialog.setModal(false);
 		dialog.setVisible(true);
 	}
