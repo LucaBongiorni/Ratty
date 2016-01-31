@@ -27,13 +27,11 @@ public final class Ratty {
 		final NimbusLookAndFeel nimbus = new NimbusLookAndFeel();
 		final UIDefaults defaults = nimbus.getDefaults();
 		
-		defaults.put("control", Color.GRAY);
-		defaults.put("nimbusBase", Color.BLACK);
-		defaults.put("text", Color.WHITE);
-		defaults.put("Table:\"Table.cellRenderer\".background", new Color(50, 50, 50));
-		defaults.put("Table.alternateRowColor", new Color(75, 75, 75));
-		defaults.put("TextField.foreground", Color.BLACK);
-		defaults.put("Tree.background", Color.GRAY);
+		defaults.put("control", new Color(245, 245, 245));
+		defaults.put("nimbusBase", new Color(225, 225, 225));
+		defaults.put("Table:\"Table.cellRenderer\".background", new Color(225, 225, 225));
+		defaults.put("Table.alternateRowColor", new Color(175, 175, 175));
+		defaults.put("Tree.background", new Color(245, 245, 245));
 		
 		try {
 			UIManager.setLookAndFeel(nimbus);

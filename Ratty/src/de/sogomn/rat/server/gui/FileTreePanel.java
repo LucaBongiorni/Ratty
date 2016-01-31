@@ -38,7 +38,7 @@ public final class FileTreePanel {
 	private static final int DEFAULT_WIDTH = 500;
 	private static final int DEFAULT_HEIGHT = 500;
 	
-	private static final BufferedImage[] MENU_ICONS = new SpriteSheet("/menu_icons_tree.png", 16, 16).getSprites();
+	private static final BufferedImage[] MENU_ICONS = new SpriteSheet("/menu_icons_tree.png", 32, 32).getSprites();
 	
 	public static final String REQUEST = "Show content";
 	public static final String DOWNLOAD = "Download file";
@@ -95,6 +95,7 @@ public final class FileTreePanel {
 		dialog.setContentPane(scrollPane);
 		dialog.pack();
 		dialog.setLocationByPlatform(true);
+		dialog.setIconImages(RattyGui.GUI_ICONS);
 	}
 	
 	private void addMenuItem(final String name, final Icon icon) {

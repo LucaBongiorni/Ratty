@@ -44,8 +44,9 @@ public final class RattyGui {
 	private static final BufferedImage GUI_ICON_SMALL = ImageUtils.loadImage("/gui_icon.png");
 	private static final BufferedImage GUI_ICON_MEDIUM = ImageUtils.scaleImage(ImageUtils.loadImage("/gui_icon.png"), 64, 64);
 	private static final BufferedImage GUI_ICON_LARGE = ImageUtils.scaleImage(ImageUtils.loadImage("/gui_icon.png"), 128, 128);
-	private static final ArrayList<BufferedImage> GUI_ICONS = new ArrayList<BufferedImage>(3);
-	private static final BufferedImage[] MENU_ICONS = new SpriteSheet("/menu_icons.png", 16, 16).getSprites();
+	private static final BufferedImage[] MENU_ICONS = new SpriteSheet("/menu_icons.png", 32, 32).getSprites();
+	
+	public static final ArrayList<BufferedImage> GUI_ICONS = new ArrayList<BufferedImage>(3);
 	
 	public static final String POPUP = "Open popup";
 	public static final String SCREENSHOT = "Take screenshot";
