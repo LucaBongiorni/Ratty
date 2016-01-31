@@ -85,9 +85,14 @@ public final class CommandPacket extends AbstractPingPongPacket {
 	
 	public static CommandPacket create() {
 		final String input = JOptionPane.showInputDialog(null);
-		final CommandPacket packet = new CommandPacket(input);
 		
-		return packet;
+		if (input != null) {
+			final CommandPacket packet = new CommandPacket(input);
+			
+			return packet;
+		} else {
+			return null;
+		}
 	}
 	
 }

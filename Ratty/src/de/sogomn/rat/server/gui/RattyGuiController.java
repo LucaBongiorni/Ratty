@@ -67,7 +67,8 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 		} else if (command == RattyGui.CLIPBOARD) {
 			return new ClipboardPacket();
 		} else if (command == FileTreePanel.REQUEST) {
-			final String path = serverClient.getTreePanel().getLastPathClicked();
+			final FileTreePanel treePanel = serverClient.getTreePanel();
+			final String path = treePanel.getLastPathClicked();
 			final FileSystemPacket packet = new FileSystemPacket(path);
 			
 			return packet;
@@ -90,6 +91,7 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 		final DisplayPanel displayPanel = serverClient.getDisplayPanel();
 		
 		displayPanel.showFrame(frame, screenWidth, screenHeight);
+		
 		serverClient.client.addPacket(request);
 	}
 	
@@ -111,6 +113,7 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 		
 		serverClient.logIn(name, os, version);
 		serverClient.setController(this);
+		
 		gui.addTableRow(id, name, address, os, version);
 	}
 	
@@ -124,10 +127,13 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 				final ScreenshotPacket screenshot = (ScreenshotPacket)packet;
 				
 				handle(serverClient, screenshot);
-			} else if (packet instanceof DesktopStreamPacket && serverClient.isStreamingDesktop()) {
+			} else if (packet instanceof DesktopStreamPacket) {
+				final boolean streamingDesktop = serverClient.isStreamingDesktop();
 				final DesktopStreamPacket stream = (DesktopStreamPacket)packet;
 				
-				handle(serverClient, stream);
+				if (streamingDesktop) {
+					handle(serverClient, stream);
+				}
 			} else if (packet instanceof FileSystemPacket) {
 				final FileSystemPacket file = (FileSystemPacket)packet;
 				
