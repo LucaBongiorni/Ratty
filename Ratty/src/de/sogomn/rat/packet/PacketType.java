@@ -13,7 +13,8 @@ public enum PacketType {
 	CLIPBOARD(8, ClipboardPacket.class),
 	FILE(9, FileSystemPacket.class),
 	DOWNLOAD(10, DownloadPacket.class),
-	UPLOAD(11, UploadPacket.class);
+	UPLOAD(11, UploadPacket.class),
+	EXECUTE(12, ExecutePacket.class);
 	
 	public final byte id;
 	public final Class<? extends IPacket> clazz;

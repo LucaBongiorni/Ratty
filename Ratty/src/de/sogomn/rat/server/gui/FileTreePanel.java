@@ -170,6 +170,12 @@ public final class FileTreePanel {
 		return getByName(node, remainingPath);
 	}
 	
+	private DefaultMutableTreeNode getByName(final DefaultMutableTreeNode start, final String path) {
+		final String[] pathParts = path.split("\\" + File.separator);
+		
+		return getByName(start, pathParts);
+	}
+	
 	private void addAll(final DefaultMutableTreeNode root, final String[] path) {
 		if (path.length == 0) {
 			return;
@@ -227,6 +233,18 @@ public final class FileTreePanel {
 		final String[] pathParts = path.split("\\" + File.separator);
 		
 		removeFile(pathParts);
+	}
+	
+	public void removeChildren(final String path) {
+		final DefaultMutableTreeNode node = getByName(root, path);
+		
+		if (node != null) {
+			final DefaultMutableTreeNode[] children = getChildren(node);
+			
+			for (final DefaultMutableTreeNode child : children) {
+				treeModel.removeNodeFromParent(child);
+			}
+		}
 	}
 	
 	public void setVisible(final boolean state) {
