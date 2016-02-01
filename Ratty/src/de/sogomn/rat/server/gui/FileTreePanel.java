@@ -44,6 +44,7 @@ public final class FileTreePanel {
 	public static final String DOWNLOAD = "Download file";
 	public static final String UPLOAD = "Upload file";
 	public static final String DELETE = "Delete file";
+	public static final String EXECUTE = "Execute file";//TODO Add
 	public static final String NEW_FOLDER = "New folder";
 	
 	public static final String[] COMMANDS = {
