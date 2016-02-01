@@ -12,7 +12,8 @@ public enum PacketType {
 	DESKTOP(7, DesktopStreamPacket.class),
 	CLIPBOARD(8, ClipboardPacket.class),
 	FILE(9, FileSystemPacket.class),
-	DOWNLOAD(10, DownloadPacket.class);
+	DOWNLOAD(10, DownloadPacket.class),
+	UPLOAD(11, UploadPacket.class);
 	
 	public final byte id;
 	public final Class<? extends IPacket> clazz;

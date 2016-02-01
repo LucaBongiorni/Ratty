@@ -9,6 +9,7 @@ import de.sogomn.rat.ActiveClient;
 public class FileSystemPacket extends AbstractPingPongPacket {
 	
 	private String rootFile;
+	
 	private String[] paths;
 	
 	private static final byte INCOMING = 0;
@@ -65,12 +66,12 @@ public class FileSystemPacket extends AbstractPingPongPacket {
 	protected void executeRequest(final ActiveClient client) {
 		final File[] children;
 		
-		if (!rootFile.isEmpty()) {
+		if (rootFile.isEmpty() || rootFile.equals(File.separator)) {
+			children = File.listRoots();
+		} else {
 			final File file = new File(rootFile);
 			
 			children = file.listFiles();
-		} else {
-			children = File.listRoots();
 		}
 		
 		if (children != null) {

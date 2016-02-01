@@ -6,6 +6,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -16,6 +18,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
@@ -27,6 +30,7 @@ public final class FileTreePanel {
 	
 	private DefaultMutableTreeNode root;
 	private JTree tree;
+	private DefaultTreeModel treeModel;
 	private DefaultMutableTreeNode lastNodeClicked;
 	private JScrollPane scrollPane;
 	
@@ -43,14 +47,15 @@ public final class FileTreePanel {
 	public static final String REQUEST = "Show content";
 	public static final String DOWNLOAD = "Download file";
 	public static final String UPLOAD = "Upload file";
+	public static final String EXECUTE = "Execute file";
 	public static final String DELETE = "Delete file";
-	public static final String EXECUTE = "Execute file";//TODO Add
 	public static final String NEW_FOLDER = "New folder";
 	
 	public static final String[] COMMANDS = {
 		REQUEST,
 		DOWNLOAD,
 		UPLOAD,
+		EXECUTE,
 		DELETE,
 		NEW_FOLDER
 	};
@@ -59,6 +64,7 @@ public final class FileTreePanel {
 		dialog = new JDialog();
 		root = new DefaultMutableTreeNode(ROOT_NAME);
 		tree = new JTree(root);
+		treeModel = (DefaultTreeModel)tree.getModel();
 		scrollPane = new JScrollPane(tree, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		menu = new JPopupMenu();
 		
@@ -132,7 +138,7 @@ public final class FileTreePanel {
 		return children;
 	}
 	
-	private DefaultMutableTreeNode getByName(final DefaultMutableTreeNode node, final String name) {
+	private DefaultMutableTreeNode getChildByName(final DefaultMutableTreeNode node, final String name) {
 		final DefaultMutableTreeNode[] children = getChildren(node);
 		
 		for (final DefaultMutableTreeNode child : children) {
@@ -152,7 +158,7 @@ public final class FileTreePanel {
 		}
 		
 		final String name = path[0];
-		final DefaultMutableTreeNode node = getByName(start, name);
+		final DefaultMutableTreeNode node = getChildByName(start, name);
 		
 		if (path.length == 1 || node == null) {
 			return node;
@@ -171,18 +177,32 @@ public final class FileTreePanel {
 		
 		final String name = path[0];
 		
-		DefaultMutableTreeNode node = getByName(root, name);
+		DefaultMutableTreeNode node = getChildByName(root, name);
 		
 		if (node == null) {
 			node = new DefaultMutableTreeNode(name);
 			
-			root.add(node);
+			treeModel.insertNodeInto(node, root, 0);
 		}
 		
 		final String[] remainingPath = new String[path.length - 1];
 		System.arraycopy(path, 1, remainingPath, 0, remainingPath.length);
 		
 		addAll(node, remainingPath);
+	}
+	
+	private String getPath(final DefaultMutableTreeNode end) {
+		final TreeNode[] parents = end.getPath();
+		
+		final String path = Stream
+				.of(parents)
+				.skip(1)
+				.map(node -> (DefaultMutableTreeNode)node)
+				.map(DefaultMutableTreeNode::getUserObject)
+				.map(object -> (String)object)
+				.collect(Collectors.joining(File.separator)) + File.separator;
+		
+		return path;
 	}
 	
 	public void addFile(final String... path) {
@@ -199,7 +219,7 @@ public final class FileTreePanel {
 		final DefaultMutableTreeNode node = getByName(root, path);
 		
 		if (node != null) {
-			node.removeFromParent();
+			treeModel.removeNodeFromParent(node);
 		}
 	}
 	
@@ -207,10 +227,6 @@ public final class FileTreePanel {
 		final String[] pathParts = path.split("\\" + File.separator);
 		
 		removeFile(pathParts);
-	}
-	
-	public void clear() {
-		root.removeAllChildren();
 	}
 	
 	public void setVisible(final boolean state) {
@@ -230,23 +246,23 @@ public final class FileTreePanel {
 			return "";
 		}
 		
-		final TreeNode[] parents = lastNodeClicked.getPath();
-		final StringBuilder stringBuilder = new StringBuilder();
+		final String path = getPath(lastNodeClicked);
 		
-		for (final TreeNode node : parents) {
-			final DefaultMutableTreeNode parent = (DefaultMutableTreeNode)node;
-			final String name = (String)parent.getUserObject();
-			
-			stringBuilder.append(name + File.separator);
-		}
+		return path;
+	}
+	
+	public String getLastNodeClickedFolder() {
+		final String path;
 		
-		final String path = stringBuilder.toString();
-		
-		if (path.startsWith(ROOT_NAME + File.separator)) {
-			return path.substring(ROOT_NAME.length() + 1);
+		if (!lastNodeClicked.isLeaf()) {
+			path = getPath(lastNodeClicked);
 		} else {
-			return path;
+			final DefaultMutableTreeNode parent = (DefaultMutableTreeNode)lastNodeClicked.getParent();
+			
+			path = getPath(parent);
 		}
+		
+		return path;
 	}
 	
 }
