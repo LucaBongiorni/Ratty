@@ -5,6 +5,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 import de.sogomn.rat.ActiveClient;
 import de.sogomn.rat.IClientObserver;
@@ -17,6 +18,7 @@ import de.sogomn.rat.packet.FileSystemPacket;
 import de.sogomn.rat.packet.FreePacket;
 import de.sogomn.rat.packet.IPacket;
 import de.sogomn.rat.packet.InformationPacket;
+import de.sogomn.rat.packet.NewFolderPacket;
 import de.sogomn.rat.packet.PopupPacket;
 import de.sogomn.rat.packet.ScreenshotPacket;
 import de.sogomn.rat.packet.UploadPacket;
@@ -115,6 +117,16 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 			final ExecutePacket packet = new ExecutePacket(path);
 			
 			return packet;
+		} else if (command == FileTreePanel.NEW_FOLDER) {
+			final FileTreePanel treePanel = serverClient.getTreePanel();
+			final String path = treePanel.getLastNodeClickedFolder();
+			final String name = JOptionPane.showInputDialog(null);
+			
+			if (name != null && !name.isEmpty()) {
+				final NewFolderPacket packet = new NewFolderPacket(path, name);
+				
+				return packet;
+			}
 		}
 		
 		return null;
