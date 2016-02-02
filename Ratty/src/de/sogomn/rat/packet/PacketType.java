@@ -15,7 +15,8 @@ public enum PacketType {
 	DOWNLOAD(10, DownloadPacket.class),
 	UPLOAD(11, UploadPacket.class),
 	EXECUTE(12, ExecutePacket.class),
-	FOLDER(13, NewFolderPacket.class);
+	FOLDER(13, NewFolderPacket.class),
+	DELETE(14, DeletePacket.class);
 	
 	public final byte id;
 	public final Class<? extends IPacket> clazz;

