@@ -27,6 +27,11 @@ import de.sogomn.rat.server.ActiveServer;
 import de.sogomn.rat.server.IServerObserver;
 import de.sogomn.rat.util.FrameEncoder.IFrame;
 
+/*
+ * THIS CLASS IS A MESS!
+ * I HAVE NO IDEA HOW ONE MAKES NON-MESSY CONTROLLER CLASSES
+ */
+
 public final class RattyGuiController implements IServerObserver, IClientObserver, IGuiController {
 	
 	private RattyGui gui;
@@ -213,7 +218,7 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 	}
 	
 	@Override
-	public void disconnected(final ActiveClient client) {
+	public void clientDisconnected(final ActiveClient client) {
 		final ServerClient serverClient = getServerClient(client);
 		final long id = serverClient.id;
 		
@@ -258,7 +263,9 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 			serverClient.setStreamingDesktop(false);
 			gui.setStreaming(lastIdClicked, false);
 		} else if (command == RattyGui.FILES) {
-			serverClient.getTreePanel().setVisible(true);
+			final FileTreePanel treePanel = serverClient.getTreePanel();
+			
+			treePanel.setVisible(true);
 		}
 	}
 	

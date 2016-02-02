@@ -87,7 +87,7 @@ public final class ActiveClient extends TCPConnection {
 		}
 		
 		if (observer != null) {
-			observer.disconnected(this);
+			observer.clientDisconnected(this);
 		}
 	}
 	

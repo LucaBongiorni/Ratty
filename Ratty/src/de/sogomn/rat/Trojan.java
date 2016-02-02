@@ -14,7 +14,7 @@ public final class Trojan implements IClientObserver {
 	}
 	
 	@Override
-	public void disconnected(final ActiveClient client) {
+	public void clientDisconnected(final ActiveClient client) {
 		final String address = client.getAddress();
 		final int port = client.getPort();
 		

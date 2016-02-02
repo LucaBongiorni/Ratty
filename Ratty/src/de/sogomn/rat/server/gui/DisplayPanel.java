@@ -29,11 +29,18 @@ public final class DisplayPanel {
 		screen.setResizeBehavior(ResizeBehavior.KEEP_ASPECT_RATIO);
 		screen.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
 		screen.setBackgroundColor(Color.BLACK);
+		screen.addKeyboardListener(this::keyEvent);
 		screen.addListener(g -> {
 			g.drawImage(image, 0, 0, null);
 		});
 		
 		return screen;
+	}
+	
+	private void keyEvent(final int key, final boolean flag) {
+		if (controller != null) {
+			//TODO
+		}
 	}
 	
 	private void drawToScreenImage(final BufferedImage imagePart, final int x, final int y) {
