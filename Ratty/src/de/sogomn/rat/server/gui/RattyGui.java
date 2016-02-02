@@ -88,7 +88,7 @@ public final class RattyGui {
 			
 			@Override
 			public Class<?> getColumnClass(final int columnIndex) {
-				if (columnIndex == 5) {
+				if (columnIndex == 5) {	//Column 5 = Streaming
 					return Boolean.class;
 				}
 				
