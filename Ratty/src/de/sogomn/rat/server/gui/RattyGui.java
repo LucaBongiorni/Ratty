@@ -1,5 +1,6 @@
 package de.sogomn.rat.server.gui;
 
+import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
@@ -31,6 +32,8 @@ public final class RattyGui {
 	private JPopupMenu menu;
 	
 	private IGuiController controller;
+	
+	private static final Dimension SIZE = new Dimension(800, 400);
 	
 	private static final String[] HEADERS = {
 		"ID",
@@ -75,9 +78,27 @@ public final class RattyGui {
 	}
 	
 	public RattyGui() {
+		final DefaultTableModel model = new DefaultTableModel() {
+			private static final long serialVersionUID = 365970129123372132L;
+			
+			@Override
+			public boolean isCellEditable(final int row, final int column) {
+				return false;
+			}
+			
+			@Override
+			public Class<?> getColumnClass(final int columnIndex) {
+				if (columnIndex == 5) {
+					return Boolean.class;
+				}
+				
+				return super.getColumnClass(columnIndex);
+			}
+		};
+		
 		frame = new JFrame();
 		table = new JTable();
-		tableModel = (DefaultTableModel)table.getModel();
+		tableModel = model;
 		scrollPane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		menu = new JPopupMenu();
 		
@@ -100,12 +121,13 @@ public final class RattyGui {
 		
 		scrollPane.setBorder(null);
 		tableModel.setColumnIdentifiers(HEADERS);
-		table.setEnabled(false);
 		table.setComponentPopupMenu(menu);
 		table.addMouseListener(mouseAdapter);
+		table.setModel(tableModel);
 		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setContentPane(scrollPane);
+		frame.setPreferredSize(SIZE);
 		frame.pack();
 		frame.setLocationByPlatform(true);
 		frame.setIconImages(GUI_ICONS);

