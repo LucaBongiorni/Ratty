@@ -262,14 +262,4 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 		}
 	}
 	
-	@Override
-	public void keyboardInput(final int key, final boolean flag) {
-		//...
-	}
-	
-	@Override
-	public void mouseInput(final int x, final int y, final int button, final boolean flag) {
-		//...
-	}
-	
 }
