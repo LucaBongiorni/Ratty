@@ -44,12 +44,12 @@ public final class FileTreePanel {
 	
 	private static final BufferedImage[] MENU_ICONS = new SpriteSheet("/menu_icons_tree.png", 32, 32).getSprites();
 	
-	public static final String REQUEST = "Show content";
+	public static final String REQUEST = "Request content";
 	public static final String DOWNLOAD = "Download file";
-	public static final String UPLOAD = "Upload file";
+	public static final String UPLOAD = "Upload file here";
 	public static final String EXECUTE = "Execute file";
 	public static final String DELETE = "Delete file";
-	public static final String NEW_FOLDER = "New folder";
+	public static final String NEW_FOLDER = "Create new folder here";
 	
 	public static final String[] COMMANDS = {
 		REQUEST,

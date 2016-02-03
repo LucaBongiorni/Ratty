@@ -220,17 +220,19 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 	@Override
 	public void clientDisconnected(final ActiveClient client) {
 		final ServerClient serverClient = getServerClient(client);
+		final FileTreePanel treePanel = serverClient.getTreePanel();
 		final long id = serverClient.id;
 		
 		client.setObserver(null);
 		client.close();
 		clients.remove(client);
 		
+		treePanel.setVisible(false);
 		gui.removeTableRow(id);
 	}
 	
 	@Override
-	public void clientConnected(final ActiveServer server, final ActiveClient client) {
+	public synchronized void clientConnected(final ActiveServer server, final ActiveClient client) {
 		final long id = nextId++;
 		final ServerClient serverClient = new ServerClient(id, client);
 		final InformationPacket packet = new InformationPacket();
