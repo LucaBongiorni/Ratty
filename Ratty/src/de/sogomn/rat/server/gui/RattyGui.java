@@ -15,7 +15,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
 
 import de.sogomn.engine.fx.SpriteSheet;
 import de.sogomn.engine.util.ImageUtils;
@@ -25,24 +24,15 @@ public final class RattyGui {
 	private JFrame frame;
 	
 	private JTable table;
-	private DefaultTableModel tableModel;
-	private long lastIdClicked;
+	private ServerClientTableModel tableModel;
 	private JScrollPane scrollPane;
 	
 	private JPopupMenu menu;
 	
+	private ServerClient lastServerClientClicked;
 	private IGuiController controller;
 	
 	private static final Dimension SIZE = new Dimension(800, 400);
-	
-	private static final String[] HEADERS = {
-		"ID",
-		"Name",
-		"IP address",
-		"OS",
-		"Version",
-		"Streaming"
-	};
 	
 	private static final BufferedImage GUI_ICON_SMALL = ImageUtils.loadImage("/gui_icon.png");
 	private static final BufferedImage GUI_ICON_MEDIUM = ImageUtils.scaleImage(ImageUtils.loadImage("/gui_icon.png"), 64, 64);
@@ -78,27 +68,9 @@ public final class RattyGui {
 	}
 	
 	public RattyGui() {
-		final DefaultTableModel model = new DefaultTableModel() {
-			private static final long serialVersionUID = 365970129123372132L;
-			
-			@Override
-			public boolean isCellEditable(final int row, final int column) {
-				return false;
-			}
-			
-			@Override
-			public Class<?> getColumnClass(final int columnIndex) {
-				if (columnIndex == 5) {	//Column 5 = Streaming
-					return Boolean.class;
-				}
-				
-				return super.getColumnClass(columnIndex);
-			}
-		};
-		
 		frame = new JFrame();
 		table = new JTable();
-		tableModel = model;
+		tableModel = new ServerClientTableModel();
 		scrollPane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		menu = new JPopupMenu();
 		
@@ -115,12 +87,11 @@ public final class RattyGui {
 				final Point mousePoint = m.getPoint();
 				final int rowIndex = table.rowAtPoint(mousePoint);
 				
-				lastIdClicked = (Long)tableModel.getValueAt(rowIndex, 0);
+				lastServerClientClicked = tableModel.getServerClient(rowIndex);
 			}
 		};
 		
 		scrollPane.setBorder(null);
-		tableModel.setColumnIdentifiers(HEADERS);
 		table.setComponentPopupMenu(menu);
 		table.addMouseListener(mouseAdapter);
 		table.setModel(tableModel);
@@ -155,48 +126,24 @@ public final class RattyGui {
 		controller.userInput(command);
 	}
 	
-	private int getRowIndex(final long id) {
-		final int rows = tableModel.getRowCount();
-		
-		for (int i = 0; i < rows; i++) {
-			final long rowId = (Long)tableModel.getValueAt(i, 0);
-			
-			if (rowId == id) {
-				return i;
-			}
-		}
-		
-		return -1;
+	public void updateTable() {
+		tableModel.fireTableDataChanged();
 	}
 	
-	public void addTableRow(final long id, final String name, final String address, final String os, final String version) {
-		final Object[] data = {id, name, address, os, version, false};
-		
-		tableModel.addRow(data);
+	public void addRow(final ServerClient client) {
+		tableModel.addServerClient(client);
 	}
 	
-	public void removeTableRow(final long id) {
-		final int rowIndex = getRowIndex(id);
-		
-		if (rowIndex != -1) {
-			tableModel.removeRow(rowIndex);
-		}
-	}
-	
-	public void setStreaming(final long id, final boolean state) {
-		final int rowIndex = getRowIndex(id);
-		
-		if (rowIndex != -1) {
-			tableModel.setValueAt(state, rowIndex, 5);	//Column 5 = Streaming
-		}
+	public void removeRow(final ServerClient client) {
+		tableModel.removeServerClient(client);
 	}
 	
 	public void setController(final IGuiController controller) {
 		this.controller = controller;
 	}
 	
-	public long getLastIdClicked() {
-		return lastIdClicked;
+	public ServerClient getLastServerClientClicked() {
+		return lastServerClientClicked;
 	}
 	
 }

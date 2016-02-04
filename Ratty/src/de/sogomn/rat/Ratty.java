@@ -54,10 +54,10 @@ public final class Ratty {
 		if (!newClient.isOpen()) {
 			try {
 				Thread.sleep(DISCONNECT_SLEEP_INTERVAL);
-				System.gc();
 			} catch (final InterruptedException ex) {
 				ex.printStackTrace();
 			} finally {
+				System.gc();
 				connectToHost(address, port);
 			}
 			
