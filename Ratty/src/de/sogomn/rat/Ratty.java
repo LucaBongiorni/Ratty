@@ -102,15 +102,13 @@ public final class Ratty {
 			connectToHost(address, port);
 		} else {
 			final String[] options = {"Server", "Client"};
-			final int input = JOptionPane.showOptionDialog(null, "Server or client?", "Choose", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null);
+			final int input = JOptionPane.showOptionDialog(null, "Server or client?", null, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null);
 			
 			if (input == JOptionPane.YES_OPTION) {
-				System.out.println("Starting server");
+				System.out.println("Server");
 				
 				startServer(port);
 			} else if (input == JOptionPane.NO_OPTION) {
-				System.out.println("Starting client");
-				
 				connectToHost(address, port);
 			}
 		}
