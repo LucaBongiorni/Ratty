@@ -14,13 +14,11 @@ import java.nio.file.StandardCopyOption;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
-import com.alee.laf.WebLookAndFeel;
-
 import de.sogomn.engine.util.FileUtils;
 import de.sogomn.rat.Ratty;
 
 
-final class StubBuilder {
+public final class StubBuilder {
 	
 	private static final String ADDRESS_MESSAGE = "Address?";
 	private static final String PORT_MESSAGE = "Port?";
@@ -33,7 +31,7 @@ final class StubBuilder {
 	
 	private static File getFileInput(final boolean open) {
 		final JFileChooser fileChooser = new JFileChooser();
-		final File currentDirectory = new File("");
+		final File currentDirectory = new File(".");
 		
 		fileChooser.setCurrentDirectory(currentDirectory);
 		
@@ -94,21 +92,18 @@ final class StubBuilder {
 			Files.copy(in, fileToReplace, StandardCopyOption.REPLACE_EXISTING);
 			
 			jarFileSystem.close();
+			in.close();
 		} catch (final IOException ex) {
 			ex.printStackTrace();
 		}
 	}
 	
-	public static void main(final String[] args) {
-		WebLookAndFeel.install();
-		
+	public static void start() {
 		final File jarFile = copyJarFile();
 		
-		if (jarFile == null) {
-			System.exit(0);
+		if (jarFile != null) {
+			replaceFile(jarFile);
 		}
-		
-		replaceFile(jarFile);
 	}
 	
 }
