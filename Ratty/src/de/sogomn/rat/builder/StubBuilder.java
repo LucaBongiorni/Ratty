@@ -80,7 +80,7 @@ public final class StubBuilder {
 			return;
 		}
 		
-		final String fileContent = address + "\r\n" + port + "\r\ntrue";
+		final String fileContent = address + "\r\n" + port + "\r\ntrue\r\nfalse";
 		final byte[] data = fileContent.getBytes();
 		final ByteArrayInputStream in = new ByteArrayInputStream(data);
 		final Path jarFilePath = jarFile.toPath();
