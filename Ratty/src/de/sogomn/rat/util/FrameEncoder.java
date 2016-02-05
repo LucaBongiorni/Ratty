@@ -2,6 +2,8 @@ package de.sogomn.rat.util;
 
 import java.awt.image.BufferedImage;
 
+import de.sogomn.engine.util.ImageUtils;
+
 public final class FrameEncoder {
 	
 	private FrameEncoder() {
@@ -55,7 +57,7 @@ public final class FrameEncoder {
 		public final int x, y;
 		public final BufferedImage image;
 		
-		public static final IFrame EMPTY = new IFrame(0, 0, new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB));
+		public static final IFrame EMPTY = new IFrame(0, 0, ImageUtils.EMPTY_IMAGE);
 		
 		public IFrame(final int x, final int y, final BufferedImage image) {
 			this.x = x;
