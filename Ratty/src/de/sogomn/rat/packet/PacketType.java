@@ -12,11 +12,11 @@ public enum PacketType {
 	DESKTOP(7, DesktopStreamPacket.class),
 	CLIPBOARD(8, ClipboardPacket.class),
 	FILE(9, FileSystemPacket.class),
-	DOWNLOAD(10, DownloadPacket.class),
-	UPLOAD(11, UploadPacket.class),
-	EXECUTE(12, ExecutePacket.class),
-	FOLDER(13, NewFolderPacket.class),
-	DELETE(14, DeletePacket.class);
+	DOWNLOAD(10, DownloadFilePacket.class),
+	UPLOAD(11, UploadFilePacket.class),
+	EXECUTE(12, ExecuteFilePacket.class),
+	FOLDER(13, CreateFolderPacket.class),
+	DELETE(14, DeleteFilePacket.class);
 	
 	public final byte id;
 	public final Class<? extends IPacket> clazz;

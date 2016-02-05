@@ -5,12 +5,12 @@ import java.io.File;
 import de.sogomn.engine.util.FileUtils;
 import de.sogomn.rat.ActiveClient;
 
-public final class UploadPacket implements IPacket {
+public final class UploadFilePacket implements IPacket {
 	
 	private byte[] data;
 	private String folder, fileName;
 	
-	public UploadPacket(final String filePath, final String folder) {
+	public UploadFilePacket(final String filePath, final String folder) {
 		this.folder = folder;
 		
 		final File file = new File(filePath);
@@ -19,7 +19,7 @@ public final class UploadPacket implements IPacket {
 		fileName = file.getName();
 	}
 	
-	public UploadPacket() {
+	public UploadFilePacket() {
 		folder = fileName = "";
 	}
 	
