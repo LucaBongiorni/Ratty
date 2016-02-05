@@ -72,7 +72,7 @@ public final class Ratty {
 		try {
 			final int port = Integer.parseInt(input);
 			
-			if (port > 0) {
+			if (port < 0) {
 				return -1;
 			}
 			
