@@ -14,10 +14,15 @@ public final class DisplayPanel {
 	private Screen screen;
 	private BufferedImage image;
 	
+	private int lastKeyHit;
+	
 	private IGuiController controller;
 	
 	private static final int SCREEN_WIDTH = 1920 / 2;
 	private static final int SCREEN_HEIGHT = 1080 / 2;
+	
+	public static final String KEY_PRESSED = "Key pressed";
+	public static final String KEY_RELEASED = "Key released";
 	
 	public DisplayPanel() {
 		//...
@@ -38,8 +43,10 @@ public final class DisplayPanel {
 	}
 	
 	private void keyEvent(final int key, final boolean flag) {
+		lastKeyHit = key;
+		
 		if (controller != null) {
-			//TODO
+			controller.userInput(flag ? KEY_PRESSED : KEY_RELEASED);
 		}
 	}
 	
@@ -85,6 +92,10 @@ public final class DisplayPanel {
 	
 	public void setController(final IGuiController controller) {
 		this.controller = controller;
+	}
+	
+	public int getLastKeyHit() {
+		return lastKeyHit;
 	}
 	
 }

