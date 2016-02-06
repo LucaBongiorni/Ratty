@@ -31,11 +31,11 @@ public final class FileTreePanel {
 	private DefaultMutableTreeNode root;
 	private JTree tree;
 	private DefaultTreeModel treeModel;
-	private DefaultMutableTreeNode lastNodeClicked;
 	private JScrollPane scrollPane;
 	
 	private JPopupMenu menu;
 	
+	private DefaultMutableTreeNode lastNodeClicked;
 	private IGuiController controller;
 	
 	private static final String ROOT_NAME = "Drives";
@@ -102,7 +102,6 @@ public final class FileTreePanel {
 		dialog.setContentPane(scrollPane);
 		dialog.pack();
 		dialog.setLocationByPlatform(true);
-		dialog.setIconImages(RattyGui.GUI_ICONS);
 	}
 	
 	private void addMenuItem(final String name, final Icon icon) {

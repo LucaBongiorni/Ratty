@@ -15,7 +15,6 @@ public final class DisplayPanel {
 	private BufferedImage image;
 	
 	private int lastKeyHit;
-	
 	private IGuiController controller;
 	
 	private static final int SCREEN_WIDTH = 1920 / 2;

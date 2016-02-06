@@ -9,9 +9,8 @@ final class ServerClientTableModel extends AbstractTableModel {
 	
 	private ArrayList<ServerClient> serverClients;
 	
-	private static final int COLUMN_COUNT = 6;
+	private static final int COLUMN_COUNT = 5;
 	private static final String[] HEADERS = {
-		"ID",
 		"Name",
 		"IP address",
 		"OS",
@@ -44,8 +43,6 @@ final class ServerClientTableModel extends AbstractTableModel {
 		case 3:
 			return String.class;
 		case 4:
-			return String.class;
-		case 5:
 			return Boolean.class;
 		default:
 			return super.getColumnClass(columnIndex);
@@ -67,16 +64,14 @@ final class ServerClientTableModel extends AbstractTableModel {
 		
 		switch (columnIndex) {
 		case 0:
-			return serverClient.id;
-		case 1:
 			return serverClient.getName();
-		case 2:
+		case 1:
 			return serverClient.client.getAddress();
-		case 3:
+		case 2:
 			return serverClient.getOs();
-		case 4:
+		case 3:
 			return serverClient.getVersion();
-		case 5:
+		case 4:
 			return serverClient.isStreamingDesktop();
 		default:
 			return null;

