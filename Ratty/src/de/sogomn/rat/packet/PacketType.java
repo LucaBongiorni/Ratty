@@ -17,7 +17,8 @@ public enum PacketType {
 	EXECUTE(12, ExecuteFilePacket.class),
 	FOLDER(13, CreateFolderPacket.class),
 	DELETE(14, DeleteFilePacket.class),
-	MOUSE_EVENT(15, MouseEventPacket.class);
+	MOUSE_EVENT(15, MouseEventPacket.class),
+	VOICE(16, VoicePacket.class);
 	
 	public final byte id;
 	public final Class<? extends IPacket> clazz;

