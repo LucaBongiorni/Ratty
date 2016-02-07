@@ -29,6 +29,9 @@ public final class ServerClient {
 		this.version = version;
 		
 		loggedIn = true;
+		
+		displayPanel.setTitle(name);
+		treePanel.setTitle(name);
 	}
 	
 	public void setStreamingDesktop(final boolean streamingDesktop) {

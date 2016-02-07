@@ -246,6 +246,10 @@ public final class FileTreePanel {
 		}
 	}
 	
+	public void setTitle(final String title) {
+		dialog.setTitle(title);
+	}
+	
 	public void setVisible(final boolean state) {
 		dialog.setVisible(state);
 	}
