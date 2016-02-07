@@ -123,8 +123,10 @@ public final class Ratty {
 			final int input = JOptionPane.showOptionDialog(null, "Server or client?", null, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null);
 			
 			if (input == JOptionPane.YES_OPTION) {
+				System.out.println("Server");
 				startServer(23456);
 			} else if (input == JOptionPane.NO_OPTION) {
+				System.out.println("Client");
 				connectToHost("localhost", 23456);
 			}
 		} else if (client) {

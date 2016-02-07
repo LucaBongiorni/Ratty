@@ -32,9 +32,23 @@ public final class CreateFolderPacket implements IPacket {
 	
 	@Override
 	public void execute(final ActiveClient client) {
-		final String fullPath = path + File.separator + name;
+		final File folder = new File(path);
 		
-		FileUtils.createFolder(fullPath);
+		String fullPath = null;
+		
+		if (folder.isDirectory()) {
+			fullPath = path + File.separator + name;
+		} else {
+			final File parent = folder.getParentFile();
+			
+			if (parent != null) {
+				fullPath = parent.getAbsolutePath() + File.separator + name;
+			}
+		}
+		
+		if (fullPath != null) {
+			FileUtils.createFolder(fullPath);
+		}
 	}
 	
 	public String getPath() {

