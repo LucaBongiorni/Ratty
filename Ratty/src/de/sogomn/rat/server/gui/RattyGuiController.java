@@ -29,6 +29,7 @@ import de.sogomn.rat.packet.PopupPacket;
 import de.sogomn.rat.packet.ScreenshotPacket;
 import de.sogomn.rat.packet.UploadFilePacket;
 import de.sogomn.rat.packet.VoicePacket;
+import de.sogomn.rat.packet.WebsitePacket;
 import de.sogomn.rat.server.ActiveServer;
 import de.sogomn.rat.server.IServerObserver;
 import de.sogomn.rat.util.FrameEncoder.IFrame;
@@ -158,6 +159,12 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 			packet = new MouseEventPacket(x, y, button, MouseEventPacket.RELEASE);
 		} else if (command == RattyGui.VOICE && !serverClient.isStreamingVoice()) {
 			packet = new VoicePacket();
+		} else if (command == RattyGui.WEBSITE) {
+			final String input = JOptionPane.showInputDialog(null);
+			
+			if (input != null && !input.isEmpty()) {
+				packet = new WebsitePacket(input);
+			}
 		}
 		
 		return packet;

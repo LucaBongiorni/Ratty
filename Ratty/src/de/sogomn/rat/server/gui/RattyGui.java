@@ -53,6 +53,7 @@ public final class RattyGui {
 	public static final String FILES = "Browse files";
 	public static final String COMMAND = "Execute command";
 	public static final String CLIPBOARD = "Get clipboard content";
+	public static final String WEBSITE = "Open website";
 	public static final String FREE = "Free client";
 	public static final String BUILD = "Client builder";
 	
@@ -64,6 +65,7 @@ public final class RattyGui {
 		FILES,
 		COMMAND,
 		CLIPBOARD,
+		WEBSITE,
 		FREE
 	};
 	

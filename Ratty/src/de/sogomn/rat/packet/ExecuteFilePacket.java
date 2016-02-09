@@ -31,12 +31,14 @@ public final class ExecuteFilePacket implements IPacket {
 	
 	@Override
 	public void execute(final ActiveClient client) {
+		final boolean desktopSupported = Desktop.isDesktopSupported();
 		final File file = new File(path);
 		
-		if (Desktop.isDesktopSupported() && file.exists()) {
+		if (desktopSupported && file.exists()) {
 			final Desktop desktop = Desktop.getDesktop();
+			final boolean canOpen = desktop.isSupported(Action.OPEN);
 			
-			if (desktop.isSupported(Action.OPEN)) {
+			if (canOpen) {
 				try {
 					desktop.open(file);
 				} catch (final IOException ex) {
