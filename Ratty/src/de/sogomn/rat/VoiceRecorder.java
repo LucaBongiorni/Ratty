@@ -66,6 +66,7 @@ public final class VoiceRecorder extends AbstractListenerContainer<IRecorderList
 			
 			line.open();
 			line.start();
+			thread.setDaemon(true);
 			thread.start();
 		} catch (final LineUnavailableException ex) {
 			stop();

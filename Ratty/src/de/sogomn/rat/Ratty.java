@@ -70,7 +70,7 @@ public final class Ratty {
 		try {
 			final int port = Integer.parseInt(input);
 			
-			if (port < 0 || port > 65535) {
+			if (port < 0 || port > 65535) {	//65535 = Max port
 				return -1;
 			}
 			

@@ -55,4 +55,14 @@ public final class VoicePacket extends AbstractPingPongPacket {
 		this.data = data;
 	}
 	
+	public byte[] getData() {
+		return data;
+	}
+	
+	public Sound getSound() {
+		final Sound sound = Sound.loadSound(data);
+		
+		return sound;
+	}
+	
 }

