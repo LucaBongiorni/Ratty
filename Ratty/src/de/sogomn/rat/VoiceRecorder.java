@@ -15,14 +15,12 @@ public final class VoiceRecorder extends AbstractListenerContainer<IRecorderList
 	private TargetDataLine line;
 	private Thread thread;
 	
-	private int maximum;
+	private int limit;
 	
 	private static final int BUFFER_SIZE = 1024;
 	
 	public VoiceRecorder(final int maximum) {
-		this.maximum = maximum;
-		
-		out = new ByteArrayOutputStream();
+		this.limit = maximum;
 	}
 	
 	public VoiceRecorder() {
@@ -50,7 +48,7 @@ public final class VoiceRecorder extends AbstractListenerContainer<IRecorderList
 	
 	public void start() {
 		final Runnable runnable = () -> {
-			while (out.size() < maximum) {
+			while (out.size() < limit) {
 				captureAudio();
 			}
 			
@@ -62,10 +60,10 @@ public final class VoiceRecorder extends AbstractListenerContainer<IRecorderList
 		};
 		
 		try {
+			out = new ByteArrayOutputStream();
 			line = AudioSystem.getTargetDataLine(null);
 			thread = new Thread(runnable);
 			
-			out.reset();
 			line.open();
 			line.start();
 			thread.start();
@@ -87,8 +85,8 @@ public final class VoiceRecorder extends AbstractListenerContainer<IRecorderList
 		}
 	}
 	
-	public void setMaximum(final int maximum) {
-		this.maximum = maximum;
+	public void setLimit(final int limit) {
+		this.limit = limit;
 	}
 	
 }

