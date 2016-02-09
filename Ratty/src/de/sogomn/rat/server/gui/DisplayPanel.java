@@ -103,7 +103,7 @@ public final class DisplayPanel {
 		g.dispose();
 	}
 	
-	public void openScreen(final int width, final int height) {
+	public void updateScreen(final int width, final int height) {
 		if (screen == null || screen.getInitialWidth() != width || screen.getInitialHeight() != height || !screen.isOpen()) {
 			if (screen != null) {
 				screen.close();
@@ -122,7 +122,7 @@ public final class DisplayPanel {
 		final int width = image.getWidth();
 		final int height = image.getHeight();
 		
-		openScreen(width, height);
+		updateScreen(width, height);
 	}
 	
 	public void showFrame(final IFrame frame, final int screenWidth, final int screenHeight) {
@@ -131,7 +131,19 @@ public final class DisplayPanel {
 		}
 		
 		drawToScreenImage(frame.image, frame.x, frame.y);
-		openScreen(screenWidth, screenHeight);
+		updateScreen(screenWidth, screenHeight);
+	}
+	
+	public void showFrames(final IFrame[] frames, final int screenWidth, final int screenHeight) {
+		if (image == null || image.getWidth() != screenWidth || image.getHeight() != screenHeight) {
+			image = new BufferedImage(screenWidth, screenHeight, BufferedImage.TYPE_INT_RGB);
+		}
+		
+		for (final IFrame frame : frames) {
+			drawToScreenImage(frame.image, frame.x, frame.y);
+		}
+		
+		updateScreen(screenWidth, screenHeight);
 	}
 	
 	public void setTitle(final String title) {

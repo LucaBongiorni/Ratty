@@ -119,6 +119,10 @@ public final class ActiveClient extends TCPConnection {
 		reader.start();
 	}
 	
+	public void clearPackets() {
+		packetQueue.clear();
+	}
+	
 	public void addPacket(final IPacket packet) {
 		packetQueue.add(packet);
 	}

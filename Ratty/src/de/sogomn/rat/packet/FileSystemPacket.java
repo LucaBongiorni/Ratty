@@ -12,8 +12,8 @@ public class FileSystemPacket extends AbstractPingPongPacket {
 	
 	private String[] paths;
 	
-	private static final byte INCOMING = 0;
-	private static final byte END = 1;
+	private static final byte INCOMING = 1;
+	private static final byte END = 0;
 	
 	public FileSystemPacket(final String rootFile) {
 		this.rootFile = rootFile;
