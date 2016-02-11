@@ -41,7 +41,7 @@ public final class DesktopStreamPacket extends AbstractPingPongPacket {
 	@Override
 	protected void sendData(final ActiveClient client) {
 		Stream.of(frames).forEach(frame -> {
-			final byte[] data = ImageUtils.toByteArray(frame.image, "JPG");
+			final byte[] data = ImageUtils.toByteArray(frame.image, 0);
 			
 			client.writeByte(INCOMING);
 			client.writeShort((short)frame.x);
