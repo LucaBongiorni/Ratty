@@ -40,7 +40,7 @@ public final class RattyGuiFx extends Application {
 	private static final int HEIGHT = 600;
 	private static final String TITLE = "Ratty";
 	private static final String FXML_PATH = "/main_gui.fxml";
-	private static final String CSS_PATH = "/test.css";
+	private static final String CSS_PATH = "/main_gui.css";
 	private static final String LANGUAGE_BASE = "language.language";
 	
 	private static final String NAME = "name";
