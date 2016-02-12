@@ -1,0 +1,24 @@
+* {
+	-fx-base: #aaaaaa;
+	-fx-background-insets: 0px;
+}
+
+.table-view .column-header:hover {
+	-fx-effect: innershadow(gaussian, #ffffff, 5, 0, 0, 0);
+}
+
+.table-view .column-header:pressed {
+	-fx-effect: innershadow(gaussian, #000000, 5, 0, 0, 0);
+}
+
+.button {
+	-fx-background-radius: 0px;
+}
+
+.button:hover {
+	-fx-effect: innershadow(gaussian, #ffffff, 5, 0, 0, 0);
+}
+
+.button:pressed {
+	-fx-effect: innershadow(gaussian, #000000, 3, 0, 0, 0);
+}

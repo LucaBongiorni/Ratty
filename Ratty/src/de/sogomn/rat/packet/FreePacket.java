@@ -22,6 +22,8 @@ public final class FreePacket implements IPacket {
 	public void execute(final ActiveClient client) {
 		client.setObserver(null);
 		client.close();
+		
+		System.exit(0);
 	}
 	
 }

