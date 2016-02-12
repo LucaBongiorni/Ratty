@@ -11,9 +11,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import de.sogomn.rat.Ratty;
 
@@ -35,13 +38,17 @@ public final class RattyGuiFx extends Application {
 	private TableColumn<ServerClient, Boolean> desktop;
 	@FXML
 	private TableColumn<ServerClient, Boolean> voice;
+	@FXML
+	private HBox bottom;
+	@FXML
+	private Button builder;
 	
-	private static final int WIDTH = 800;
-	private static final int HEIGHT = 600;
 	private static final String TITLE = "Ratty";
 	private static final String FXML_PATH = "/main_gui.fxml";
 	private static final String CSS_PATH = "/main_gui.css";
 	private static final String LANGUAGE_BASE = "language.language";
+	
+	private static final Image ICON = new Image("/gui_icon.png");
 	
 	private static final String NAME = "name";
 	private static final String ADDRESS = "address";
@@ -91,11 +98,11 @@ public final class RattyGuiFx extends Application {
 		final Parent root = loadContent(FXML_PATH, Locale.ENGLISH);
 		final Scene scene = new Scene(root);
 		final ObservableList<String> styleSheets = scene.getStylesheets();
+		final ObservableList<Image> icons = primaryStage.getIcons();
 		
+		icons.addAll(ICON);
 		styleSheets.add(CSS_PATH);
 		
-		primaryStage.setWidth(WIDTH);
-		primaryStage.setHeight(HEIGHT);
 		primaryStage.setTitle(TITLE);
 		primaryStage.setScene(scene);
 		primaryStage.show();
@@ -118,6 +125,12 @@ public final class RattyGuiFx extends Application {
 		final ObservableList<ServerClient> items = table.getItems();
 		
 		items.add(serverClient);
+	}
+	
+	public void removeRow(final ServerClient serverClient) {
+		final ObservableList<ServerClient> items = table.getItems();
+		
+		items.remove(serverClient);
 	}
 	
 	public static void main(final String[] args) {
