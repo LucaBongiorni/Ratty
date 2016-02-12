@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane fx:id="pane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <bottom>
+      <HBox fx:id="bottom" BorderPane.alignment="CENTER">
+         <children>
+            <Button fx:id="builder" mnemonicParsing="false" text="%button.build" />
+         </children>
+      </HBox>
+   </bottom>
+   <center>
+      <TableView fx:id="table" editable="true" BorderPane.alignment="CENTER">
+         <columns>
+            <TableColumn editable="false" prefWidth="75.0" text="%column.name" />
+            <TableColumn editable="false" prefWidth="75.0" text="%column.address" />
+            <TableColumn editable="false" prefWidth="75.0" text="%column.os" />
+            <TableColumn editable="false" prefWidth="75.0" text="%column.version" />
+            <TableColumn editable="false" prefWidth="75.0" text="%column.desktop" />
+            <TableColumn editable="false" prefWidth="75.0" text="%column.voice" />
+         </columns>
+         <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+         </columnResizePolicy>
+      </TableView>
+   </center>
+</BorderPane>
