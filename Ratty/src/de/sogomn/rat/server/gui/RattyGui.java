@@ -21,9 +21,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
 import de.sogomn.engine.fx.SpriteSheet;
+import de.sogomn.engine.util.AbstractListenerContainer;
 import de.sogomn.engine.util.ImageUtils;
 
-public final class RattyGui {
+public final class RattyGui extends AbstractListenerContainer<IGuiController> {
 	
 	private JFrame frame;
 	
@@ -36,7 +37,6 @@ public final class RattyGui {
 	private JButton build;
 	
 	private ServerClient lastServerClientClicked;
-	private IGuiController controller;
 	
 	private static final Dimension SIZE = new Dimension(800, 600);
 	
@@ -130,13 +130,9 @@ public final class RattyGui {
 	}
 	
 	private void actionPerformed(final ActionEvent a) {
-		if (controller == null) {
-			return;
-		}
-		
 		final String command = a.getActionCommand();
 		
-		controller.userInput(command);
+		notifyListeners(controller -> controller.userInput(command));
 	}
 	
 	public void updateTable() {
@@ -149,10 +145,6 @@ public final class RattyGui {
 	
 	public void removeRow(final ServerClient client) {
 		tableModel.removeServerClient(client);
-	}
-	
-	public void setController(final IGuiController controller) {
-		this.controller = controller;
 	}
 	
 	public ServerClient getLastServerClientClicked() {

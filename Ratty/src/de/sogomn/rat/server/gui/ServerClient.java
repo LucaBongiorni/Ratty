@@ -9,16 +9,15 @@ public final class ServerClient {
 	private String name, os, version;
 	private boolean streamingDesktop, streamingVoice;
 	
-	private DisplayController displayPanel;
-	private FileTreePanel treePanel;
-	
 	final ActiveConnection connection;
+	final DisplayController displayController;
+	final FileTreeController fileTreeController;
 	
 	public ServerClient(final ActiveConnection connection) {
 		this.connection = connection;
 		
-		displayPanel = new DisplayController(connection);
-		treePanel = new FileTreePanel();
+		displayController = new DisplayController(this);
+		fileTreeController = new FileTreeController(this);
 	}
 	
 	public void logIn(final String name, final String os, final String version) {
@@ -27,8 +26,6 @@ public final class ServerClient {
 		this.version = version;
 		
 		loggedIn = true;
-		
-		treePanel.setTitle(name);
 	}
 	
 	public void setStreamingDesktop(final boolean streamingDesktop) {
@@ -37,10 +34,6 @@ public final class ServerClient {
 	
 	public void setStreamingVoice(final boolean streamingVoice) {
 		this.streamingVoice = streamingVoice;
-	}
-	
-	public void setController(final IGuiController controller) {
-		treePanel.setController(controller);
 	}
 	
 	public String getName() {
@@ -69,14 +62,6 @@ public final class ServerClient {
 	
 	public boolean isStreamingVoice() {
 		return streamingVoice;
-	}
-	
-	public DisplayController getDisplayPanel() {
-		return displayPanel;
-	}
-	
-	public FileTreePanel getTreePanel() {
-		return treePanel;
 	}
 	
 }

@@ -5,18 +5,19 @@ import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
+import de.sogomn.engine.IKeyboardListener;
 import de.sogomn.engine.IMouseListener;
 import de.sogomn.engine.Screen;
 import de.sogomn.engine.Screen.ResizeBehavior;
 import de.sogomn.engine.util.ImageUtils;
-import de.sogomn.rat.ActiveConnection;
+import de.sogomn.rat.packet.IPacket;
 import de.sogomn.rat.packet.KeyEventPacket;
 import de.sogomn.rat.packet.MouseEventPacket;
 import de.sogomn.rat.util.FrameEncoder.IFrame;
 
-public final class DisplayController {
+public final class DisplayController implements ISubController, IMouseListener, IKeyboardListener {
 	
-	private ActiveConnection connection;
+	private ServerClient client;
 	
 	private Screen screen;
 	private BufferedImage image;
@@ -24,67 +25,25 @@ public final class DisplayController {
 	private static final int SCREEN_WIDTH = 1920 / 2;
 	private static final int SCREEN_HEIGHT = 1080 / 2;
 	
-	public DisplayController(final ActiveConnection connection) {
-		this.connection = connection;
+	public DisplayController(final ServerClient client) {
+		this.client = client;
 	}
 	
 	private Screen createScreen(final int width, final int height) {
 		final Screen screen = new Screen(width, height);
-		final String title = connection.getAddress();
-		final IMouseListener mouseListener = new IMouseListener() {
-			@Override
-			public void mouseEvent(final int x, final int y, final int button, final boolean flag) {
-				mouseEventPerformed(x, y, button, flag);
-			}
-			
-			@Override
-			public void mouseMotionEvent(final int x, final int y, final int modifiers) {
-				//...
-			}
-			
-			@Override
-			public void mouseWheelEvent(final int x, final int y, final int rotation) {
-				//...
-			}
-		};
+		final String title = client.connection.getAddress();
 		
 		screen.setResizeBehavior(ResizeBehavior.KEEP_ASPECT_RATIO);
 		screen.setTitle(title);
 		screen.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
 		screen.setBackgroundColor(Color.BLACK);
-		screen.addMouseListener(mouseListener);
-		screen.addKeyboardListener(this::keyEventPerformed);
+		screen.addMouseListener(this);
+		screen.addKeyboardListener(this);
 		screen.addListener(g -> {
 			g.drawImage(image, 0, 0, null);
 		});
 		
 		return screen;
-	}
-	
-	private void mouseEventPerformed(final int x, final int y, final int button, final boolean flag) {
-		final byte type = flag ? MouseEventPacket.PRESS : MouseEventPacket.RELEASE;
-		final int buttonEvent;
-		
-		if (button == MouseEvent.BUTTON1) {
-			buttonEvent = MouseEvent.BUTTON1_DOWN_MASK;
-		} else if (button == MouseEvent.BUTTON2) {
-			buttonEvent = MouseEvent.BUTTON2_DOWN_MASK;
-		} else if (button == MouseEvent.BUTTON3) {
-			buttonEvent = MouseEvent.BUTTON3_DOWN_MASK;
-		} else {
-			buttonEvent = MouseEvent.NOBUTTON;
-		}
-		
-		final MouseEventPacket packet = new MouseEventPacket(x, y, buttonEvent, type);
-		
-		connection.addPacket(packet);
-	}
-	
-	private void keyEventPerformed(final int key, final boolean flag) {
-		final byte type = flag ? KeyEventPacket.PRESS : KeyEventPacket.RELEASE;
-		final KeyEventPacket packet = new KeyEventPacket(key, type);
-		
-		connection.addPacket(packet);
 	}
 	
 	private void drawToScreenImage(final BufferedImage imagePart, final int x, final int y) {
@@ -137,6 +96,54 @@ public final class DisplayController {
 		}
 		
 		updateScreen(screenWidth, screenHeight);
+	}
+	
+	@Override
+	public void userInput(final String actionCommand) {
+		//...
+	}
+	
+	@Override
+	public void handlePacket(final IPacket packet) {
+		//...
+	}
+	
+	@Override
+	public void mouseEvent(final int x, final int y, final int button, final boolean flag) {
+		final byte type = flag ? MouseEventPacket.PRESS : MouseEventPacket.RELEASE;
+		final int buttonEvent;
+		
+		if (button == MouseEvent.BUTTON1) {
+			buttonEvent = MouseEvent.BUTTON1_DOWN_MASK;
+		} else if (button == MouseEvent.BUTTON2) {
+			buttonEvent = MouseEvent.BUTTON2_DOWN_MASK;
+		} else if (button == MouseEvent.BUTTON3) {
+			buttonEvent = MouseEvent.BUTTON3_DOWN_MASK;
+		} else {
+			buttonEvent = MouseEvent.NOBUTTON;
+		}
+		
+		final MouseEventPacket packet = new MouseEventPacket(x, y, buttonEvent, type);
+		
+		client.connection.addPacket(packet);
+	}
+	
+	@Override
+	public void mouseMotionEvent(final int x, final int y, final int modifiers) {
+		//...
+	}
+	
+	@Override
+	public void mouseWheelEvent(final int x, final int y, final int rotation) {
+		//...
+	}
+	
+	@Override
+	public void keyboardEvent(final int key, final boolean flag) {
+		final byte type = flag ? KeyEventPacket.PRESS : KeyEventPacket.RELEASE;
+		final KeyEventPacket packet = new KeyEventPacket(key, type);
+		
+		client.connection.addPacket(packet);
 	}
 	
 }
