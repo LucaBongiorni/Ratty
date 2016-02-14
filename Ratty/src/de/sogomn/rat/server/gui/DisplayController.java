@@ -9,34 +9,28 @@ import de.sogomn.engine.IMouseListener;
 import de.sogomn.engine.Screen;
 import de.sogomn.engine.Screen.ResizeBehavior;
 import de.sogomn.engine.util.ImageUtils;
+import de.sogomn.rat.ActiveConnection;
+import de.sogomn.rat.packet.KeyEventPacket;
+import de.sogomn.rat.packet.MouseEventPacket;
 import de.sogomn.rat.util.FrameEncoder.IFrame;
 
-public final class DisplayPanel {
+public final class DisplayController {
 	
-	private String title;
+	private ActiveConnection connection;
+	
 	private Screen screen;
 	private BufferedImage image;
-	
-	private int lastXPos, lastYPos;
-	private int lastButtonHit;
-	private int lastKeyHit;
-	private IGuiController controller;
 	
 	private static final int SCREEN_WIDTH = 1920 / 2;
 	private static final int SCREEN_HEIGHT = 1080 / 2;
 	
-	public static final String MOUSE_PRESSED = "Mouse pressed";
-	public static final String MOUSE_RELEASED = "Mouse released";
-	public static final String KEY_PRESSED = "Key pressed";
-	public static final String KEY_RELEASED = "Key released";
-	
-	public DisplayPanel() {
-		//...
+	public DisplayController(final ActiveConnection connection) {
+		this.connection = connection;
 	}
 	
 	private Screen createScreen(final int width, final int height) {
 		final Screen screen = new Screen(width, height);
-		
+		final String title = connection.getAddress();
 		final IMouseListener mouseListener = new IMouseListener() {
 			@Override
 			public void mouseEvent(final int x, final int y, final int button, final boolean flag) {
@@ -68,30 +62,29 @@ public final class DisplayPanel {
 	}
 	
 	private void mouseEventPerformed(final int x, final int y, final int button, final boolean flag) {
-		lastXPos = x;
-		lastYPos = y;
+		final byte type = flag ? MouseEventPacket.PRESS : MouseEventPacket.RELEASE;
+		final int buttonEvent;
 		
 		if (button == MouseEvent.BUTTON1) {
-			lastButtonHit = MouseEvent.BUTTON1_DOWN_MASK;
+			buttonEvent = MouseEvent.BUTTON1_DOWN_MASK;
 		} else if (button == MouseEvent.BUTTON2) {
-			lastButtonHit = MouseEvent.BUTTON2_DOWN_MASK;
+			buttonEvent = MouseEvent.BUTTON2_DOWN_MASK;
 		} else if (button == MouseEvent.BUTTON3) {
-			lastButtonHit = MouseEvent.BUTTON3_DOWN_MASK;
+			buttonEvent = MouseEvent.BUTTON3_DOWN_MASK;
 		} else {
-			lastButtonHit = MouseEvent.NOBUTTON;
+			buttonEvent = MouseEvent.NOBUTTON;
 		}
 		
-		if (controller != null) {
-			controller.userInput(flag ? MOUSE_PRESSED : MOUSE_RELEASED);
-		}
+		final MouseEventPacket packet = new MouseEventPacket(x, y, buttonEvent, type);
+		
+		connection.addPacket(packet);
 	}
 	
 	private void keyEventPerformed(final int key, final boolean flag) {
-		lastKeyHit = key;
+		final byte type = flag ? KeyEventPacket.PRESS : KeyEventPacket.RELEASE;
+		final KeyEventPacket packet = new KeyEventPacket(key, type);
 		
-		if (controller != null) {
-			controller.userInput(flag ? KEY_PRESSED : KEY_RELEASED);
-		}
+		connection.addPacket(packet);
 	}
 	
 	private void drawToScreenImage(final BufferedImage imagePart, final int x, final int y) {
@@ -144,30 +137,6 @@ public final class DisplayPanel {
 		}
 		
 		updateScreen(screenWidth, screenHeight);
-	}
-	
-	public void setTitle(final String title) {
-		this.title = title;
-	}
-	
-	public void setController(final IGuiController controller) {
-		this.controller = controller;
-	}
-	
-	public int getLastXPos() {
-		return lastXPos;
-	}
-	
-	public int getLastYPos() {
-		return lastYPos;
-	}
-	
-	public int getLastButtonHit() {
-		return lastButtonHit;
-	}
-	
-	public int getLastKeyHit() {
-		return lastKeyHit;
 	}
 	
 }

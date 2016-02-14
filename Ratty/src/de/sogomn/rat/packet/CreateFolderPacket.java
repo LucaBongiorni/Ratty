@@ -3,7 +3,7 @@ package de.sogomn.rat.packet;
 import java.io.File;
 
 import de.sogomn.engine.util.FileUtils;
-import de.sogomn.rat.ActiveClient;
+import de.sogomn.rat.ActiveConnection;
 
 public final class CreateFolderPacket implements IPacket {
 	
@@ -19,19 +19,19 @@ public final class CreateFolderPacket implements IPacket {
 	}
 	
 	@Override
-	public void send(final ActiveClient client) {
+	public void send(final ActiveConnection client) {
 		client.writeUTF(path);
 		client.writeUTF(name);
 	}
 	
 	@Override
-	public void receive(final ActiveClient client) {
+	public void receive(final ActiveConnection client) {
 		path = client.readUTF();
 		name = client.readUTF();
 	}
 	
 	@Override
-	public void execute(final ActiveClient client) {
+	public void execute(final ActiveConnection client) {
 		final File folder = new File(path);
 		
 		String fullPath = null;

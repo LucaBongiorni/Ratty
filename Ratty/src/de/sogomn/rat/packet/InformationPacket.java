@@ -1,6 +1,6 @@
 package de.sogomn.rat.packet;
 
-import de.sogomn.rat.ActiveClient;
+import de.sogomn.rat.ActiveConnection;
 import de.sogomn.rat.Ratty;
 
 public final class InformationPacket extends AbstractPingPongPacket {
@@ -22,31 +22,31 @@ public final class InformationPacket extends AbstractPingPongPacket {
 	}
 	
 	@Override
-	protected void sendRequest(final ActiveClient client) {
+	protected void sendRequest(final ActiveConnection client) {
 		//...
 	}
 	
 	@Override
-	protected void sendData(final ActiveClient client) {
+	protected void sendData(final ActiveConnection client) {
 		client.writeUTF(name);
 		client.writeUTF(os);
 		client.writeUTF(version);
 	}
 	
 	@Override
-	protected void receiveRequest(final ActiveClient client) {
+	protected void receiveRequest(final ActiveConnection client) {
 		//...
 	}
 	
 	@Override
-	protected void receiveData(final ActiveClient client) {
+	protected void receiveData(final ActiveConnection client) {
 		name = client.readUTF();
 		os = client.readUTF();
 		version = client.readUTF();
 	}
 	
 	@Override
-	protected void executeRequest(final ActiveClient client) {
+	protected void executeRequest(final ActiveConnection client) {
 		type = DATA;
 		name = System.getProperty("user.name");
 		os = System.getProperty("os.name");
@@ -56,7 +56,7 @@ public final class InformationPacket extends AbstractPingPongPacket {
 	}
 	
 	@Override
-	protected void executeData(final ActiveClient client) {
+	protected void executeData(final ActiveConnection client) {
 		//...
 	}
 	

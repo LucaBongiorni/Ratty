@@ -1,6 +1,6 @@
 package de.sogomn.rat.packet;
 
-import de.sogomn.rat.ActiveClient;
+import de.sogomn.rat.ActiveConnection;
 
 public final class FreePacket implements IPacket {
 	
@@ -9,17 +9,17 @@ public final class FreePacket implements IPacket {
 	}
 	
 	@Override
-	public void send(final ActiveClient client) {
+	public void send(final ActiveConnection client) {
 		//...
 	}
 	
 	@Override
-	public void receive(final ActiveClient client) {
+	public void receive(final ActiveConnection client) {
 		//...
 	}
 	
 	@Override
-	public void execute(final ActiveClient client) {
+	public void execute(final ActiveConnection client) {
 		client.setObserver(null);
 		client.close();
 		

