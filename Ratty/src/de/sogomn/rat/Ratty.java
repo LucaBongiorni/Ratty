@@ -139,8 +139,6 @@ public final class Ratty {
 			
 			startServer(port);
 		}
-		
-		System.out.println(REGISTRY_COMMAND);
 	}
 	
 }
