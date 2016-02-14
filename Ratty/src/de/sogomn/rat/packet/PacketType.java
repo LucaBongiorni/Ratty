@@ -11,7 +11,7 @@ public enum PacketType {
 	FREE(4, FreePacket.class),
 	INFORMATION(5, InformationPacket.class),
 	COMMAND(6, CommandPacket.class),
-	DESKTOP(7, DesktopStreamPacket.class),
+	DESKTOP(7, DesktopPacket.class),
 	CLIPBOARD(8, ClipboardPacket.class),
 	FILE(9, FileSystemPacket.class),
 	DOWNLOAD(10, DownloadFilePacket.class),

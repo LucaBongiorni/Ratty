@@ -122,10 +122,12 @@ public final class Ratty {
 			
 			if (input == JOptionPane.YES_OPTION) {
 				System.out.println("Server");
-				startServer(56673);
+				
+				startServer(port);
 			} else if (input == JOptionPane.NO_OPTION) {
 				System.out.println("Client");
-				connectToHost("localhost", 56673);
+				
+				connectToHost(address, port);
 			}
 		} else if (client) {
 			addToStartup();

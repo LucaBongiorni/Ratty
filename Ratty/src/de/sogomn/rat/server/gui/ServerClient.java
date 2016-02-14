@@ -2,7 +2,7 @@ package de.sogomn.rat.server.gui;
 
 import de.sogomn.rat.ActiveConnection;
 
-public final class ServerClient {
+final class ServerClient {
 	
 	private boolean loggedIn;
 	

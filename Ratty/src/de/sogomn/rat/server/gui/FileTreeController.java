@@ -2,7 +2,7 @@ package de.sogomn.rat.server.gui;
 
 import de.sogomn.rat.packet.IPacket;
 
-public final class FileTreeController implements ISubController {
+final class FileTreeController implements ISubController {
 	
 	private ServerClient client;
 	
@@ -32,6 +32,8 @@ public final class FileTreeController implements ISubController {
 		} else if (command == FileTree.NEW_FOLDER) {
 			//...
 		} else if (command == FileTree.DELETE) {
+			//...
+		} else if (command == RattyGui.FILES) {
 			//...
 		}
 	}

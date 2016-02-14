@@ -9,7 +9,7 @@ import de.sogomn.rat.ActiveConnection;
 import de.sogomn.rat.util.FrameEncoder;
 import de.sogomn.rat.util.FrameEncoder.IFrame;
 
-public final class DesktopStreamPacket extends AbstractPingPongPacket {
+public final class DesktopPacket extends AbstractPingPongPacket {
 	
 	private IFrame[] frames;
 	private int screenWidth, screenHeight;
@@ -24,12 +24,12 @@ public final class DesktopStreamPacket extends AbstractPingPongPacket {
 	private static final byte INCOMING = 1;
 	private static final byte END = 0;
 	
-	public DesktopStreamPacket(final boolean delete) {
+	public DesktopPacket(final boolean delete) {
 		type = REQUEST;
 		deleteLastScreenshot = delete ? DELETE : KEEP;
 	}
 	
-	public DesktopStreamPacket() {
+	public DesktopPacket() {
 		this(false);
 	}
 	

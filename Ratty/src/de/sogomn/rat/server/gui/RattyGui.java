@@ -135,7 +135,7 @@ public final class RattyGui extends AbstractListenerContainer<IGuiController> {
 		notifyListeners(controller -> controller.userInput(command));
 	}
 	
-	public void updateTable() {
+	public void update() {
 		tableModel.fireTableDataChanged();
 	}
 	
