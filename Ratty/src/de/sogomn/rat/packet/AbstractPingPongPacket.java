@@ -17,46 +17,46 @@ public abstract class AbstractPingPongPacket implements IPacket {
 		this(REQUEST);
 	}
 	
-	protected abstract void sendRequest(final ActiveConnection client);
+	protected abstract void sendRequest(final ActiveConnection connection);
 	
-	protected abstract void sendData(final ActiveConnection client);
+	protected abstract void sendData(final ActiveConnection connection);
 	
-	protected abstract void receiveRequest(final ActiveConnection client);
+	protected abstract void receiveRequest(final ActiveConnection connection);
 	
-	protected abstract void receiveData(final ActiveConnection client);
+	protected abstract void receiveData(final ActiveConnection connection);
 	
-	protected abstract void executeRequest(final ActiveConnection client);
+	protected abstract void executeRequest(final ActiveConnection connection);
 	
-	protected abstract void executeData(final ActiveConnection client);
+	protected abstract void executeData(final ActiveConnection connection);
 	
 	@Override
-	public final void send(final ActiveConnection client) {
-		client.writeByte(type);
+	public final void send(final ActiveConnection connection) {
+		connection.writeByte(type);
 		
 		if (type == REQUEST) {
-			sendRequest(client);
+			sendRequest(connection);
 		} else if (type == DATA) {
-			sendData(client);
+			sendData(connection);
 		}
 	}
 	
 	@Override
-	public final void receive(final ActiveConnection client) {
-		type = client.readByte();
+	public final void receive(final ActiveConnection connection) {
+		type = connection.readByte();
 		
 		if (type == REQUEST) {
-			receiveRequest(client);
+			receiveRequest(connection);
 		} else if (type == DATA) {
-			receiveData(client);
+			receiveData(connection);
 		}
 	}
 	
 	@Override
-	public final void execute(final ActiveConnection client) {
+	public final void execute(final ActiveConnection connection) {
 		if (type == REQUEST) {
-			executeRequest(client);
+			executeRequest(connection);
 		} else if (type == DATA) {
-			executeData(client);
+			executeData(connection);
 		}
 	}
 	

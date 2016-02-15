@@ -28,23 +28,23 @@ public final class MouseEventPacket implements IPacket {
 	}
 	
 	@Override
-	public void send(final ActiveConnection client) {
-		client.writeInt(x);
-		client.writeInt(y);
-		client.writeInt(button);
-		client.writeByte(strokeType);
+	public void send(final ActiveConnection connection) {
+		connection.writeInt(x);
+		connection.writeInt(y);
+		connection.writeInt(button);
+		connection.writeByte(strokeType);
 	}
 	
 	@Override
-	public void receive(final ActiveConnection client) {
-		x = client.readInt();
-		y = client.readInt();
-		button = client.readInt();
-		strokeType = client.readByte();
+	public void receive(final ActiveConnection connection) {
+		x = connection.readInt();
+		y = connection.readInt();
+		button = connection.readInt();
+		strokeType = connection.readByte();
 	}
 	
 	@Override
-	public void execute(final ActiveConnection client) {
+	public void execute(final ActiveConnection connection) {
 		try {
 			final Robot rob = new Robot();
 			

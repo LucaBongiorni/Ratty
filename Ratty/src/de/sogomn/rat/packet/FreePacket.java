@@ -9,19 +9,19 @@ public final class FreePacket implements IPacket {
 	}
 	
 	@Override
-	public void send(final ActiveConnection client) {
+	public void send(final ActiveConnection connection) {
 		//...
 	}
 	
 	@Override
-	public void receive(final ActiveConnection client) {
+	public void receive(final ActiveConnection connection) {
 		//...
 	}
 	
 	@Override
-	public void execute(final ActiveConnection client) {
-		client.setObserver(null);
-		client.close();
+	public void execute(final ActiveConnection connection) {
+		connection.setObserver(null);
+		connection.close();
 		
 		System.exit(0);
 	}

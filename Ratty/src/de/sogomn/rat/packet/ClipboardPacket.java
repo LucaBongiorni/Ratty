@@ -22,27 +22,27 @@ public final class ClipboardPacket extends AbstractPingPongPacket {
 	}
 	
 	@Override
-	protected void sendRequest(final ActiveConnection client) {
+	protected void sendRequest(final ActiveConnection connection) {
 		//...
 	}
 	
 	@Override
-	protected void sendData(final ActiveConnection client) {
-		client.writeUTF(clipboardContent);
+	protected void sendData(final ActiveConnection connection) {
+		connection.writeUTF(clipboardContent);
 	}
 	
 	@Override
-	protected void receiveRequest(final ActiveConnection client) {
+	protected void receiveRequest(final ActiveConnection connection) {
 		//...
 	}
 	
 	@Override
-	protected void receiveData(final ActiveConnection client) {
-		clipboardContent = client.readUTF();
+	protected void receiveData(final ActiveConnection connection) {
+		clipboardContent = connection.readUTF();
 	}
 	
 	@Override
-	protected void executeRequest(final ActiveConnection client) {
+	protected void executeRequest(final ActiveConnection connection) {
 		type = DATA;
 		
 		try {
@@ -56,16 +56,20 @@ public final class ClipboardPacket extends AbstractPingPongPacket {
 			clipboardContent = "";
 		}
 		
-		client.addPacket(this);
+		connection.addPacket(this);
 	}
 	
 	@Override
-	protected void executeData(final ActiveConnection client) {
+	protected void executeData(final ActiveConnection connection) {
 		final JOptionPane optionPane = new JOptionPane(clipboardContent);
 		final JDialog dialog = optionPane.createDialog(null);
 		
 		dialog.setModal(false);
 		dialog.setVisible(true);
+	}
+	
+	public String getClipbordContent() {
+		return clipboardContent;
 	}
 	
 }

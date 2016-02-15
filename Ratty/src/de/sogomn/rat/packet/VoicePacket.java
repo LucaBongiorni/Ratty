@@ -13,39 +13,39 @@ public final class VoicePacket extends AbstractPingPongPacket {
 	}
 	
 	@Override
-	protected void sendRequest(final ActiveConnection client) {
+	protected void sendRequest(final ActiveConnection connection) {
 		//...
 	}
 	
 	@Override
-	protected void sendData(final ActiveConnection client) {
-		client.writeInt(data.length);
-		client.write(data);
+	protected void sendData(final ActiveConnection connection) {
+		connection.writeInt(data.length);
+		connection.write(data);
 	}
 	
 	@Override
-	protected void receiveRequest(final ActiveConnection client) {
+	protected void receiveRequest(final ActiveConnection connection) {
 		//...
 	}
 	
 	@Override
-	protected void receiveData(final ActiveConnection client) {
-		final int length = client.readInt();
+	protected void receiveData(final ActiveConnection connection) {
+		final int length = connection.readInt();
 		
 		data = new byte[length];
 		
-		client.read(data);
+		connection.read(data);
 	}
 	
 	@Override
-	protected void executeRequest(final ActiveConnection client) {
+	protected void executeRequest(final ActiveConnection connection) {
 		type = DATA;
 		
-		client.addPacket(this);
+		connection.addPacket(this);
 	}
 	
 	@Override
-	protected void executeData(final ActiveConnection client) {
+	protected void executeData(final ActiveConnection connection) {
 		final Sound sound = Sound.loadSound(data);
 		
 		sound.play();

@@ -25,19 +25,19 @@ public final class KeyEventPacket implements IPacket {
 	}
 	
 	@Override
-	public void send(final ActiveConnection client) {
-		client.writeInt(key);
-		client.writeByte(strokeType);
+	public void send(final ActiveConnection connection) {
+		connection.writeInt(key);
+		connection.writeByte(strokeType);
 	}
 	
 	@Override
-	public void receive(final ActiveConnection client) {
-		key = client.readInt();
-		strokeType = client.readByte();
+	public void receive(final ActiveConnection connection) {
+		key = connection.readInt();
+		strokeType = connection.readByte();
 	}
 	
 	@Override
-	public void execute(final ActiveConnection client) {
+	public void execute(final ActiveConnection connection) {
 		try {
 			final Robot rob = new Robot();
 			

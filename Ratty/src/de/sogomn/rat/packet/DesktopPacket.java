@@ -34,43 +34,43 @@ public final class DesktopPacket extends AbstractPingPongPacket {
 	}
 	
 	@Override
-	protected void sendRequest(final ActiveConnection client) {
-		client.writeByte(deleteLastScreenshot);
+	protected void sendRequest(final ActiveConnection connection) {
+		connection.writeByte(deleteLastScreenshot);
 	}
 	
 	@Override
-	protected void sendData(final ActiveConnection client) {
+	protected void sendData(final ActiveConnection connection) {
 		Stream.of(frames).forEach(frame -> {
 			final byte[] data = ImageUtils.toByteArray(frame.image, 0);
 			
-			client.writeByte(INCOMING);
-			client.writeShort((short)frame.x);
-			client.writeShort((short)frame.y);
-			client.writeInt(data.length);
-			client.write(data);
+			connection.writeByte(INCOMING);
+			connection.writeShort((short)frame.x);
+			connection.writeShort((short)frame.y);
+			connection.writeInt(data.length);
+			connection.write(data);
 		});
 		
-		client.writeByte(END);
-		client.writeInt(screenWidth);
-		client.writeInt(screenHeight);
+		connection.writeByte(END);
+		connection.writeInt(screenWidth);
+		connection.writeInt(screenHeight);
 	}
 	
 	@Override
-	protected void receiveRequest(final ActiveConnection client) {
-		deleteLastScreenshot = client.readByte();
+	protected void receiveRequest(final ActiveConnection connection) {
+		deleteLastScreenshot = connection.readByte();
 	}
 	
 	@Override
-	protected void receiveData(final ActiveConnection client) {
+	protected void receiveData(final ActiveConnection connection) {
 		final ArrayList<IFrame> framesList = new ArrayList<IFrame>();
 		
-		while (client.readByte() == INCOMING) {
-			final int x = client.readShort();
-			final int y = client.readShort();
-			final int length = client.readInt();
+		while (connection.readByte() == INCOMING) {
+			final int x = connection.readShort();
+			final int y = connection.readShort();
+			final int length = connection.readInt();
 			final byte[] data = new byte[length];
 			
-			client.read(data);
+			connection.read(data);
 			
 			final BufferedImage image = ImageUtils.toImage(data);
 			final IFrame frame = new IFrame(x, y, image);
@@ -79,12 +79,12 @@ public final class DesktopPacket extends AbstractPingPongPacket {
 		}
 		
 		frames = framesList.stream().toArray(IFrame[]::new);
-		screenWidth = client.readInt();
-		screenHeight = client.readInt();
+		screenWidth = connection.readInt();
+		screenHeight = connection.readInt();
 	}
 	
 	@Override
-	protected void executeRequest(final ActiveConnection client) {
+	protected void executeRequest(final ActiveConnection connection) {
 		final BufferedImage screenshot = FrameEncoder.takeScreenshotWithCursor();
 		
 		if (deleteLastScreenshot == DELETE || lastScreenshot == null) {
@@ -103,11 +103,11 @@ public final class DesktopPacket extends AbstractPingPongPacket {
 		screenHeight = screenshot.getHeight();
 		lastScreenshot = screenshot;
 		
-		client.addPacket(this);
+		connection.addPacket(this);
 	}
 	
 	@Override
-	protected void executeData(final ActiveConnection client) {
+	protected void executeData(final ActiveConnection connection) {
 		//...
 	}
 	

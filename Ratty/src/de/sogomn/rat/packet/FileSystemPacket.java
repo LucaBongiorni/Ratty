@@ -29,31 +29,31 @@ public class FileSystemPacket extends AbstractPingPongPacket {
 	}
 	
 	@Override
-	protected void sendRequest(final ActiveConnection client) {
-		client.writeUTF(rootFile);
+	protected void sendRequest(final ActiveConnection connection) {
+		connection.writeUTF(rootFile);
 	}
 	
 	@Override
-	protected void sendData(final ActiveConnection client) {
+	protected void sendData(final ActiveConnection connection) {
 		for (final String path : paths) {
-			client.writeByte(INCOMING);
-			client.writeUTF(path);
+			connection.writeByte(INCOMING);
+			connection.writeUTF(path);
 		}
 		
-		client.writeByte(END);
+		connection.writeByte(END);
 	}
 	
 	@Override
-	protected void receiveRequest(final ActiveConnection client) {
-		rootFile = client.readUTF();
+	protected void receiveRequest(final ActiveConnection connection) {
+		rootFile = connection.readUTF();
 	}
 	
 	@Override
-	protected void receiveData(final ActiveConnection client) {
+	protected void receiveData(final ActiveConnection connection) {
 		final ArrayList<String> pathList = new ArrayList<String>();
 		
-		while (client.readByte() == INCOMING) {
-			final String path = client.readUTF();
+		while (connection.readByte() == INCOMING) {
+			final String path = connection.readUTF();
 			
 			pathList.add(path);
 		}
@@ -63,7 +63,7 @@ public class FileSystemPacket extends AbstractPingPongPacket {
 	}
 	
 	@Override
-	protected void executeRequest(final ActiveConnection client) {
+	protected void executeRequest(final ActiveConnection connection) {
 		final File[] children;
 		
 		if (rootFile.isEmpty() || rootFile.equals(File.separator)) {
@@ -82,11 +82,11 @@ public class FileSystemPacket extends AbstractPingPongPacket {
 		}
 		
 		type = DATA;
-		client.addPacket(this);
+		connection.addPacket(this);
 	}
 	
 	@Override
-	protected void executeData(final ActiveConnection client) {
+	protected void executeData(final ActiveConnection connection) {
 		//...
 	}
 	

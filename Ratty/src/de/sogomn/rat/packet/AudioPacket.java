@@ -23,25 +23,29 @@ public final class AudioPacket implements IPacket {
 	}
 	
 	@Override
-	public void send(final ActiveConnection client) {
-		client.writeInt(data.length);
-		client.write(data);
+	public void send(final ActiveConnection connection) {
+		connection.writeInt(data.length);
+		connection.write(data);
 	}
 	
 	@Override
-	public void receive(final ActiveConnection client) {
-		final int length = client.readInt();
+	public void receive(final ActiveConnection connection) {
+		final int length = connection.readInt();
 		
 		data = new byte[length];
 		
-		client.read(data);
+		connection.read(data);
 	}
 	
 	@Override
-	public void execute(final ActiveConnection client) {
+	public void execute(final ActiveConnection connection) {
 		final Sound sound = Sound.loadSound(data);
 		
 		sound.play();
+	}
+	
+	public byte[] getData() {
+		return data;
 	}
 	
 }

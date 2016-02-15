@@ -34,7 +34,6 @@ public final class FileTree extends AbstractListenerContainer<IGuiController> {
 	
 	private static final String ROOT_NAME = "Drives";
 	private static final Dimension DEFAULT_SIZE = new Dimension(500, 500);
-	
 	private static final BufferedImage[] MENU_ICONS = new SpriteSheet("/menu_icons_tree.png", 32, 32).getSprites();
 	
 	public static final String REQUEST = "Request content";
@@ -113,10 +112,14 @@ public final class FileTree extends AbstractListenerContainer<IGuiController> {
 		notifyListeners(controller -> controller.userInput(command));
 	}
 	
-	public void addNodes(final String... names) {
+	public void reload() {
+		treeModel.reload();
+	}
+	
+	public void addNodeStructure(final String... path) {
 		FileTreeNode current = root;
 		
-		for (final String name : names) {
+		for (final String name : path) {
 			final FileTreeNode next = current.getChild(name);
 			
 			if (next == null) {

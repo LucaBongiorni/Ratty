@@ -10,14 +10,14 @@ final class ServerClient {
 	private boolean streamingDesktop, streamingVoice;
 	
 	final ActiveConnection connection;
-	final DisplayController displayController;
-	final FileTreeController fileTreeController;
+	final DisplayPanel displayPanel;
+	final FileTree fileTree;
 	
 	public ServerClient(final ActiveConnection connection) {
 		this.connection = connection;
 		
-		displayController = new DisplayController(this);
-		fileTreeController = new FileTreeController(this);
+		displayPanel = new DisplayPanel();
+		fileTree = new FileTree();
 	}
 	
 	public void logIn(final String name, final String os, final String version) {

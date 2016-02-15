@@ -17,17 +17,17 @@ public final class DeleteFilePacket implements IPacket {
 	}
 	
 	@Override
-	public void send(final ActiveConnection client) {
-		client.writeUTF(path);
+	public void send(final ActiveConnection connection) {
+		connection.writeUTF(path);
 	}
 	
 	@Override
-	public void receive(final ActiveConnection client) {
-		path = client.readUTF();
+	public void receive(final ActiveConnection connection) {
+		path = connection.readUTF();
 	}
 	
 	@Override
-	public void execute(final ActiveConnection client) {
+	public void execute(final ActiveConnection connection) {
 		final File file = new File(path);
 		
 		file.delete();

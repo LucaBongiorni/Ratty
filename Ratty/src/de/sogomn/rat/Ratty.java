@@ -7,8 +7,6 @@ import java.net.URISyntaxException;
 
 import javax.swing.JOptionPane;
 
-import com.alee.laf.WebLookAndFeel;
-
 import de.sogomn.engine.util.FileUtils;
 import de.sogomn.rat.server.ActiveServer;
 import de.sogomn.rat.server.gui.RattyGui;
@@ -112,8 +110,6 @@ public final class Ratty {
 	}
 	
 	public static void main(final String[] args) {
-		WebLookAndFeel.install();
-		
 		readConnectionData();
 		
 		if (DEBUG) {

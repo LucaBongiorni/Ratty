@@ -21,17 +21,17 @@ public final class PopupPacket implements IPacket {
 	}
 	
 	@Override
-	public void send(final ActiveConnection client) {
-		client.writeUTF(message);
+	public void send(final ActiveConnection connection) {
+		connection.writeUTF(message);
 	}
 	
 	@Override
-	public void receive(final ActiveConnection client) {
-		message = client.readUTF();
+	public void receive(final ActiveConnection connection) {
+		message = connection.readUTF();
 	}
 	
 	@Override
-	public void execute(final ActiveConnection client) {
+	public void execute(final ActiveConnection connection) {
 		final JOptionPane optionPane = new JOptionPane(message);
 		final JDialog dialog = optionPane.createDialog(null);
 		

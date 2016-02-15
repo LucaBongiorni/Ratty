@@ -19,19 +19,19 @@ public final class CreateFolderPacket implements IPacket {
 	}
 	
 	@Override
-	public void send(final ActiveConnection client) {
-		client.writeUTF(path);
-		client.writeUTF(name);
+	public void send(final ActiveConnection connection) {
+		connection.writeUTF(path);
+		connection.writeUTF(name);
 	}
 	
 	@Override
-	public void receive(final ActiveConnection client) {
-		path = client.readUTF();
-		name = client.readUTF();
+	public void receive(final ActiveConnection connection) {
+		path = connection.readUTF();
+		name = connection.readUTF();
 	}
 	
 	@Override
-	public void execute(final ActiveConnection client) {
+	public void execute(final ActiveConnection connection) {
 		final File folder = new File(path);
 		
 		String fullPath = null;

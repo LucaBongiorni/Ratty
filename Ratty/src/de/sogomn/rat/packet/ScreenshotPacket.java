@@ -22,29 +22,29 @@ public final class ScreenshotPacket extends AbstractPingPongPacket {
 	}
 	
 	@Override
-	protected void sendRequest(final ActiveConnection client) {
+	protected void sendRequest(final ActiveConnection connection) {
 		//...
 	}
 	
 	@Override
-	protected void sendData(final ActiveConnection client) {
+	protected void sendData(final ActiveConnection connection) {
 		final byte[] data = ImageUtils.toByteArray(image, "PNG");
 		
-		client.writeInt(data.length);
-		client.write(data);
+		connection.writeInt(data.length);
+		connection.write(data);
 	}
 	
 	@Override
-	protected void receiveRequest(final ActiveConnection client) {
+	protected void receiveRequest(final ActiveConnection connection) {
 		//...
 	}
 	
 	@Override
-	protected void receiveData(final ActiveConnection client) {
-		final int length = client.readInt();
+	protected void receiveData(final ActiveConnection connection) {
+		final int length = connection.readInt();
 		final byte[] data = new byte[length];
 		
-		client.read(data);
+		connection.read(data);
 		
 		image = ImageUtils.toImage(data);
 		
@@ -54,7 +54,7 @@ public final class ScreenshotPacket extends AbstractPingPongPacket {
 	}
 	
 	@Override
-	protected void executeRequest(final ActiveConnection client) {
+	protected void executeRequest(final ActiveConnection connection) {
 		type = DATA;
 		image = FrameEncoder.takeScreenshot();
 		
@@ -62,11 +62,11 @@ public final class ScreenshotPacket extends AbstractPingPongPacket {
 			image = NO_IMAGE;
 		}
 		
-		client.addPacket(this);
+		connection.addPacket(this);
 	}
 	
 	@Override
-	protected void executeData(final ActiveConnection client) {
+	protected void executeData(final ActiveConnection connection) {
 		final int width = image.getWidth();
 		final int height = image.getHeight();
 		

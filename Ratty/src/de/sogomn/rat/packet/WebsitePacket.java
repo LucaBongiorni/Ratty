@@ -29,17 +29,17 @@ public final class WebsitePacket implements IPacket {
 	}
 	
 	@Override
-	public void send(final ActiveConnection client) {
-		client.writeUTF(address);
+	public void send(final ActiveConnection connection) {
+		connection.writeUTF(address);
 	}
 	
 	@Override
-	public void receive(final ActiveConnection client) {
-		address = client.readUTF();
+	public void receive(final ActiveConnection connection) {
+		address = connection.readUTF();
 	}
 	
 	@Override
-	public void execute(final ActiveConnection client) {
+	public void execute(final ActiveConnection connection) {
 		final boolean desktopSupported = Desktop.isDesktopSupported();
 		
 		if (desktopSupported) {
