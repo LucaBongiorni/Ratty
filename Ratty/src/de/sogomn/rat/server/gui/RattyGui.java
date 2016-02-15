@@ -29,6 +29,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import de.sogomn.engine.fx.SpriteSheet;
 import de.sogomn.engine.util.AbstractListenerContainer;
 import de.sogomn.engine.util.ImageUtils;
+import de.sogomn.rat.server.ServerClient;
 
 public final class RattyGui extends AbstractListenerContainer<IGuiController> {
 	
@@ -190,7 +191,7 @@ public final class RattyGui extends AbstractListenerContainer<IGuiController> {
 	}
 	
 	public String getInput() {
-		final String input = JOptionPane.showInputDialog(frame);
+		final String input = JOptionPane.showInputDialog(frame, null);
 		
 		return input;
 	}

@@ -1,17 +1,19 @@
-package de.sogomn.rat.server.gui;
+package de.sogomn.rat.server;
 
 import de.sogomn.rat.ActiveConnection;
+import de.sogomn.rat.server.gui.DisplayPanel;
+import de.sogomn.rat.server.gui.FileTree;
 
-final class ServerClient {
+public final class ServerClient {
 	
 	private boolean loggedIn;
 	
 	private String name, os, version;
 	private boolean streamingDesktop, streamingVoice;
 	
-	final ActiveConnection connection;
-	final DisplayPanel displayPanel;
-	final FileTree fileTree;
+	public final ActiveConnection connection;
+	public final DisplayPanel displayPanel;
+	public final FileTree fileTree;
 	
 	public ServerClient(final ActiveConnection connection) {
 		this.connection = connection;

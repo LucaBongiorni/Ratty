@@ -5,6 +5,8 @@ import java.util.function.Function;
 
 import javax.swing.table.AbstractTableModel;
 
+import de.sogomn.rat.server.ServerClient;
+
 final class ServerClientTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = 919111102883611810L;
 	
