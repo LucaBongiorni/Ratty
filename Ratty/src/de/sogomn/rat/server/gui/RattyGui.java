@@ -190,7 +190,7 @@ public final class RattyGui extends AbstractListenerContainer<IGuiController> {
 	}
 	
 	public String getInput() {
-		final String input = JOptionPane.showInputDialog(frame);
+		final String input = JOptionPane.showInputDialog(frame, null);
 		
 		return input;
 	}

