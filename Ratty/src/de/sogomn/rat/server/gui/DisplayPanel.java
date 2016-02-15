@@ -34,8 +34,8 @@ public final class DisplayPanel extends AbstractListenerContainer<IGuiController
 		//...
 	}
 	
-	private Screen createScreen(final int width, final int height) {
-		final Screen screen = new Screen(width, height);
+	private Screen createScreen(final int screenWidth, final int screenHeight) {
+		final Screen screen = new Screen(screenWidth, screenHeight);
 		
 		screen.setResizeBehavior(ResizeBehavior.KEEP_ASPECT_RATIO);
 		screen.setTitle(title);
