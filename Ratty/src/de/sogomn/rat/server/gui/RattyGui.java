@@ -29,7 +29,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import de.sogomn.engine.fx.SpriteSheet;
 import de.sogomn.engine.util.AbstractListenerContainer;
 import de.sogomn.engine.util.ImageUtils;
-import de.sogomn.rat.server.ServerClient;
 
 public final class RattyGui extends AbstractListenerContainer<IGuiController> {
 	
@@ -171,7 +170,13 @@ public final class RattyGui extends AbstractListenerContainer<IGuiController> {
 	}
 	
 	public File getFile(final String type) {
-		final FileFilter filter = new FileNameExtensionFilter("*." + type, type);
+		final FileFilter filter;
+		
+		if (type != null) {
+			filter = new FileNameExtensionFilter("*." + type, type);
+		} else {
+			filter = null;
+		}
 		
 		fileChooser.setFileFilter(filter);
 		

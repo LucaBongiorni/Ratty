@@ -1,6 +1,5 @@
 package de.sogomn.rat;
 
-import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -9,7 +8,6 @@ import java.net.URISyntaxException;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 
@@ -46,13 +44,9 @@ public final class Ratty {
 	
 	private static void setLookAndFeel() {
 		final NimbusLookAndFeel nimbus = new NimbusLookAndFeel();
-		final UIDefaults defaults = nimbus.getDefaults();
 		
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		JDialog.setDefaultLookAndFeelDecorated(true);
-		
-		defaults.put("nimbusBase", Color.LIGHT_GRAY);
-		defaults.put("cotrol", Color.LIGHT_GRAY);
 		
 		try {
 			UIManager.setLookAndFeel(nimbus);

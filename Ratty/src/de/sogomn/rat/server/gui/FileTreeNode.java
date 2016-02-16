@@ -28,16 +28,23 @@ public final class FileTreeNode implements MutableTreeNode {
 		return enumeration;
 	}
 	
+	public FileTreeNode[] getChildren() {
+		final FileTreeNode[] childArray = children.stream().toArray(FileTreeNode[]::new);
+		
+		return childArray;
+	}
+	
 	@Override
 	public void insert(final MutableTreeNode child, final int index) {
 		final boolean fileTreeNode = child instanceof FileTreeNode;
 		
-		if (index < 0 || index > children.size() - 1 || !fileTreeNode) {
+		if (index < 0 || index > children.size() || !fileTreeNode) {
 			return;
 		}
 		
 		final FileTreeNode fileTreeNodeChild = (FileTreeNode)child;
 		
+		fileTreeNodeChild.setParent(this);
 		children.add(index, fileTreeNodeChild);
 	}
 	
@@ -62,6 +69,11 @@ public final class FileTreeNode implements MutableTreeNode {
 		}
 		
 		parent.remove(this);
+	}
+	
+	@Override
+	public String toString() {
+		return name;
 	}
 	
 	@Override
@@ -133,7 +145,9 @@ public final class FileTreeNode implements MutableTreeNode {
 			current = current.getParent();
 		}
 		
-		return builder.toString();
+		final String path = builder.toString();
+		
+		return path;
 	}
 	
 	public String getName() {

@@ -5,16 +5,16 @@ import java.io.File;
 import de.sogomn.engine.util.FileUtils;
 import de.sogomn.rat.ActiveConnection;
 
-public final class CreateFolderPacket implements IPacket {
+public final class CreateDirectoryPacket implements IPacket {
 	
 	private String path, name;
 	
-	public CreateFolderPacket(final String path, final String name) {
+	public CreateDirectoryPacket(final String path, final String name) {
 		this.path = path;
 		this.name = name;
 	}
 	
-	public CreateFolderPacket() {
+	public CreateDirectoryPacket() {
 		this("", "");
 	}
 	

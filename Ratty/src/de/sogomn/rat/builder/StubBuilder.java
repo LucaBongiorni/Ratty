@@ -21,6 +21,7 @@ import de.sogomn.rat.Ratty;
 
 /*
  * This class is kinda hardcoded.
+ * I don't care.
  */
 public final class StubBuilder {
 	

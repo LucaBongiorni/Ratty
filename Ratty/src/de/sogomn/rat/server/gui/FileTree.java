@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -32,7 +33,7 @@ public final class FileTree extends AbstractListenerContainer<IGuiController> {
 	
 	private FileTreeNode lastNodeClicked;
 	
-	private static final String ROOT_NAME = "Drives";
+	private static final String ROOT_NAME = "";
 	private static final Dimension DEFAULT_SIZE = new Dimension(500, 500);
 	private static final BufferedImage[] MENU_ICONS = new SpriteSheet("/menu_icons_tree.png", 32, 32).getSprites();
 	
@@ -131,6 +132,30 @@ public final class FileTree extends AbstractListenerContainer<IGuiController> {
 			} else {
 				current = next;
 			}
+		}
+	}
+	
+	public void addNodeStructure(final String path) {
+		final String[] parts = path.split("\\" + File.separator);
+		
+		if (parts.length == 0) {
+			final String[] part = {path};
+			
+			addNodeStructure(part);
+		} else {
+			addNodeStructure(parts);
+		}
+	}
+	
+	public void removeNode(final FileTreeNode node) {
+		treeModel.removeNodeFromParent(node);
+	}
+	
+	public void removeChildren(final FileTreeNode node) {
+		final FileTreeNode[] children = node.getChildren();
+		
+		for (final FileTreeNode child : children) {
+			treeModel.removeNodeFromParent(child);
 		}
 	}
 	

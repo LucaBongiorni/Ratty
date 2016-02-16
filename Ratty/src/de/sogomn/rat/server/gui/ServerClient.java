@@ -1,10 +1,8 @@
-package de.sogomn.rat.server;
+package de.sogomn.rat.server.gui;
 
 import de.sogomn.rat.ActiveConnection;
-import de.sogomn.rat.server.gui.DisplayPanel;
-import de.sogomn.rat.server.gui.FileTree;
 
-public final class ServerClient {
+final class ServerClient {
 	
 	private boolean loggedIn;
 	
@@ -28,6 +26,16 @@ public final class ServerClient {
 		this.version = version;
 		
 		loggedIn = true;
+	}
+	
+	public void addListener(final IGuiController controller) {
+		displayPanel.addListener(controller);
+		fileTree.addListener(controller);
+	}
+	
+	public void removeListener(final IGuiController controller) {
+		displayPanel.removeListener(controller);
+		fileTree.removeListener(controller);
 	}
 	
 	public void setStreamingDesktop(final boolean streamingDesktop) {
