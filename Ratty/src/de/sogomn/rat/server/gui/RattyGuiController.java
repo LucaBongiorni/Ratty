@@ -195,7 +195,7 @@ public final class RattyGuiController extends AbstractRattyController implements
 			launchAttack();
 		} else if (command == RattyGui.BUILD) {
 			StubBuilder.start();
-		} else if (command == FileTree.NEW_FOLDER || command == FileTree.UPLOAD || command == FileTree.REQUEST || command == FileTree.DELETE) {
+		} else if (command == FileTree.NEW_DIRECTORY || command == FileTree.UPLOAD || command == FileTree.REQUEST || command == FileTree.DELETE) {
 			handleFileTreeCommand(client, command);
 		}
 	}
@@ -227,7 +227,7 @@ public final class RattyGuiController extends AbstractRattyController implements
 			packet = createExecutePacket(client);
 		} else if (command == FileTree.DELETE) {
 			packet = createDeletePacket(client);
-		} else if (command == FileTree.NEW_FOLDER) {
+		} else if (command == FileTree.NEW_DIRECTORY) {
 			packet = createFolderPacket(client);
 		} else if (command == DisplayPanel.MOUSE_EVENT && client.isStreamingDesktop()) {
 			packet = client.displayPanel.getLastMouseEventPacket();

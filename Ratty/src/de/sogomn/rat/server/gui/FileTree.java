@@ -1,5 +1,7 @@
 package de.sogomn.rat.server.gui;
 
+import static de.sogomn.rat.Ratty.*;
+
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
@@ -37,12 +39,12 @@ public final class FileTree extends AbstractListenerContainer<IGuiController> {
 	private static final Dimension DEFAULT_SIZE = new Dimension(500, 500);
 	private static final BufferedImage[] MENU_ICONS = new SpriteSheet("/menu_icons_tree.png", 32, 32).getSprites();
 	
-	public static final String REQUEST = "Request content";
-	public static final String DOWNLOAD = "Download file";
-	public static final String UPLOAD = "Upload file here";
-	public static final String EXECUTE = "Execute file";
-	public static final String DELETE = "Delete file";
-	public static final String NEW_FOLDER = "Create new folder here";
+	public static final String REQUEST = LANGUAGE.getString("action.request_files");
+	public static final String DOWNLOAD = LANGUAGE.getString("action.download");
+	public static final String UPLOAD = LANGUAGE.getString("action.upload");
+	public static final String EXECUTE = LANGUAGE.getString("action.execute");
+	public static final String DELETE = LANGUAGE.getString("action.delete");
+	public static final String NEW_DIRECTORY = LANGUAGE.getString("action.new_directory");
 	
 	public static final String[] COMMANDS = {
 		REQUEST,
@@ -50,7 +52,7 @@ public final class FileTree extends AbstractListenerContainer<IGuiController> {
 		UPLOAD,
 		EXECUTE,
 		DELETE,
-		NEW_FOLDER
+		NEW_DIRECTORY
 	};
 	
 	public FileTree() {

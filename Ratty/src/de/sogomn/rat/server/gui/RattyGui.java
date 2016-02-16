@@ -1,5 +1,7 @@
 package de.sogomn.rat.server.gui;
 
+import static de.sogomn.rat.Ratty.LANGUAGE;
+
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -54,18 +56,18 @@ public final class RattyGui extends AbstractListenerContainer<IGuiController> {
 	private static final List<BufferedImage> GUI_ICONS = Arrays.asList(GUI_ICON_SMALL, GUI_ICON_MEDIUM, GUI_ICON_LARGE);
 	private static final BufferedImage[] MENU_ICONS = new SpriteSheet("/menu_icons.png", 32, 32).getSprites();
 	
-	public static final String POPUP = "Open popup";
-	public static final String SCREENSHOT = "Take screenshot";
-	public static final String DESKTOP = "Toggle desktop stream";
-	public static final String VOICE = "Toggle audio stream";
-	public static final String FILES = "Browse files";
-	public static final String COMMAND = "Execute command";
-	public static final String CLIPBOARD = "Get clipboard content";
-	public static final String WEBSITE = "Open website";
-	public static final String AUDIO = "Play audio";
-	public static final String FREE = "Free client";
-	public static final String BUILD = "Client builder";
-	public static final String ATTACK = "Launch attack";
+	public static final String POPUP = LANGUAGE.getString("action.popup");
+	public static final String SCREENSHOT = LANGUAGE.getString("action.screenshot");
+	public static final String DESKTOP = LANGUAGE.getString("action.desktop");
+	public static final String VOICE = LANGUAGE.getString("action.voice");
+	public static final String FILES = LANGUAGE.getString("action.files");
+	public static final String COMMAND = LANGUAGE.getString("action.command");
+	public static final String CLIPBOARD = LANGUAGE.getString("action.clipboard");
+	public static final String WEBSITE = LANGUAGE.getString("action.website");
+	public static final String AUDIO = LANGUAGE.getString("action.audio");
+	public static final String FREE = LANGUAGE.getString("action.free");
+	public static final String BUILD = LANGUAGE.getString("action.build");
+	public static final String ATTACK = LANGUAGE.getString("action.attack");
 	
 	public static final String[] COMMANDS = {
 		POPUP,
