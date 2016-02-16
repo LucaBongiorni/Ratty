@@ -1,5 +1,7 @@
 package de.sogomn.rat.builder;
 
+import static de.sogomn.rat.Ratty.LANGUAGE;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -25,8 +27,8 @@ import de.sogomn.rat.Ratty;
  */
 public final class StubBuilder {
 	
-	private static final String ADDRESS_MESSAGE = "Which address should the client connect to?";
-	private static final String PORT_MESSAGE = "Which port?";
+	private static final String ADDRESS_MESSAGE = LANGUAGE.getString("builder.address_question");
+	private static final String PORT_MESSAGE = LANGUAGE.getString("builder.port_question");
 	
 	private static final String FILE_EXTENSION = ".jar";
 	private static final String FILE_NAME = "/connection_data.txt";
