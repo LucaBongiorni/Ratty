@@ -18,6 +18,8 @@ import de.sogomn.engine.util.ImageUtils;
 
 public final class FrameEncoder {
 	
+	private static final int SKIP = 3;
+	
 	private static final int CELLS_WIDE = 5;
 	private static final int CELLS_HIGH = 5;
 	private static final IFrame[] EMPTY_ARRAY = new IFrame[0];
@@ -89,8 +91,8 @@ public final class FrameEncoder {
 				final int cellEndY = cellY + cellHeight;
 				
 				outer:
-				for (int xx = cellX; xx < cellEndX && xx < width; xx++) {
-					for (int yy = cellY; yy < cellEndY && yy < height; yy++) {
+				for (int xx = cellX; xx < cellEndX && xx < width; xx += SKIP) {
+					for (int yy = cellY; yy < cellEndY && yy < height; yy += SKIP) {
 						final int previousRgb = previous.getRGB(xx, yy);
 						final int nextRgb = next.getRGB(xx, yy);
 						

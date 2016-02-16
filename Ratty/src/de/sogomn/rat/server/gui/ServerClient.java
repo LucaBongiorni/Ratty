@@ -25,6 +25,11 @@ final class ServerClient {
 		this.os = os;
 		this.version = version;
 		
+		final String title = name + " " + getAddress();
+		
+		displayPanel.setTitle(title);
+		fileTree.setTitle(title);
+		
 		loggedIn = true;
 	}
 	

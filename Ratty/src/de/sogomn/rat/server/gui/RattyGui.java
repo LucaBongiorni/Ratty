@@ -126,7 +126,7 @@ public final class RattyGui extends AbstractListenerContainer<IGuiController> {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setPreferredSize(SIZE);
 		frame.pack();
-		frame.setLocationByPlatform(true);
+		frame.setLocationRelativeTo(null);
 		frame.setIconImages(GUI_ICONS);
 		frame.setVisible(true);
 		frame.requestFocus();

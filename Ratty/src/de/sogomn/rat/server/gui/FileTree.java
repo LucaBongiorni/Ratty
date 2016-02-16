@@ -94,7 +94,7 @@ public final class FileTree extends AbstractListenerContainer<IGuiController> {
 		frame.setPreferredSize(DEFAULT_SIZE);
 		frame.setContentPane(scrollPane);
 		frame.pack();
-		frame.setLocationByPlatform(true);
+		frame.setLocationRelativeTo(null);
 	}
 	
 	private void addMenuItem(final String name, final Icon icon) {
