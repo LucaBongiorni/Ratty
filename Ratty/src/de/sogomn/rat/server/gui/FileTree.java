@@ -1,6 +1,6 @@
 package de.sogomn.rat.server.gui;
 
-import static de.sogomn.rat.Ratty.*;
+import static de.sogomn.rat.Ratty.LANGUAGE;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -21,6 +21,7 @@ import javax.swing.tree.TreePath;
 
 import de.sogomn.engine.fx.SpriteSheet;
 import de.sogomn.engine.util.AbstractListenerContainer;
+import de.sogomn.engine.util.ImageUtils;
 
 public final class FileTree extends AbstractListenerContainer<IGuiController> {
 	
@@ -37,7 +38,7 @@ public final class FileTree extends AbstractListenerContainer<IGuiController> {
 	
 	private static final String ROOT_NAME = "";
 	private static final Dimension DEFAULT_SIZE = new Dimension(500, 500);
-	private static final BufferedImage[] MENU_ICONS = new SpriteSheet("/menu_icons_tree.png", 32, 32).getSprites();
+	private static final BufferedImage[] MENU_ICONS = new SpriteSheet(ImageUtils.scaleImage(ImageUtils.loadImage("/menu_icons_tree.png"), 2), 16 * 2, 16 * 2).getSprites();
 	
 	public static final String REQUEST = LANGUAGE.getString("action.request_files");
 	public static final String DOWNLOAD = LANGUAGE.getString("action.download");

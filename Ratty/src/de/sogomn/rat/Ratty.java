@@ -25,7 +25,7 @@ import de.sogomn.rat.server.gui.RattyGuiController;
  */
 public final class Ratty {
 	
-	public static final boolean DEBUG = false;
+	public static final boolean DEBUG = true;
 	public static final String VERSION = "1.3";
 	public static final ResourceBundle LANGUAGE = ResourceBundle.getBundle("language.lang");
 	
