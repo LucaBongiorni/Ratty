@@ -9,7 +9,7 @@ import de.sogomn.rat.packet.InformationPacket;
 
 public abstract class AbstractRattyController implements IServerObserver, IConnectionObserver {
 	
-	private ArrayList<ActiveConnection> connections;
+	protected ArrayList<ActiveConnection> connections;
 	
 	public AbstractRattyController() {
 		connections = new ArrayList<ActiveConnection>();

@@ -38,9 +38,8 @@ public final class RattyGuiController extends AbstractRattyController implements
 	
 	private HashMap<ActiveConnection, ServerClient> clients;
 	
-	public RattyGuiController(final RattyGui gui) {
-		this.gui = gui;
-		
+	public RattyGuiController() {
+		gui = new RattyGui();
 		clients = new HashMap<ActiveConnection, ServerClient>();
 		
 		gui.addListener(this);

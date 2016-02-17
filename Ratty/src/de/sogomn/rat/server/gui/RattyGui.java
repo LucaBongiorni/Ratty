@@ -32,7 +32,7 @@ import de.sogomn.engine.fx.SpriteSheet;
 import de.sogomn.engine.util.AbstractListenerContainer;
 import de.sogomn.engine.util.ImageUtils;
 
-public final class RattyGui extends AbstractListenerContainer<IGuiController> {
+final class RattyGui extends AbstractListenerContainer<IGuiController> {
 	
 	private JFrame frame;
 	

