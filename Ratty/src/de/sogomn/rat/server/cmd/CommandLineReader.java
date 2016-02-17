@@ -3,7 +3,7 @@ package de.sogomn.rat.server.cmd;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.stream.Stream;
+import java.util.ArrayList;
 
 import de.sogomn.engine.util.AbstractListenerContainer;
 
@@ -11,8 +11,6 @@ public final class CommandLineReader extends AbstractListenerContainer<ICommandL
 	
 	private BufferedReader reader;
 	private Thread thread;
-	
-	private static final String ARGUMENT_SEPARATOR = " ";
 	
 	public CommandLineReader() {
 		final InputStreamReader inReader = new InputStreamReader(System.in);
@@ -57,6 +55,9 @@ public final class CommandLineReader extends AbstractListenerContainer<ICommandL
 		private final String command;
 		private final String[] arguments;
 		
+		private static final char ARGUMENT_SEPARATOR = ' ';
+		private static final char STRING_LITERAL = '\"';
+		
 		public static final Command EMPTY = new Command("");
 		
 		public Command(final String command, final String... arguments) {
@@ -100,19 +101,42 @@ public final class CommandLineReader extends AbstractListenerContainer<ICommandL
 		}
 		
 		public static Command parse(final String line) {
-			final String[] parts = line.split(ARGUMENT_SEPARATOR);
-			
-			if (parts.length == 0) {
+			if (line == null || line.isEmpty()) {
 				return EMPTY;
 			}
 			
-			final String commandString = parts[0];
-			final String[] arguments = Stream
-					.of(parts)
+			final int length = line.length();
+			final StringBuilder currentArgument = new StringBuilder();
+			final ArrayList<String> arguments = new ArrayList<String>();
+			
+			boolean string = false;
+			
+			for (int i = 0; i < length; i++) {
+				final char c = line.charAt(i);
+				
+				if (c == STRING_LITERAL) {
+					string = !string;
+				} else if (c == ARGUMENT_SEPARATOR && !string) {
+					final String argument = currentArgument.toString();
+					
+					arguments.add(argument);
+					currentArgument.setLength(0);
+				} else  {
+					currentArgument.append(c);
+				}
+			}
+			
+			final String argument = currentArgument.toString();
+			
+			arguments.add(argument);
+			
+			final String commandString = arguments.get(0);
+			final String[] argumentArray = arguments
+					.stream()
 					.skip(1)
-					.filter(part -> part != null && !part.isEmpty())
+					.filter(arg -> arg != null && !arg.isEmpty())
 					.toArray(String[]::new);
-			final Command command = new Command(commandString, arguments);
+			final Command command = new Command(commandString, argumentArray);
 			
 			return command;
 		}

