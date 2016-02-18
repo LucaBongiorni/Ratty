@@ -9,6 +9,7 @@ import java.util.ResourceBundle;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 
@@ -54,9 +55,11 @@ public final class Ratty {
 	
 	private static void setLookAndFeel() {
 		final NimbusLookAndFeel nimbus = new NimbusLookAndFeel();
+		final UIDefaults defaults = nimbus.getDefaults();
 		
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		JDialog.setDefaultLookAndFeelDecorated(true);
+		GUISettings.setDefaults(defaults);
 		
 		try {
 			UIManager.setLookAndFeel(nimbus);
