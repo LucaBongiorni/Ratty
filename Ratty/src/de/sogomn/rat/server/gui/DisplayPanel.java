@@ -53,7 +53,7 @@ public final class DisplayPanel extends AbstractListenerContainer<IGuiController
 	private void drawToScreenImage(final BufferedImage imagePart, final int x, final int y) {
 		final Graphics2D g = image.createGraphics();
 		
-		ImageUtils.applyHighGraphics(g);
+		ImageUtils.applyLowGraphics(g);
 		
 		g.drawImage(imagePart, x, y, null);
 		g.dispose();
