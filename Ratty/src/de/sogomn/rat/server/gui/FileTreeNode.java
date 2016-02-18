@@ -35,10 +35,14 @@ public final class FileTreeNode implements MutableTreeNode {
 	}
 	
 	@Override
-	public void insert(final MutableTreeNode child, final int index) {
+	public void insert(final MutableTreeNode child, int index) {
 		final boolean fileTreeNode = child instanceof FileTreeNode;
+		final int size = children.size();
 		
-		if (index < 0 || index > children.size() || !fileTreeNode) {
+		/*To reverse the order*/
+		index = size - index;
+		
+		if (index < 0 || index > size || !fileTreeNode) {
 			return;
 		}
 		
