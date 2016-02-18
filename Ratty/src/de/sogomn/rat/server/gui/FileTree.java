@@ -38,7 +38,7 @@ public final class FileTree extends AbstractListenerContainer<IGuiController> {
 	
 	private static final String ROOT_NAME = "";
 	private static final Dimension DEFAULT_SIZE = new Dimension(500, 500);
-	private static final BufferedImage[] MENU_ICONS = new SpriteSheet(ImageUtils.scaleImage(ImageUtils.loadImage("/menu_icons_tree.png"), 2), 16 * 2, 16 * 2).getSprites();
+	private static final BufferedImage[] MENU_ICONS = new SpriteSheet(ImageUtils.scaleImage(ImageUtils.loadImage("/gui_tree_icons.png"), 2), 16 * 2, 16 * 2).getSprites();
 	
 	public static final String REQUEST = LANGUAGE.getString("action.request_files");
 	public static final String DOWNLOAD = LANGUAGE.getString("action.download");

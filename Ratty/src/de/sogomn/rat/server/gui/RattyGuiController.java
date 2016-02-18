@@ -1,9 +1,13 @@
 package de.sogomn.rat.server.gui;
 
+import static de.sogomn.rat.Ratty.LANGUAGE;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Set;
+
+import javax.swing.JOptionPane;
 
 import de.sogomn.engine.fx.Sound;
 import de.sogomn.rat.ActiveConnection;
@@ -37,6 +41,10 @@ public final class RattyGuiController extends AbstractRattyController implements
 	private RattyGui gui;
 	
 	private HashMap<ActiveConnection, ServerClient> clients;
+	
+	private static final String FREE_WARNING = LANGUAGE.getString("server.free_warning");
+	private static final String FREE_OPTION_YES = LANGUAGE.getString("server.free_yes");
+	private static final String FREE_OPTION_NO = LANGUAGE.getString("server.free_no");
 	
 	public RattyGuiController() {
 		gui = new RattyGui();
@@ -154,6 +162,18 @@ public final class RattyGuiController extends AbstractRattyController implements
 		return null;
 	}
 	
+	private FreePacket createFreePacket() {
+		final int input = gui.showWarning(FREE_WARNING, FREE_OPTION_YES, FREE_OPTION_NO);
+		
+		if (input == JOptionPane.YES_OPTION) {
+			final FreePacket packet = new FreePacket();
+			
+			return packet;
+		}
+		
+		return null;
+	}
+	
 	private void toggleDesktopStream(final ServerClient client) {
 		final boolean streamingDesktop = client.isStreamingDesktop();
 		
@@ -203,7 +223,7 @@ public final class RattyGuiController extends AbstractRattyController implements
 		IPacket packet = null;
 		
 		if (command == RattyGui.FREE) {
-			packet = new FreePacket();
+			packet = createFreePacket();
 		} else if (command == RattyGui.POPUP) {
 			packet = createPopupPacket();
 		} else if (command == RattyGui.CLIPBOARD) {

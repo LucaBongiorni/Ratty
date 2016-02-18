@@ -183,7 +183,7 @@ public final class Ratty {
 				if (port != -1) {
 					startServer(port, true);
 				} else {
-					JOptionPane.showMessageDialog(null, PORT_ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, PORT_ERROR_MESSAGE, null, JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		}
