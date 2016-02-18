@@ -1,13 +1,10 @@
 package de.sogomn.rat;
 
-import java.awt.Font;
-import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ResourceBundle;
-import java.util.stream.Stream;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -69,8 +66,6 @@ public final class Ratty {
 		} catch (final Exception ex) {
 			ex.printStackTrace();
 		}
-		
-		Stream.of(GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts()).map(Font::getName).forEach(name -> System.out.println(name));
 	}
 	
 	private static void readConnectionData() throws ArrayIndexOutOfBoundsException, NumberFormatException {
