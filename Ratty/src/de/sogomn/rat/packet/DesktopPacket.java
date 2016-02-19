@@ -8,6 +8,7 @@ import de.sogomn.engine.util.ImageUtils;
 import de.sogomn.rat.ActiveConnection;
 import de.sogomn.rat.util.FrameEncoder;
 import de.sogomn.rat.util.FrameEncoder.IFrame;
+import de.sogomn.rat.util.QuickLZ;
 
 public final class DesktopPacket extends AbstractPingPongPacket {
 	
@@ -41,7 +42,8 @@ public final class DesktopPacket extends AbstractPingPongPacket {
 	@Override
 	protected void sendData(final ActiveConnection connection) {
 		Stream.of(frames).forEach(frame -> {
-			final byte[] data = ImageUtils.toByteArray(frame.image, 0);
+			byte[] data = ImageUtils.toByteArray(frame.image, 0);
+			data = QuickLZ.compress(data);
 			
 			connection.writeByte(INCOMING);
 			connection.writeShort((short)frame.x);
@@ -68,9 +70,10 @@ public final class DesktopPacket extends AbstractPingPongPacket {
 			final int x = connection.readShort();
 			final int y = connection.readShort();
 			final int length = connection.readInt();
-			final byte[] data = new byte[length];
 			
+			byte[] data = new byte[length];
 			connection.read(data);
+			data = QuickLZ.decompress(data);
 			
 			final BufferedImage image = ImageUtils.toImage(data);
 			final IFrame frame = new IFrame(x, y, image);
