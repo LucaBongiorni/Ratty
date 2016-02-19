@@ -25,7 +25,7 @@ final class GUISettings {
 	private static final Color BRIGHTER = new Color(255, 220, 190);
 	private static final Color DARKER = new Color(225, 185, 155);
 	private static final Color ALTERNATIVE = new Color(245, 235, 215);
-	private static final Color SELECTION = new Color(100, 115, 155);
+	private static final Color SELECTION = new Color(105, 120, 155);
 	
 	private static final EmptyBorder TABLE_CELL_BORDER = new EmptyBorder(2, 5, 2, 5);
 	

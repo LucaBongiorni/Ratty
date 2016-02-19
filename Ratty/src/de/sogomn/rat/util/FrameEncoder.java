@@ -20,11 +20,11 @@ public final class FrameEncoder {
 	
 	private static final int SKIP = 5;
 	
-	private static final int CELLS_WIDE = 8;
-	private static final int CELLS_HIGH = 8;
+	private static final int CELLS_WIDE = 6;
+	private static final int CELLS_HIGH = 6;
 	private static final IFrame[] EMPTY_ARRAY = new IFrame[0];
 	
-	private static final int CURSOR_SIZE = 10;
+	private static final int CURSOR_SIZE = 16;
 	private static final Stroke CURSOR_STROKE = new BasicStroke(3);
 	
 	private FrameEncoder() {

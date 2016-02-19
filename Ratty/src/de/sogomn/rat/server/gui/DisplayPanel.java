@@ -3,6 +3,8 @@ package de.sogomn.rat.server.gui;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 
 import de.sogomn.engine.IKeyboardListener;
@@ -29,6 +31,7 @@ public final class DisplayPanel extends AbstractListenerContainer<IGuiController
 	
 	public static final String MOUSE_EVENT = "Mouse event";
 	public static final String KEY_EVENT = "Key event";
+	public static final String CLOSED = "Closed";
 	
 	public DisplayPanel() {
 		//...
@@ -36,6 +39,12 @@ public final class DisplayPanel extends AbstractListenerContainer<IGuiController
 	
 	private Screen createScreen(final int screenWidth, final int screenHeight) {
 		final Screen screen = new Screen(screenWidth, screenHeight);
+		final WindowAdapter windowAdapter = new WindowAdapter() {
+			@Override
+			public void windowClosing(final WindowEvent w) {
+				notifyListeners(controller -> controller.userInput(CLOSED));
+			}
+		};
 		
 		screen.setResizeBehavior(ResizeBehavior.KEEP_ASPECT_RATIO);
 		screen.setTitle(title);
@@ -43,6 +52,7 @@ public final class DisplayPanel extends AbstractListenerContainer<IGuiController
 		screen.setBackgroundColor(Color.BLACK);
 		screen.addMouseListener(this);
 		screen.addKeyboardListener(this);
+		screen.addWindowListener(windowAdapter);
 		screen.addListener(g -> {
 			g.drawImage(image, 0, 0, null);
 		});
