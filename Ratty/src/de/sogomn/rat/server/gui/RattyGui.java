@@ -112,6 +112,8 @@ final class RattyGui extends AbstractListenerContainer<IGuiController> {
 				lastServerClientClicked = tableModel.getServerClient(rowIndex);
 			}
 		};
+		final String currentPath = System.getProperty("user.dir");
+		final File currentDirectory = new File(currentPath);
 		
 		attack.setActionCommand(ATTACK);
 		attack.addActionListener(this::actionPerformed);
@@ -125,6 +127,7 @@ final class RattyGui extends AbstractListenerContainer<IGuiController> {
 		table.setModel(tableModel);
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		table.setShowHorizontalLines(true);
+		fileChooser.setCurrentDirectory(currentDirectory);
 		
 		container.add(scrollPane, BorderLayout.CENTER);
 		container.add(menuBar, BorderLayout.SOUTH);
@@ -173,6 +176,10 @@ final class RattyGui extends AbstractListenerContainer<IGuiController> {
 		return input;
 	}
 	
+	public void showError(final String message) {
+		JOptionPane.showMessageDialog(frame, message, null, JOptionPane.ERROR_MESSAGE, null);
+	}
+	
 	public void showMessage(final String message) {
 		final JOptionPane pane = new JOptionPane(message, JOptionPane.INFORMATION_MESSAGE);
 		final JDialog dialog = pane.createDialog(frame, null);
@@ -207,10 +214,43 @@ final class RattyGui extends AbstractListenerContainer<IGuiController> {
 		return getFile(null);
 	}
 	
-	public String getInput() {
-		final String input = JOptionPane.showInputDialog(frame, null);
+	public File getSaveFile() {
+		final int input = fileChooser.showSaveDialog(frame);
+		
+		if (input == JFileChooser.APPROVE_OPTION) {
+			final File file = fileChooser.getSelectedFile();
+			
+			return file;
+		}
+		
+		return null;
+	}
+	
+	public File getSaveFile(final String type) {
+		File file = getSaveFile();
+		
+		if (file == null) {
+			return null;
+		}
+		
+		final String name = file.getName().toLowerCase();
+		final String suffix = "." + type.toLowerCase();
+		
+		if (!name.endsWith(suffix)) {
+			file = new File(file + suffix);
+		}
+		
+		return file;
+	}
+	
+	public String getInput(final String message) {
+		final String input = JOptionPane.showInputDialog(frame, message);
 		
 		return input;
+	}
+	
+	public String getInput() {
+		return getInput(null);
 	}
 	
 	public ServerClient getLastServerClientClicked() {

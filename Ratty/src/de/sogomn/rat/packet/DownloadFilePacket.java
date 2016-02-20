@@ -4,6 +4,7 @@ import java.io.File;
 
 import de.sogomn.engine.util.FileUtils;
 import de.sogomn.rat.ActiveConnection;
+import de.sogomn.rat.util.QuickLZ;
 
 public final class DownloadFilePacket extends AbstractPingPongPacket {
 	
@@ -31,8 +32,10 @@ public final class DownloadFilePacket extends AbstractPingPongPacket {
 	
 	@Override
 	protected void sendData(final ActiveConnection connection) {
-		connection.writeInt(data.length);
-		connection.write(data);
+		final byte[] compressed = QuickLZ.compress(data);
+		
+		connection.writeInt(compressed.length);
+		connection.write(compressed);
 		connection.writeUTF(fileName);
 	}
 	
@@ -46,9 +49,8 @@ public final class DownloadFilePacket extends AbstractPingPongPacket {
 		final int length = connection.readInt();
 		
 		data = new byte[length];
-		
 		connection.read(data);
-		
+		data = QuickLZ.decompress(data);
 		fileName = connection.readUTF();
 		
 	}

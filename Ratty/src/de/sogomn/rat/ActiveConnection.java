@@ -11,7 +11,6 @@ import de.sogomn.rat.packet.PacketType;
 public final class ActiveConnection extends TCPConnection {
 	
 	private LinkedBlockingQueue<IPacket> packetQueue;
-	
 	private Thread sender, reader;
 	
 	private IConnectionObserver observer;

