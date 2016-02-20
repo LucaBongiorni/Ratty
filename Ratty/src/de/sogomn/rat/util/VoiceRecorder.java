@@ -36,7 +36,8 @@ public final class VoiceRecorder {
 			line.start();
 			thread.start();
 		} catch (final LineUnavailableException ex) {
-			ex.printStackTrace();
+			running = false;
+			data = new byte[0];
 		}
 	}
 	
