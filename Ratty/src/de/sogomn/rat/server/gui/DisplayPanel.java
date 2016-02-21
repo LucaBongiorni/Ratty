@@ -45,6 +45,7 @@ public final class DisplayPanel extends AbstractListenerContainer<IGuiController
 				notifyListeners(controller -> controller.userInput(CLOSED));
 			}
 		};
+		final BufferedImage[] icons = RattyGui.GUI_ICONS.stream().toArray(BufferedImage[]::new);
 		
 		screen.setResizeBehavior(ResizeBehavior.KEEP_ASPECT_RATIO);
 		screen.setTitle(title);
@@ -56,6 +57,7 @@ public final class DisplayPanel extends AbstractListenerContainer<IGuiController
 		screen.addListener(g -> {
 			g.drawImage(image, 0, 0, null);
 		});
+		screen.setIcons(icons);
 		
 		return screen;
 	}

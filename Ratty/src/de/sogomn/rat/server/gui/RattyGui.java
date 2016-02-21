@@ -55,8 +55,9 @@ final class RattyGui extends AbstractListenerContainer<IGuiController> {
 	private static final BufferedImage GUI_ICON_MEDIUM = ImageUtils.scaleImage(GUI_ICON_SMALL, 64, 64);
 	private static final BufferedImage GUI_ICON_LARGE = ImageUtils.scaleImage(GUI_ICON_SMALL, 128, 128);
 	private static final BufferedImage GUI_ICON_HUGE = ImageUtils.scaleImage(GUI_ICON_SMALL, 256, 256);
-	private static final List<BufferedImage> GUI_ICONS = Arrays.asList(GUI_ICON_SMALL, GUI_ICON_MEDIUM, GUI_ICON_LARGE, GUI_ICON_HUGE);
 	private static final BufferedImage[] MENU_ICONS = new SpriteSheet(ImageUtils.scaleImage(ImageUtils.loadImage("/gui_menu_icons.png"), 2), 16 * 2, 16 * 2).getSprites();
+	
+	public static final List<BufferedImage> GUI_ICONS = Arrays.asList(GUI_ICON_SMALL, GUI_ICON_MEDIUM, GUI_ICON_LARGE, GUI_ICON_HUGE);
 	
 	public static final String POPUP = LANGUAGE.getString("action.popup");
 	public static final String SCREENSHOT = LANGUAGE.getString("action.screenshot");
