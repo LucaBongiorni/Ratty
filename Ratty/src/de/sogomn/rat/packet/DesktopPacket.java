@@ -88,7 +88,7 @@ public final class DesktopPacket extends AbstractPingPongPacket {
 	
 	@Override
 	protected void executeRequest(final ActiveConnection connection) {
-		final BufferedImage screenshot = FrameEncoder.takeScreenshotWithCursor();
+		final BufferedImage screenshot = FrameEncoder.captureScreen();
 		
 		if (deleteLastScreenshot == DELETE || lastScreenshot == null) {
 			final IFrame frame = new IFrame(0, 0, screenshot);

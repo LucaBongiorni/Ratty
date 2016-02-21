@@ -23,7 +23,7 @@ public final class FrameEncoder {
 	private static final int CELLS_WIDE = 6;
 	private static final int CELLS_HIGH = 6;
 	private static final IFrame[] EMPTY_ARRAY = new IFrame[0];
-	
+	private static final float CAPTURE_SCALING = 0.5f;
 	private static final int CURSOR_SIZE = 16;
 	private static final Stroke CURSOR_STROKE = new BasicStroke(3);
 	
@@ -47,16 +47,17 @@ public final class FrameEncoder {
 		}
 	}
 	
-	public static BufferedImage takeScreenshotWithCursor() {
-		final BufferedImage image = takeScreenshot();
+	public static BufferedImage captureScreen() {
+		BufferedImage image = takeScreenshot();
+		image = ImageUtils.scaleImage(image, CAPTURE_SCALING);
 		
 		if (image == null) {
 			return null;
 		}
 		
 		final Point mousePoint = MouseInfo.getPointerInfo().getLocation();
-		final int mouseX = mousePoint.x - CURSOR_SIZE / 2;
-		final int mouseY = mousePoint.y - CURSOR_SIZE / 2;
+		final int mouseX = (int)((mousePoint.x - CURSOR_SIZE / 2) * CAPTURE_SCALING);
+		final int mouseY = (int)((mousePoint.y - CURSOR_SIZE / 2) * CAPTURE_SCALING);
 		
 		final Graphics2D g = image.createGraphics();
 		

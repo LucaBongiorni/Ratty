@@ -33,6 +33,16 @@ public final class JarBuilder {
 		//...
 	}
 	
+	public static void removeFile(final File jar, final String file) throws IOException {
+		final Path jarPath = jar.toPath();
+		final FileSystem fileSystem = FileSystems.newFileSystem(jarPath, null);
+		final Path path = fileSystem.getPath(file);
+		
+		Files.delete(path);
+		
+		fileSystem.close();
+	}
+	
 	public static void build(final File destination, final String replacement, final byte[] replacementData) throws IOException {
 		FileUtils.copyFile(JAR_FILE, destination);
 		
