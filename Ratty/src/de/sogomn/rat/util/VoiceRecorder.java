@@ -1,7 +1,8 @@
 package de.sogomn.rat.util;
 
+import java.util.function.Consumer;
+
 import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.TargetDataLine;
 
 public final class VoiceRecorder {
@@ -11,6 +12,8 @@ public final class VoiceRecorder {
 	private boolean running;
 	
 	private byte[] data;
+	
+	private Consumer<VoiceRecorder> observer;
 	
 	public VoiceRecorder(final int bufferSize) {
 		data = new byte[bufferSize];
@@ -24,6 +27,10 @@ public final class VoiceRecorder {
 		final Runnable runnable = () -> {
 			while (running) {
 				line.read(data, 0, data.length);
+				
+				if (observer != null) {
+					observer.accept(this);
+				}
 			}
 		};
 		
@@ -35,9 +42,12 @@ public final class VoiceRecorder {
 			line.open();
 			line.start();
 			thread.start();
-		} catch (final LineUnavailableException ex) {
-			running = false;
+		} catch (final Exception ex) {
+			stop();
+			
 			data = new byte[0];
+			
+			ex.printStackTrace();
 		}
 	}
 	
@@ -48,12 +58,20 @@ public final class VoiceRecorder {
 		
 		running = false;
 		
-		thread.interrupt();
-		line.stop();
-		line.close();
+		try {
+			thread.interrupt();
+			line.stop();
+			line.close();
+		} catch (final Exception ex) {
+			ex.printStackTrace();
+		}
 		
 		thread = null;
 		line = null;
+	}
+	
+	public void setObserver(final Consumer<VoiceRecorder> observer) {
+		this.observer = observer;
 	}
 	
 	public boolean isRunning() {

