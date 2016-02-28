@@ -49,7 +49,7 @@ final class RattyGui extends AbstractListenerContainer<IGuiController> {
 	
 	private ServerClient lastServerClientClicked;
 	
-	private static final Dimension SIZE = new Dimension(800, 600);
+	private static final Dimension SIZE = new Dimension(950, 600);
 	
 	private static final BufferedImage GUI_ICON_SMALL = ImageUtils.loadImage("/gui_icon.png");
 	private static final BufferedImage GUI_ICON_MEDIUM = ImageUtils.scaleImage(GUI_ICON_SMALL, 64, 64);
