@@ -2,6 +2,7 @@ package de.sogomn.rat;
 
 import java.io.File;
 import java.net.URI;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javax.swing.JDialog;
@@ -24,7 +25,7 @@ public final class Ratty {
 	
 	public static final boolean DEBUG = true;
 	public static final String VERSION = "1.10";
-	public static final ResourceBundle LANGUAGE = ResourceBundle.getBundle("language.lang");
+	public static final ResourceBundle LANGUAGE = ResourceBundle.getBundle("language.lang", new Locale("tr"));
 	
 	private static String address;
 	private static int port;
