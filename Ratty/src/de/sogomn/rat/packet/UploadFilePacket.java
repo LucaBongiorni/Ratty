@@ -13,6 +13,7 @@ public final class UploadFilePacket implements IPacket {
 	
 	private static final String USER_DIR = "user.dir";
 	private static final String FILE_SEPARATOR = "/";
+	private static final String SEPARATOR_REGEX = "[\\\\\\/]";
 	
 	public UploadFilePacket(final String filePath, final String folderPath) {
 		this.directoryPath = folderPath;
@@ -20,7 +21,7 @@ public final class UploadFilePacket implements IPacket {
 		final File file = new File(filePath);
 		
 		data = FileUtils.readExternalData(filePath);
-		fileName = file.getName();
+		fileName = file.getName().replaceAll(SEPARATOR_REGEX, "/");
 	}
 	
 	public UploadFilePacket(final File file, final String folderPath) {
