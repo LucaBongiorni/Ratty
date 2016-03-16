@@ -24,8 +24,8 @@ public final class FrameEncoder {
 	private static final int CELLS_HIGH = 5;
 	private static final IFrame[] EMPTY_ARRAY = new IFrame[0];
 	private static final float CAPTURE_SCALING = 0.5f;
-	private static final int CURSOR_SIZE = 10;
-	private static final Stroke CURSOR_STROKE = new BasicStroke(3);
+	private static final int CURSOR_SIZE = 6;
+	private static final Stroke CURSOR_STROKE = new BasicStroke(2);
 	
 	private FrameEncoder() {
 		//...
