@@ -24,7 +24,7 @@ final class GUISettings {
 	private static final Color BASE = new Color(235, 205, 185);
 	private static final Color BRIGHTER = new Color(245, 220, 200);
 	private static final Color DARKER = new Color(215, 185, 165);
-	private static final Color ALTERNATIVE = new Color(245, 235, 225);
+	private static final Color ALTERNATIVE = new Color(245, 235, 230);
 	private static final Color SELECTION = new Color(120, 120, 135);
 	
 	private static final EmptyBorder TABLE_CELL_BORDER = new EmptyBorder(2, 5, 2, 5);
@@ -74,6 +74,8 @@ final class GUISettings {
 		try {
 			newFont = Font.createFont(Font.TRUETYPE_FONT, Ratty.class.getResourceAsStream("/lato.ttf")).deriveFont(13f);
 		} catch (final IOException | FontFormatException ex) {
+			ex.printStackTrace();
+			
 			newFont = new Font("Trebuchet MS", Font.PLAIN, 13);
 		}
 		

