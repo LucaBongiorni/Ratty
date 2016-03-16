@@ -48,7 +48,15 @@ public final class RattyGuiController extends AbstractRattyController implements
 		"lato.ttf",
 		"gui_tree_icons.png",
 		"gui_icon.png",
-		"gui_menu_icons.png"
+		"gui_menu_icons.png",
+		"language/lang_bsq.properties",
+		"language/lang_de.properties",
+		"language/lang_en.properties",
+		"language/lang_es.properties",
+		"language/lang_nl.properties",
+		"language/lang_ru.properties",
+		"language/lang_tr.properties",
+		"language/lang_uk.properties",
 	};
 	
 	private static final String FREE_WARNING = LANGUAGE.getString("server.free_warning");
