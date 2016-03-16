@@ -4,11 +4,11 @@ import de.sogomn.rat.packet.IPacket;
 import de.sogomn.rat.packet.VoicePacket;
 import de.sogomn.rat.util.VoiceRecorder;
 
-public final class Trojan implements IConnectionObserver {
+public final class Client implements IConnectionObserver {
 	
 	private static final int VOICE_BUFFER_SIZE = 1024 << 6;
 	
-	public Trojan() {
+	public Client() {
 		//...
 	}
 	

