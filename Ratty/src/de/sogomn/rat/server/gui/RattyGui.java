@@ -32,6 +32,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import de.sogomn.engine.fx.SpriteSheet;
 import de.sogomn.engine.util.AbstractListenerContainer;
 import de.sogomn.engine.util.ImageUtils;
+import de.sogomn.rat.Ratty;
 
 final class RattyGui extends AbstractListenerContainer<IGuiController> {
 	
@@ -50,7 +51,7 @@ final class RattyGui extends AbstractListenerContainer<IGuiController> {
 	private ServerClient lastServerClientClicked;
 	
 	private static final Dimension SIZE = new Dimension(1150, 600);
-	private static final String TITLE = "Ratty";
+	private static final String TITLE = "Ratty " + Ratty.VERSION;
 	
 	private static final BufferedImage GUI_ICON_SMALL = ImageUtils.loadImage("/gui_icon.png");
 	private static final BufferedImage GUI_ICON_MEDIUM = ImageUtils.scaleImage(GUI_ICON_SMALL, 64, 64);
