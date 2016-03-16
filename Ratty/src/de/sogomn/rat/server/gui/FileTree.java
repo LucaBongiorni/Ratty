@@ -7,7 +7,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.io.File;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -37,6 +36,7 @@ public final class FileTree extends AbstractListenerContainer<IGuiController> {
 	private FileTreeNode lastNodeClicked;
 	
 	private static final String ROOT_NAME = "";
+	private static final String SEPARATOR_REGEX = "[\\\\\\/]";
 	private static final Dimension DEFAULT_SIZE = new Dimension(500, 500);
 	private static final BufferedImage[] MENU_ICONS = new SpriteSheet(ImageUtils.scaleImage(ImageUtils.loadImage("/gui_tree_icons.png"), 2), 16 * 2, 16 * 2).getSprites();
 	
@@ -140,7 +140,7 @@ public final class FileTree extends AbstractListenerContainer<IGuiController> {
 	}
 	
 	public void addNodeStructure(final String path) {
-		final String[] parts = path.split("\\" + File.separator);
+		final String[] parts = path.split(SEPARATOR_REGEX);
 		
 		if (parts.length == 0) {
 			final String[] part = {path};

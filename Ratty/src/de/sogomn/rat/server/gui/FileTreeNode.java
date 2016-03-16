@@ -1,6 +1,5 @@
 package de.sogomn.rat.server.gui;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -14,6 +13,8 @@ public final class FileTreeNode implements MutableTreeNode {
 	private ArrayList<FileTreeNode> children;
 	
 	private String name;
+	
+	private static final String FILE_SEPARATOR = "/";
 	
 	public FileTreeNode(final String name) {
 		this.name = name;
@@ -144,7 +145,7 @@ public final class FileTreeNode implements MutableTreeNode {
 		while (current != null) {
 			final String name = current.getName();
 			
-			builder.insert(0, name + File.separator);
+			builder.insert(0, name + FILE_SEPARATOR);
 			
 			current = current.getParent();
 		}

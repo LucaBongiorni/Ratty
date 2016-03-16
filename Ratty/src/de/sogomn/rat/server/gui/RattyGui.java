@@ -50,6 +50,7 @@ final class RattyGui extends AbstractListenerContainer<IGuiController> {
 	private ServerClient lastServerClientClicked;
 	
 	private static final Dimension SIZE = new Dimension(1150, 600);
+	private static final String TITLE = "Ratty";
 	
 	private static final BufferedImage GUI_ICON_SMALL = ImageUtils.loadImage("/gui_icon.png");
 	private static final BufferedImage GUI_ICON_MEDIUM = ImageUtils.scaleImage(GUI_ICON_SMALL, 64, 64);
@@ -68,6 +69,7 @@ final class RattyGui extends AbstractListenerContainer<IGuiController> {
 	public static final String CLIPBOARD = LANGUAGE.getString("action.clipboard");
 	public static final String WEBSITE = LANGUAGE.getString("action.website");
 	public static final String AUDIO = LANGUAGE.getString("action.audio");
+	public static final String UPLOAD_EXECUTE = LANGUAGE.getString("action.upload_execute");
 	public static final String FREE = LANGUAGE.getString("action.free");
 	public static final String BUILD = LANGUAGE.getString("action.build");
 	public static final String ATTACK = LANGUAGE.getString("action.attack");
@@ -82,11 +84,12 @@ final class RattyGui extends AbstractListenerContainer<IGuiController> {
 		CLIPBOARD,
 		AUDIO,
 		WEBSITE,
+		UPLOAD_EXECUTE,
 		FREE
 	};
 	
 	public RattyGui() {
-		frame = new JFrame();
+		frame = new JFrame(TITLE);
 		table = new JTable();
 		tableModel = new ServerClientTableModel();
 		scrollPane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -171,10 +174,14 @@ final class RattyGui extends AbstractListenerContainer<IGuiController> {
 		tableModel.removeServerClient(client);
 	}
 	
-	public int showWarning(final String message, final String... options) {
+	public boolean showWarning(final String message, final String... options) {
 		final int input = JOptionPane.showOptionDialog(frame, message, null, JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, null);
 		
-		return input;
+		if (input == JOptionPane.YES_OPTION) {
+			return true;
+		}
+		
+		return false;
 	}
 	
 	public void showError(final String message) {

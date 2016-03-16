@@ -9,6 +9,8 @@ public final class CreateDirectoryPacket implements IPacket {
 	
 	private String path, name;
 	
+	private static final String FILE_SEPARATOR = "/";
+	
 	public CreateDirectoryPacket(final String path, final String name) {
 		this.path = path;
 		this.name = name;
@@ -37,12 +39,12 @@ public final class CreateDirectoryPacket implements IPacket {
 		String fullPath = null;
 		
 		if (folder.isDirectory()) {
-			fullPath = path + File.separator + name;
+			fullPath = path + FILE_SEPARATOR + name;
 		} else {
 			final File parent = folder.getParentFile();
 			
 			if (parent != null) {
-				fullPath = parent.getAbsolutePath() + File.separator + name;
+				fullPath = parent.getAbsolutePath() + FILE_SEPARATOR + name;
 			}
 		}
 		

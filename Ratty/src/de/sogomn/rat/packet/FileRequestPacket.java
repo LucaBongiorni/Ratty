@@ -14,6 +14,7 @@ public class FileRequestPacket extends AbstractPingPongPacket {
 	
 	private static final byte INCOMING = 1;
 	private static final byte END = 0;
+	private static final String FILE_SEPARATOR = "/";
 	
 	public FileRequestPacket(final String rootFile) {
 		this.rootFile = rootFile;
@@ -66,7 +67,7 @@ public class FileRequestPacket extends AbstractPingPongPacket {
 	protected void executeRequest(final ActiveConnection connection) {
 		final File[] children;
 		
-		if (rootFile.isEmpty() || rootFile.equals(File.separator)) {
+		if (rootFile.isEmpty() || rootFile.equals(FILE_SEPARATOR)) {
 			children = File.listRoots();
 		} else {
 			final File file = new File(rootFile);
