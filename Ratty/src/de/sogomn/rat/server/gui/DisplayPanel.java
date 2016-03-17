@@ -55,6 +55,8 @@ public final class DisplayPanel extends AbstractListenerContainer<IGuiController
 		screen.addKeyboardListener(this);
 		screen.addWindowListener(windowAdapter);
 		screen.addListener(g -> {
+			ImageUtils.applyLowGraphics(g);
+			
 			g.drawImage(image, 0, 0, null);
 		});
 		screen.setIcons(icons);
