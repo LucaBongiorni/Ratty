@@ -23,6 +23,7 @@ import de.sogomn.rat.packet.FileRequestPacket;
 import de.sogomn.rat.packet.FreePacket;
 import de.sogomn.rat.packet.IPacket;
 import de.sogomn.rat.packet.InformationPacket;
+import de.sogomn.rat.packet.PingPacket;
 import de.sogomn.rat.packet.PopupPacket;
 import de.sogomn.rat.packet.ScreenshotPacket;
 import de.sogomn.rat.packet.UploadFilePacket;
@@ -386,6 +387,14 @@ public final class RattyGuiController extends AbstractRattyController implements
 		sound.play();
 	}
 	
+	private void handlePing(final ServerClient client, final PingPacket packet) {
+		final long milliseconds = packet.getMilliseconds();
+		
+		client.setPing(milliseconds);
+		
+		gui.update();
+	}
+	
 	private boolean handlePacket(final ServerClient client, final IPacket packet) {
 		final Class<? extends IPacket> clazz = packet.getClass();
 		
@@ -411,6 +420,10 @@ public final class RattyGuiController extends AbstractRattyController implements
 			final VoicePacket voice = (VoicePacket)packet;
 			
 			handleVoicePacket(client, voice);
+		} else if (clazz == PingPacket.class) {
+			final PingPacket ping = (PingPacket)packet;
+			
+			handlePing(client, ping);
 		} else {
 			consumed = false;
 		}
@@ -436,7 +449,6 @@ public final class RattyGuiController extends AbstractRattyController implements
 		client.addListener(this);
 		
 		gui.addRow(client);
-		
 		notification.trigger();
 		PING.play();
 	}
@@ -496,7 +508,10 @@ public final class RattyGuiController extends AbstractRattyController implements
 		final IPacket packet = createPacket(client, command);
 		
 		if (packet != null) {
+			final PingPacket ping = new PingPacket();
+			
 			client.connection.addPacket(packet);
+			client.connection.addPacket(ping);
 		}
 		
 		handleCommand(client, command);

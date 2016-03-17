@@ -74,6 +74,7 @@ final class RattyGui extends AbstractListenerContainer<IGuiController> {
 	public static final String FREE = LANGUAGE.getString("action.free");
 	public static final String BUILD = LANGUAGE.getString("action.build");
 	public static final String ATTACK = LANGUAGE.getString("action.attack");
+	public static final String CHANGE_VOLUME = LANGUAGE.getString("action.change_volume");
 	
 	public static final String[] COMMANDS = {
 		POPUP,
@@ -107,8 +108,8 @@ final class RattyGui extends AbstractListenerContainer<IGuiController> {
 			addMenuItem(command, image);
 		}
 		
-		final Container container = frame.getContentPane();
-		final MouseAdapter mouseAdapter = new MouseAdapter() {
+		final Container contentPane = frame.getContentPane();
+		final MouseAdapter tableMouseAdapter = new MouseAdapter() {
 			@Override
 			public void mousePressed(final MouseEvent m) {
 				final Point mousePoint = m.getPoint();
@@ -128,14 +129,14 @@ final class RattyGui extends AbstractListenerContainer<IGuiController> {
 		menuBar.add(attack);
 		scrollPane.setBorder(null);
 		table.setComponentPopupMenu(menu);
-		table.addMouseListener(mouseAdapter);
+		table.addMouseListener(tableMouseAdapter);
 		table.setModel(tableModel);
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		table.setShowHorizontalLines(true);
 		fileChooser.setCurrentDirectory(currentDirectory);
 		
-		container.add(scrollPane, BorderLayout.CENTER);
-		container.add(menuBar, BorderLayout.SOUTH);
+		contentPane.add(scrollPane, BorderLayout.CENTER);
+		contentPane.add(menuBar, BorderLayout.SOUTH);
 		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setPreferredSize(SIZE);

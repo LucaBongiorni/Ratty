@@ -18,13 +18,12 @@ import de.sogomn.engine.util.ImageUtils;
 
 public final class FrameEncoder {
 	
-	private static final int SKIP = 5;
+	private static final int SKIP = 6;
 	
-	private static final int CELLS_WIDE = 5;
-	private static final int CELLS_HIGH = 5;
+	private static final int CELLS_WIDE = 6;
+	private static final int CELLS_HIGH = 6;
 	private static final IFrame[] EMPTY_ARRAY = new IFrame[0];
-	private static final float CAPTURE_SCALING = 0.5f;
-	private static final int CURSOR_SIZE = 6;
+	private static final int CURSOR_SIZE = 8;
 	private static final Stroke CURSOR_STROKE = new BasicStroke(2);
 	
 	private FrameEncoder() {
@@ -48,17 +47,15 @@ public final class FrameEncoder {
 	}
 	
 	public static BufferedImage captureScreen() {
-		BufferedImage image = takeScreenshot();
-		image = ImageUtils.scaleImage(image, CAPTURE_SCALING);
+		final BufferedImage image = takeScreenshot();
 		
 		if (image == null) {
 			return null;
 		}
 		
 		final Point mousePoint = MouseInfo.getPointerInfo().getLocation();
-		final int mouseX = (int)((mousePoint.x - CURSOR_SIZE / 2) * CAPTURE_SCALING);
-		final int mouseY = (int)((mousePoint.y - CURSOR_SIZE / 2) * CAPTURE_SCALING);
-		
+		final int mouseX = (int)(mousePoint.x - CURSOR_SIZE / 2);
+		final int mouseY = (int)(mousePoint.y - CURSOR_SIZE / 2);
 		final Graphics2D g = image.createGraphics();
 		
 		ImageUtils.applyHighGraphics(g);

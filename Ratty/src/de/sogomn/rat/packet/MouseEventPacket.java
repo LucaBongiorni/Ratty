@@ -41,6 +41,8 @@ public final class MouseEventPacket implements IPacket {
 		y = connection.readInt();
 		button = connection.readInt();
 		strokeType = connection.readByte();
+		
+		System.out.println(x + " " + y);
 	}
 	
 	@Override

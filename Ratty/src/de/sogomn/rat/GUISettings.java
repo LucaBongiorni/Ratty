@@ -87,6 +87,7 @@ final class GUISettings {
 	}
 	
 	public static void setDefaults(final UIDefaults defaults) {
+		defaults.put("nimbusBase", BASE);
 		defaults.put("control", BACKGROUND);
 		defaults.put("MenuBar[Enabled].backgroundPainter", BASE_PAINTER);
 		
@@ -127,13 +128,13 @@ final class GUISettings {
 		defaults.put("TableHeader:\"TableHeader.renderer\"[Enabled+Focused].backgroundPainter", BASE_PAINTER);
 		defaults.put("TableHeader:\"TableHeader.renderer\"[Enabled+Focused+Sorted].backgroundPainter", BASE_PAINTER);
 		
-		defaults.put("ScrollBar:ScrollBarTrack[Enabled].backgroundPainter", DARKER_PAINTER);
-		defaults.put("ScrollBar:ScrollBarThumb[Enabled].backgroundPainter", BASE_PAINTER);
-		defaults.put("ScrollBar:ScrollBarThumb[MouseOver].backgroundPainter", BRIGHTER_PAINTER);
-		defaults.put("ScrollBar:ScrollBarThumb[Pressed].backgroundPainter", BASE_PAINTER);
-		defaults.put("ScrollBar:\"ScrollBar.button\"[Enabled].foregroundPainter", BASE_PAINTER);
-		defaults.put("ScrollBar:\"ScrollBar.button\"[MouseOver].foregroundPainter", BRIGHTER_PAINTER);
-		defaults.put("ScrollBar:\"ScrollBar.button\"[Pressed].foregroundPainter", BASE_PAINTER);
+//		defaults.put("ScrollBar:ScrollBarTrack[Enabled].backgroundPainter", DARKER_PAINTER);
+//		defaults.put("ScrollBar:ScrollBarThumb[Enabled].backgroundPainter", BASE_PAINTER);
+//		defaults.put("ScrollBar:ScrollBarThumb[MouseOver].backgroundPainter", BRIGHTER_PAINTER);
+//		defaults.put("ScrollBar:ScrollBarThumb[Pressed].backgroundPainter", BASE_PAINTER);
+//		defaults.put("ScrollBar:\"ScrollBar.button\"[Enabled].foregroundPainter", BASE_PAINTER);
+//		defaults.put("ScrollBar:\"ScrollBar.button\"[MouseOver].foregroundPainter", BRIGHTER_PAINTER);
+//		defaults.put("ScrollBar:\"ScrollBar.button\"[Pressed].foregroundPainter", BASE_PAINTER);
 		
 		defaults.put("PopupMenu[Enabled].backgroundPainter", BASE_PAINTER);
 		defaults.put("MenuItem[MouseOver].backgroundPainter", SELECTION_PAINTER);

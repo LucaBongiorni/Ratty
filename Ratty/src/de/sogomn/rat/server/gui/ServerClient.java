@@ -8,6 +8,7 @@ final class ServerClient {
 	
 	private String name, location, os, version;
 	private boolean streamingDesktop, streamingVoice;
+	private long ping;
 	
 	public final ActiveConnection connection;
 	public final DisplayPanel displayPanel;
@@ -52,6 +53,10 @@ final class ServerClient {
 		this.streamingVoice = streamingVoice;
 	}
 	
+	public void setPing(final long ping) {
+		this.ping = ping;
+	}
+	
 	public String getName() {
 		return name;
 	}
@@ -82,6 +87,10 @@ final class ServerClient {
 	
 	public boolean isStreamingVoice() {
 		return streamingVoice;
+	}
+	
+	public long getPing() {
+		return ping;
 	}
 	
 }

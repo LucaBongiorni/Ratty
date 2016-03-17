@@ -20,6 +20,7 @@ final class ServerClientTableModel extends AbstractTableModel {
 	private static final Column VERSION = new Column(LANGUAGE.getString("column.version"), String.class, ServerClient::getVersion);
 	private static final Column STREAMING_DESKTOP = new Column(LANGUAGE.getString("column.desktop"), Boolean.class, ServerClient::isStreamingDesktop);
 	private static final Column STREAMING_VOICE = new Column(LANGUAGE.getString("column.voice"), Boolean.class, ServerClient::isStreamingVoice);
+	private static final Column PING = new Column(LANGUAGE.getString("column.ping"), String.class, ServerClient::getPing);
 	
 	public ServerClientTableModel() {
 		serverClients = new ArrayList<ServerClient>();
@@ -32,6 +33,7 @@ final class ServerClientTableModel extends AbstractTableModel {
 		addColumn(VERSION);
 		addColumn(STREAMING_DESKTOP);
 		addColumn(STREAMING_VOICE);
+		addColumn(PING);
 	}
 	
 	public void addColumn(final Column column) {

