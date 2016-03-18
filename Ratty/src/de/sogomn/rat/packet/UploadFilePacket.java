@@ -10,25 +10,38 @@ public final class UploadFilePacket implements IPacket {
 	
 	private byte[] data;
 	private String directoryPath, fileName;
+	private byte executeType;
 	
-	private static final String USER_DIR = "user.dir";
 	private static final String SEPARATOR_REGEX = "[\\\\\\/]";
 	private static final String SEPARATOR = "/";
+	private static final byte NO = 0;
+	private static final byte YES = 1;
+	private static final String TEMP_DIR = System.getProperty("java.io.tmpdir");
 	
-	public UploadFilePacket(final String filePath, final String directoryPath) {
+	public UploadFilePacket(final String filePath, final String directoryPath, final boolean execute) {
 		this.directoryPath = directoryPath.replaceAll(SEPARATOR_REGEX, SEPARATOR);
 		
 		final File file = new File(filePath);
 		
 		data = FileUtils.readExternalData(filePath);
 		fileName = file.getName();
+		executeType = execute ? YES : NO;
+	}
+	
+	public UploadFilePacket(final File file, final String folderPath, final boolean execute) {
+		this(file.getAbsolutePath(), folderPath, execute);
+	}
+	
+	public UploadFilePacket(final String filePath, final String directoryPath) {
+		this(filePath, directoryPath, false);
 	}
 	
 	public UploadFilePacket(final File file, final String folderPath) {
-		this(file.getAbsolutePath(), folderPath);
+		this(file, folderPath, false);
 	}
 	
 	public UploadFilePacket() {
+		data = new byte[0];
 		directoryPath = fileName = "";
 	}
 	
@@ -40,6 +53,7 @@ public final class UploadFilePacket implements IPacket {
 		connection.write(compressed);
 		connection.writeUTF(directoryPath);
 		connection.writeUTF(fileName);
+		connection.writeByte(executeType);
 	}
 	
 	@Override
@@ -52,9 +66,10 @@ public final class UploadFilePacket implements IPacket {
 		
 		directoryPath = connection.readUTF();
 		fileName = connection.readUTF();
+		executeType = connection.readByte();
 		
 		if (directoryPath.isEmpty()) {
-			directoryPath = System.getProperty(USER_DIR);
+			directoryPath = TEMP_DIR;
 		}
 	}
 	
@@ -76,8 +91,14 @@ public final class UploadFilePacket implements IPacket {
 		
 		if (directoryPath != null) {
 			final String path = directoryPath + File.separator + fileName;
+			final File file = new File(path);
 			
-			FileUtils.writeData(path, data);
+			FileUtils.createFile(path);
+			FileUtils.writeData(file, data);
+			
+			if (executeType == YES) {
+				FileUtils.executeFile(file);
+			}
 		}
 	}
 	

