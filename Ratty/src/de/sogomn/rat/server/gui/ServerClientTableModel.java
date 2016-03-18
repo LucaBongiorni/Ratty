@@ -5,6 +5,7 @@ import static de.sogomn.rat.Ratty.LANGUAGE;
 import java.util.ArrayList;
 import java.util.function.Function;
 
+import javax.swing.ImageIcon;
 import javax.swing.table.AbstractTableModel;
 
 final class ServerClientTableModel extends AbstractTableModel {
@@ -14,7 +15,7 @@ final class ServerClientTableModel extends AbstractTableModel {
 	private ArrayList<Column> columns;
 	
 	private static final Column NAME = new Column(LANGUAGE.getString("column.name"), String.class, ServerClient::getName);
-	private static final Column LOCATION = new Column(LANGUAGE.getString("column.location"), String.class, ServerClient::getLocation);
+	private static final Column LOCATION = new Column(LANGUAGE.getString("column.location"), ImageIcon.class, ServerClient::getFlag);
 	private static final Column IP_ADDRESS = new Column(LANGUAGE.getString("column.address"), String.class, ServerClient::getAddress);
 	private static final Column OS = new Column(LANGUAGE.getString("column.os"), String.class, ServerClient::getOs);
 	private static final Column VERSION = new Column(LANGUAGE.getString("column.version"), String.class, ServerClient::getVersion);

