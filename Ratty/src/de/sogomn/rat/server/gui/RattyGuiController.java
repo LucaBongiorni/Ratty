@@ -465,6 +465,8 @@ public final class RattyGuiController extends AbstractRattyController implements
 			final PingPacket ping = (PingPacket)packet;
 			
 			handlePing(client, ping);
+		} else if (clazz == FreePacket.class) {
+			//To prevent shutdown
 		} else {
 			consumed = false;
 		}
