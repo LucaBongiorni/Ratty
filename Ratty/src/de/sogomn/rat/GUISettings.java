@@ -87,7 +87,7 @@ final class GUISettings {
 	}
 	
 	public static void setDefaults(final UIDefaults defaults) {
-		defaults.put("nimbusBase", BASE);
+		defaults.put("nimbusBase", Color.GRAY);
 		defaults.put("control", BACKGROUND);
 		
 		defaults.put("Button[Enabled].backgroundPainter", BASE_PAINTER);
