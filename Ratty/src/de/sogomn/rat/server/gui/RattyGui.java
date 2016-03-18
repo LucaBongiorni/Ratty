@@ -12,13 +12,17 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -28,6 +32,7 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.JTableHeader;
 
 import de.sogomn.engine.fx.SpriteSheet;
 import de.sogomn.engine.util.AbstractListenerContainer;
@@ -56,10 +61,21 @@ final class RattyGui extends AbstractListenerContainer<IGuiController> {
 	private static final BufferedImage GUI_ICON_SMALL = ImageUtils.loadImage("/gui_icon.png");
 	private static final BufferedImage GUI_ICON_MEDIUM = ImageUtils.scaleImage(GUI_ICON_SMALL, 64, 64);
 	private static final BufferedImage GUI_ICON_LARGE = ImageUtils.scaleImage(GUI_ICON_SMALL, 128, 128);
-	private static final BufferedImage GUI_ICON_HUGE = ImageUtils.scaleImage(GUI_ICON_SMALL, 256, 256);
 	private static final BufferedImage[] MENU_ICONS = new SpriteSheet(ImageUtils.scaleImage(ImageUtils.loadImage("/gui_menu_icons.png"), 2), 16 * 2, 16 * 2).getSprites();
+	private static final SpriteSheet CATEGORY_SHEET = new SpriteSheet(ImageUtils.scaleImage(ImageUtils.loadImage("/gui_category_icons.png"), 2), 16 * 2, 16 * 2);
+	private static final BufferedImage FILE_MANAGEMENT_ICON = CATEGORY_SHEET.getSprite(0);
+	private static final BufferedImage SURVEILLANCE_ICON = CATEGORY_SHEET.getSprite(1);
+	private static final BufferedImage UTILITY_ICON = CATEGORY_SHEET.getSprite(2);
+	private static final BufferedImage OTHER_ICON = CATEGORY_SHEET.getSprite(3);
 	
-	public static final List<BufferedImage> GUI_ICONS = Arrays.asList(GUI_ICON_SMALL, GUI_ICON_MEDIUM, GUI_ICON_LARGE, GUI_ICON_HUGE);
+	private static final String FILE_MANAGEMENT = LANGUAGE.getString("menu.file_management");
+	private static final String SURVEILLANCE = LANGUAGE.getString("menu.surveillance");
+	private static final String UTILITY = LANGUAGE.getString("menu.utility");
+	private static final String OTHER = LANGUAGE.getString("menu.other");
+	private static final HashMap<String, BufferedImage> FILE_MANAGEMENT_ITEM_DATA = new HashMap<String, BufferedImage>();
+	private static final HashMap<String, BufferedImage> SURVEILLANCE_ITEM_DATA = new HashMap<String, BufferedImage>();
+	private static final HashMap<String, BufferedImage> UTILITY_ITEM_DATA = new HashMap<String, BufferedImage>();
+	private static final HashMap<String, BufferedImage> OTHER_ITEM_DATA = new HashMap<String, BufferedImage>();
 	
 	public static final String POPUP = LANGUAGE.getString("action.popup");
 	public static final String SCREENSHOT = LANGUAGE.getString("action.screenshot");
@@ -74,21 +90,22 @@ final class RattyGui extends AbstractListenerContainer<IGuiController> {
 	public static final String FREE = LANGUAGE.getString("action.free");
 	public static final String BUILD = LANGUAGE.getString("action.build");
 	public static final String ATTACK = LANGUAGE.getString("action.attack");
-	public static final String CHANGE_VOLUME = LANGUAGE.getString("action.change_volume");
 	
-	public static final String[] COMMANDS = {
-		POPUP,
-		SCREENSHOT,
-		DESKTOP,
-		VOICE,
-		FILES,
-		COMMAND,
-		CLIPBOARD,
-		AUDIO,
-		WEBSITE,
-		UPLOAD_EXECUTE,
-		FREE
-	};
+	public static final List<BufferedImage> GUI_ICONS = Arrays.asList(GUI_ICON_SMALL, GUI_ICON_MEDIUM, GUI_ICON_LARGE);
+	
+	static {
+		FILE_MANAGEMENT_ITEM_DATA.put(FILES, MENU_ICONS[4]);
+		FILE_MANAGEMENT_ITEM_DATA.put(UPLOAD_EXECUTE, MENU_ICONS[9]);
+		SURVEILLANCE_ITEM_DATA.put(SCREENSHOT, MENU_ICONS[1]);
+		SURVEILLANCE_ITEM_DATA.put(DESKTOP, MENU_ICONS[2]);
+		SURVEILLANCE_ITEM_DATA.put(VOICE, MENU_ICONS[3]);
+		SURVEILLANCE_ITEM_DATA.put(CLIPBOARD, MENU_ICONS[6]);
+		UTILITY_ITEM_DATA.put(POPUP, MENU_ICONS[0]);
+		UTILITY_ITEM_DATA.put(COMMAND, MENU_ICONS[5]);
+		UTILITY_ITEM_DATA.put(AUDIO, MENU_ICONS[7]);
+		UTILITY_ITEM_DATA.put(WEBSITE, MENU_ICONS[8]);
+		OTHER_ITEM_DATA.put(FREE, MENU_ICONS[10]);
+	}
 	
 	public RattyGui() {
 		frame = new JFrame(TITLE);
@@ -100,13 +117,6 @@ final class RattyGui extends AbstractListenerContainer<IGuiController> {
 		build = new JButton(BUILD);
 		attack = new JButton(ATTACK);
 		fileChooser = new JFileChooser();
-		
-		for (int i = 0; i < COMMANDS.length && i < MENU_ICONS.length; i++) {
-			final String command = COMMANDS[i];
-			final BufferedImage image = MENU_ICONS[i];
-			
-			addMenuItem(command, image);
-		}
 		
 		final Container contentPane = frame.getContentPane();
 		final MouseAdapter tableMouseAdapter = new MouseAdapter() {
@@ -120,6 +130,13 @@ final class RattyGui extends AbstractListenerContainer<IGuiController> {
 		};
 		final String currentPath = System.getProperty("user.dir");
 		final File currentDirectory = new File(currentPath);
+		final JMenu fileManagement = createMenu(FILE_MANAGEMENT, FILE_MANAGEMENT_ICON, FILE_MANAGEMENT_ITEM_DATA);
+		final JMenu surveillance = createMenu(SURVEILLANCE, SURVEILLANCE_ICON, SURVEILLANCE_ITEM_DATA);
+		final JMenu utility = createMenu(UTILITY, UTILITY_ICON, UTILITY_ITEM_DATA);
+		final JMenu other = createMenu(OTHER, OTHER_ICON, OTHER_ITEM_DATA);
+		final JTableHeader tableHeader = table.getTableHeader();
+		
+		tableHeader.setReorderingAllowed(false);
 		
 		attack.setActionCommand(ATTACK);
 		attack.addActionListener(this::actionPerformed);
@@ -127,12 +144,16 @@ final class RattyGui extends AbstractListenerContainer<IGuiController> {
 		build.addActionListener(this::actionPerformed);
 		menuBar.add(build);
 		menuBar.add(attack);
+		menu.add(fileManagement);
+		menu.add(surveillance);
+		menu.add(utility);
+		menu.add(other);
 		scrollPane.setBorder(null);
 		table.setComponentPopupMenu(menu);
 		table.addMouseListener(tableMouseAdapter);
 		table.setModel(tableModel);
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		table.setShowHorizontalLines(true);
+		table.setShowGrid(true);
 		fileChooser.setCurrentDirectory(currentDirectory);
 		
 		contentPane.add(scrollPane, BorderLayout.CENTER);
@@ -147,7 +168,24 @@ final class RattyGui extends AbstractListenerContainer<IGuiController> {
 		frame.requestFocus();
 	}
 	
-	private void addMenuItem(final String name, final BufferedImage image) {
+	private JMenu createMenu(final String name, final BufferedImage image, final Map<String, BufferedImage> data) {
+		final JMenu menu = new JMenu(name);
+		final ImageIcon icon = new ImageIcon(image);
+		final Set<String> keySet = data.keySet();
+		
+		menu.setIcon(icon);
+		
+		for (final String key : keySet) {
+			final BufferedImage itemImage = data.get(key);
+			final JMenuItem item = createMenuItem(key, itemImage);
+			
+			menu.add(item);
+		}
+		
+		return menu;
+	}
+	
+	private JMenuItem createMenuItem(final String name, final BufferedImage image) {
 		final JMenuItem item = new JMenuItem(name);
 		final ImageIcon icon = new ImageIcon(image);
 		
@@ -155,7 +193,7 @@ final class RattyGui extends AbstractListenerContainer<IGuiController> {
 		item.addActionListener(this::actionPerformed);
 		item.setIcon(icon);
 		
-		menu.add(item);
+		return item;
 	}
 	
 	private void actionPerformed(final ActionEvent a) {
@@ -196,6 +234,12 @@ final class RattyGui extends AbstractListenerContainer<IGuiController> {
 		
 		dialog.setModal(false);
 		dialog.setVisible(true);
+	}
+	
+	public int showOptionDialog(final String message, final String... options) {
+		final int input = JOptionPane.showOptionDialog(frame, message, null, JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null);
+		
+		return input;
 	}
 	
 	public File getFile(final String type) {

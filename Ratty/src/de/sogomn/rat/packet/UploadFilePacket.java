@@ -15,8 +15,8 @@ public final class UploadFilePacket implements IPacket {
 	private static final String FILE_SEPARATOR = "/";
 	private static final String SEPARATOR_REGEX = "[\\\\\\/]";
 	
-	public UploadFilePacket(final String filePath, final String folderPath) {
-		this.directoryPath = folderPath;
+	public UploadFilePacket(final String filePath, final String directoryPath) {
+		this.directoryPath = directoryPath;
 		
 		final File file = new File(filePath);
 		

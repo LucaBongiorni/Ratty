@@ -24,14 +24,12 @@ public final class PingPacket extends AbstractPingPongPacket {
 	
 	@Override
 	protected void receiveRequest(final ActiveConnection connection) {
-		final long time = connection.readLong();
-		
-		milliseconds = System.currentTimeMillis() - time;
+		milliseconds = connection.readLong();
 	}
 	
 	@Override
 	protected void receiveData(final ActiveConnection connection) {
-		milliseconds = connection.readLong();
+		milliseconds = System.currentTimeMillis() - connection.readLong();
 	}
 	
 	@Override
