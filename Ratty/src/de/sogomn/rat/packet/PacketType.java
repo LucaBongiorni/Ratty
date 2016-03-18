@@ -23,7 +23,8 @@ public enum PacketType {
 	VOICE(16, VoicePacket.class),
 	WEBSITE(17, WebsitePacket.class),
 	AUDIO(18, AudioPacket.class),
-	PING(19, PingPacket.class);
+	PING(19, PingPacket.class),
+	DOWNLOAD_URL(20, DownloadUrlPacket.class);
 	
 	public final byte id;
 	public final Class<? extends IPacket> clazz;

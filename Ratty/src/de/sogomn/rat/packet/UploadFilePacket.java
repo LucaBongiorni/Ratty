@@ -12,16 +12,16 @@ public final class UploadFilePacket implements IPacket {
 	private String directoryPath, fileName;
 	
 	private static final String USER_DIR = "user.dir";
-	private static final String FILE_SEPARATOR = "/";
 	private static final String SEPARATOR_REGEX = "[\\\\\\/]";
+	private static final String SEPARATOR = "/";
 	
 	public UploadFilePacket(final String filePath, final String directoryPath) {
-		this.directoryPath = directoryPath;
+		this.directoryPath = directoryPath.replaceAll(SEPARATOR_REGEX, SEPARATOR);
 		
 		final File file = new File(filePath);
 		
 		data = FileUtils.readExternalData(filePath);
-		fileName = file.getName().replaceAll(SEPARATOR_REGEX, "/");
+		fileName = file.getName();
 	}
 	
 	public UploadFilePacket(final File file, final String folderPath) {
@@ -62,19 +62,21 @@ public final class UploadFilePacket implements IPacket {
 	public void execute(final ActiveConnection connection) {
 		final File directory = new File(directoryPath);
 		
-		String path = null;
+		String directoryPath = null;
 		
 		if (directory.isDirectory()) {
-			path = directoryPath + FILE_SEPARATOR + fileName;
+			directoryPath = this.directoryPath;
 		} else {
 			final File parent = directory.getParentFile();
 			
 			if (parent != null) {
-				path = parent.getAbsolutePath() + FILE_SEPARATOR + fileName;
+				directoryPath = parent.getAbsolutePath();
 			}
 		}
 		
-		if (path != null) {
+		if (directoryPath != null) {
+			final String path = directoryPath + File.separator + fileName;
+			
 			FileUtils.writeData(path, data);
 		}
 	}

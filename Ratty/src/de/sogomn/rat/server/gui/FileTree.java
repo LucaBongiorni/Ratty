@@ -46,6 +46,7 @@ public final class FileTree extends AbstractListenerContainer<IGuiController> {
 	public static final String EXECUTE = LANGUAGE.getString("action.execute");
 	public static final String DELETE = LANGUAGE.getString("action.delete");
 	public static final String NEW_DIRECTORY = LANGUAGE.getString("action.new_directory");
+	public static final String DROP_FILE = LANGUAGE.getString("action.drop_file");
 	
 	public static final String[] COMMANDS = {
 		REQUEST,
@@ -53,7 +54,8 @@ public final class FileTree extends AbstractListenerContainer<IGuiController> {
 		UPLOAD,
 		EXECUTE,
 		DELETE,
-		NEW_DIRECTORY
+		NEW_DIRECTORY,
+		DROP_FILE
 	};
 	
 	public FileTree() {

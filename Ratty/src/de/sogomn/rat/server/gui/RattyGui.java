@@ -63,13 +63,13 @@ final class RattyGui extends AbstractListenerContainer<IGuiController> {
 	private static final BufferedImage GUI_ICON_LARGE = ImageUtils.scaleImage(GUI_ICON_SMALL, 128, 128);
 	private static final BufferedImage[] MENU_ICONS = new SpriteSheet(ImageUtils.scaleImage(ImageUtils.loadImage("/gui_menu_icons.png"), 2), 16 * 2, 16 * 2).getSprites();
 	private static final SpriteSheet CATEGORY_SHEET = new SpriteSheet(ImageUtils.scaleImage(ImageUtils.loadImage("/gui_category_icons.png"), 2), 16 * 2, 16 * 2);
-	private static final BufferedImage FILE_MANAGEMENT_ICON = CATEGORY_SHEET.getSprite(0);
-	private static final BufferedImage SURVEILLANCE_ICON = CATEGORY_SHEET.getSprite(1);
+	private static final BufferedImage SURVEILLANCE_ICON = CATEGORY_SHEET.getSprite(0);
+	private static final BufferedImage FILE_MANAGEMENT_ICON = CATEGORY_SHEET.getSprite(1);
 	private static final BufferedImage UTILITY_ICON = CATEGORY_SHEET.getSprite(2);
 	private static final BufferedImage OTHER_ICON = CATEGORY_SHEET.getSprite(3);
 	
-	private static final String FILE_MANAGEMENT = LANGUAGE.getString("menu.file_management");
 	private static final String SURVEILLANCE = LANGUAGE.getString("menu.surveillance");
+	private static final String FILE_MANAGEMENT = LANGUAGE.getString("menu.file_management");
 	private static final String UTILITY = LANGUAGE.getString("menu.utility");
 	private static final String OTHER = LANGUAGE.getString("menu.other");
 	private static final HashMap<String, BufferedImage> FILE_MANAGEMENT_ITEM_DATA = new HashMap<String, BufferedImage>();
@@ -126,12 +126,14 @@ final class RattyGui extends AbstractListenerContainer<IGuiController> {
 				final int rowIndex = table.rowAtPoint(mousePoint);
 				
 				lastServerClientClicked = tableModel.getServerClient(rowIndex);
+				
+				table.setRowSelectionInterval(rowIndex, rowIndex);
 			}
 		};
 		final String currentPath = System.getProperty("user.dir");
 		final File currentDirectory = new File(currentPath);
-		final JMenu fileManagement = createMenu(FILE_MANAGEMENT, FILE_MANAGEMENT_ICON, FILE_MANAGEMENT_ITEM_DATA);
 		final JMenu surveillance = createMenu(SURVEILLANCE, SURVEILLANCE_ICON, SURVEILLANCE_ITEM_DATA);
+		final JMenu fileManagement = createMenu(FILE_MANAGEMENT, FILE_MANAGEMENT_ICON, FILE_MANAGEMENT_ITEM_DATA);
 		final JMenu utility = createMenu(UTILITY, UTILITY_ICON, UTILITY_ITEM_DATA);
 		final JMenu other = createMenu(OTHER, OTHER_ICON, OTHER_ITEM_DATA);
 		final JTableHeader tableHeader = table.getTableHeader();
@@ -144,9 +146,10 @@ final class RattyGui extends AbstractListenerContainer<IGuiController> {
 		build.addActionListener(this::actionPerformed);
 		menuBar.add(build);
 		menuBar.add(attack);
-		menu.add(fileManagement);
 		menu.add(surveillance);
+		menu.add(fileManagement);
 		menu.add(utility);
+		menu.addSeparator();
 		menu.add(other);
 		scrollPane.setBorder(null);
 		table.setComponentPopupMenu(menu);
