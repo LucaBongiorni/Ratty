@@ -72,7 +72,8 @@ public final class RattyGuiController extends AbstractRattyController implements
 		"language/lang_ru.properties",
 		"language/lang_tr.properties",
 		"language/lang_uk.properties",
-		"language/lang_pl.properties"
+		"language/lang_pl.properties",
+		"language/lang_dk.properties"
 	};
 	
 	private static final String FREE_WARNING = LANGUAGE.getString("server.free_warning");
