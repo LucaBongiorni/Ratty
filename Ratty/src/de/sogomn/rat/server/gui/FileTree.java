@@ -24,6 +24,8 @@ import de.sogomn.engine.util.ImageUtils;
 
 public final class FileTree extends AbstractListenerContainer<IGuiController> {
 	
+	private ServerClient client;
+	
 	private JFrame frame;
 	
 	private FileTreeNode root;
@@ -33,7 +35,7 @@ public final class FileTree extends AbstractListenerContainer<IGuiController> {
 	
 	private JPopupMenu menu;
 	
-	private FileTreeNode lastNodeClicked;
+	private FileTreeNode clickedNode;
 	
 	private static final String ROOT_NAME = "";
 	private static final String SEPARATOR_REGEX = "[\\\\\\/]";
@@ -58,7 +60,9 @@ public final class FileTree extends AbstractListenerContainer<IGuiController> {
 		DROP_FILE
 	};
 	
-	public FileTree() {
+	public FileTree(final ServerClient client) {
+		this.client = client;
+		
 		frame = new JFrame();
 		root = new FileTreeNode(ROOT_NAME);
 		tree = new JTree(root);
@@ -83,9 +87,9 @@ public final class FileTree extends AbstractListenerContainer<IGuiController> {
 				tree.setSelectionPath(path);
 				
 				if (path != null) {
-					lastNodeClicked = (FileTreeNode)path.getLastPathComponent();
+					clickedNode = (FileTreeNode)path.getLastPathComponent();
 				} else {
-					lastNodeClicked = null;
+					clickedNode = null;
 				}
 			}
 		};
@@ -116,7 +120,7 @@ public final class FileTree extends AbstractListenerContainer<IGuiController> {
 	private void menuItemClicked(final ActionEvent a) {
 		final String command = a.getActionCommand();
 		
-		notifyListeners(controller -> controller.userInput(command));
+		notifyListeners(controller -> controller.userInput(command, client));
 	}
 	
 	public void reload() {
@@ -179,8 +183,8 @@ public final class FileTree extends AbstractListenerContainer<IGuiController> {
 		frame.setTitle(title);
 	}
 	
-	public FileTreeNode getLastNodeClicked() {
-		return lastNodeClicked;
+	public FileTreeNode getClickedNode() {
+		return clickedNode;
 	}
 	
 }

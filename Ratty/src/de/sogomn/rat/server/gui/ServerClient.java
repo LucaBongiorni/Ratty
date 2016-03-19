@@ -20,8 +20,8 @@ final class ServerClient {
 	public ServerClient(final ActiveConnection connection) {
 		this.connection = connection;
 		
-		displayPanel = new DisplayPanel();
-		fileTree = new FileTree();
+		displayPanel = new DisplayPanel(this);
+		fileTree = new FileTree(this);
 	}
 	
 	public void logIn(final String name, final String os, final String version, final ImageIcon flag) {

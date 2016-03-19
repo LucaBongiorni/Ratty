@@ -19,6 +19,8 @@ import de.sogomn.rat.util.FrameEncoder.IFrame;
 
 public final class DisplayPanel extends AbstractListenerContainer<IGuiController> implements IMouseListener, IKeyboardListener {
 	
+	private ServerClient client;
+	
 	private String title;
 	private Screen screen;
 	private BufferedImage image;
@@ -33,8 +35,8 @@ public final class DisplayPanel extends AbstractListenerContainer<IGuiController
 	public static final String KEY_EVENT = "Key event";
 	public static final String CLOSED = "Closed";
 	
-	public DisplayPanel() {
-		//...
+	public DisplayPanel(final ServerClient client) {
+		this.client = client;
 	}
 	
 	private Screen createScreen(final int screenWidth, final int screenHeight) {
@@ -42,7 +44,7 @@ public final class DisplayPanel extends AbstractListenerContainer<IGuiController
 		final WindowAdapter windowAdapter = new WindowAdapter() {
 			@Override
 			public void windowClosing(final WindowEvent w) {
-				notifyListeners(controller -> controller.userInput(CLOSED));
+				notifyListeners(controller -> controller.userInput(CLOSED, client));
 			}
 		};
 		final BufferedImage[] icons = RattyGui.GUI_ICONS.stream().toArray(BufferedImage[]::new);
@@ -109,7 +111,7 @@ public final class DisplayPanel extends AbstractListenerContainer<IGuiController
 		
 		lastMouseEventPacket = new MouseEventPacket(x, y, buttonEvent, type);
 		
-		notifyListeners(controller -> controller.userInput(MOUSE_EVENT));
+		notifyListeners(controller -> controller.userInput(MOUSE_EVENT, client));
 	}
 	
 	@Override
@@ -128,7 +130,7 @@ public final class DisplayPanel extends AbstractListenerContainer<IGuiController
 		
 		lastKeyEventPacket = new KeyEventPacket(key, type);
 		
-		notifyListeners(controller -> controller.userInput(KEY_EVENT));
+		notifyListeners(controller -> controller.userInput(KEY_EVENT, client));
 	}
 	
 	public void setTitle(final String title) {

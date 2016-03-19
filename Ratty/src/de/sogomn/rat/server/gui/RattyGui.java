@@ -204,7 +204,7 @@ final class RattyGui extends AbstractListenerContainer<IGuiController> {
 	private void actionPerformed(final ActionEvent a) {
 		final String command = a.getActionCommand();
 		
-		notifyListeners(controller -> controller.userInput(command));
+		notifyListeners(controller -> controller.userInput(command, lastServerClientClicked));
 	}
 	
 	public void update() {
@@ -310,10 +310,6 @@ final class RattyGui extends AbstractListenerContainer<IGuiController> {
 	
 	public String getInput() {
 		return getInput(null);
-	}
-	
-	public ServerClient getLastServerClientClicked() {
-		return lastServerClientClicked;
 	}
 	
 }

