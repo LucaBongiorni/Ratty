@@ -208,7 +208,13 @@ final class RattyGui extends AbstractListenerContainer<IGuiController> {
 	}
 	
 	public void update() {
+		final int selectedRow = table.getSelectedRow();
+		
 		tableModel.fireTableDataChanged();
+		
+		if (selectedRow != -1) {
+			table.setRowSelectionInterval(selectedRow, selectedRow);
+		}
 	}
 	
 	public void addRow(final ServerClient client) {

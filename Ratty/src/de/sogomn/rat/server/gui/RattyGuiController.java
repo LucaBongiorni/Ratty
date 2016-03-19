@@ -13,7 +13,10 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
+import de.sogomn.engine.Clock;
 import de.sogomn.engine.fx.Sound;
+import de.sogomn.engine.util.Scheduler;
+import de.sogomn.engine.util.Scheduler.Task;
 import de.sogomn.rat.ActiveConnection;
 import de.sogomn.rat.builder.JarBuilder;
 import de.sogomn.rat.packet.AudioPacket;
@@ -48,6 +51,10 @@ public final class RattyGuiController extends AbstractRattyController implements
 	
 	private HashMap<ActiveConnection, ServerClient> clients;
 	
+	private Clock clock;
+	private Scheduler scheduler;
+	private Task pingTask;
+	
 	private static final String BUILDER_REPLACEMENT = "connection_data.txt";
 	private static final String BUILDER_REPLACEMENT_FORMAT = "%s\r\n%s\r\ntrue";
 	private static final String[] BUILDER_REMOVALS = {
@@ -81,13 +88,34 @@ public final class RattyGuiController extends AbstractRattyController implements
 	private static final String AMOUNT_QUESTION = LANGUAGE.getString("server.amount_question");
 	
 	private static final String FLAG_ADDRESS = "http://www.geojoe.co.uk/api/flag/?ip=";
+	private static final float PING_INTERVAL = 3;
 	
 	private static final Sound PING = Sound.loadSound("/ping.wav");
 	
 	public RattyGuiController() {
 		gui = new RattyGui();
 		clients = new HashMap<ActiveConnection, ServerClient>();
+		clock = new Clock();
+		scheduler = new Scheduler();
+		pingTask = new Task(() -> {
+			final PingPacket packet = new PingPacket();
+			
+			connections.forEach(connection -> connection.addPacket(packet));
+			
+			pingTask.reset();
+		}, PING_INTERVAL);
 		
+		final Thread pingThread = new Thread(() -> {
+			while (true) {
+				clock.update();
+			}
+		});
+		
+		pingThread.setDaemon(true);
+		pingThread.start();
+		
+		scheduler.addTask(pingTask);
+		clock.addListener(scheduler);
 		gui.addListener(this);
 	}
 	
