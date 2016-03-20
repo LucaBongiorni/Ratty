@@ -1,7 +1,7 @@
 package de.sogomn.rat.server.gui;
 
-interface IGuiController {
+public interface IGuiController {
 	
-	void userInput(final String command, final ServerClient client);
+	void userInput(final String command, final Object userObject);
 	
 }

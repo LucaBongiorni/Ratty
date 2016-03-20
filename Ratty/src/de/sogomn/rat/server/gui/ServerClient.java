@@ -13,15 +13,17 @@ final class ServerClient {
 	private boolean streamingDesktop, streamingVoice;
 	private long ping;
 	
-	public final ActiveConnection connection;
-	public final DisplayPanel displayPanel;
-	public final FileTree fileTree;
+	final ActiveConnection connection;
+	final DisplayPanel displayPanel;
+	final FileTree fileTree;
+	final ChatWindow chat;
 	
 	public ServerClient(final ActiveConnection connection) {
 		this.connection = connection;
 		
 		displayPanel = new DisplayPanel(this);
 		fileTree = new FileTree(this);
+		chat = new ChatWindow(this);
 	}
 	
 	public void logIn(final String name, final String os, final String version, final ImageIcon flag) {
@@ -34,18 +36,32 @@ final class ServerClient {
 		
 		displayPanel.setTitle(title);
 		fileTree.setTitle(title);
+		chat.setTitle(title);
 		
 		loggedIn = true;
+	}
+	
+	public void logOut() {
+		loggedIn = false;
+		
+		System.err.println();
+		System.err.println("THE FOLLOWING IS A JVM BUG!");
+		displayPanel.close();
+		fileTree.close();
+		chat.close();
+		System.err.println();
 	}
 	
 	public void addListener(final IGuiController controller) {
 		displayPanel.addListener(controller);
 		fileTree.addListener(controller);
+		chat.addListener(controller);
 	}
 	
 	public void removeListener(final IGuiController controller) {
 		displayPanel.removeListener(controller);
 		fileTree.removeListener(controller);
+		chat.removeListener(controller);
 	}
 	
 	public void setStreamingDesktop(final boolean streamingDesktop) {

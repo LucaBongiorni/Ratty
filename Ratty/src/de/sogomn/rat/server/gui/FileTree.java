@@ -24,22 +24,20 @@ import de.sogomn.engine.util.ImageUtils;
 
 public final class FileTree extends AbstractListenerContainer<IGuiController> {
 	
-	private ServerClient client;
+	private Object userObject;
 	
 	private JFrame frame;
-	
 	private FileTreeNode root;
 	private JTree tree;
 	private DefaultTreeModel treeModel;
 	private JScrollPane scrollPane;
-	
 	private JPopupMenu menu;
 	
-	private FileTreeNode clickedNode;
+	private FileTreeNode nodeClicked;
 	
+	private static final Dimension SIZE = new Dimension(500, 500);
 	private static final String ROOT_NAME = "";
 	private static final String SEPARATOR_REGEX = "[\\\\\\/]";
-	private static final Dimension DEFAULT_SIZE = new Dimension(500, 500);
 	private static final BufferedImage[] MENU_ICONS = new SpriteSheet(ImageUtils.scaleImage(ImageUtils.loadImage("/gui_tree_icons.png"), 2), 16 * 2, 16 * 2).getSprites();
 	
 	public static final String REQUEST = LANGUAGE.getString("action.request_files");
@@ -50,7 +48,7 @@ public final class FileTree extends AbstractListenerContainer<IGuiController> {
 	public static final String NEW_DIRECTORY = LANGUAGE.getString("action.new_directory");
 	public static final String DROP_FILE = LANGUAGE.getString("action.drop_file");
 	
-	public static final String[] COMMANDS = {
+	private static final String[] COMMANDS = {
 		REQUEST,
 		DOWNLOAD,
 		UPLOAD,
@@ -60,8 +58,8 @@ public final class FileTree extends AbstractListenerContainer<IGuiController> {
 		DROP_FILE
 	};
 	
-	public FileTree(final ServerClient client) {
-		this.client = client;
+	public FileTree(final Object userObject) {
+		this.userObject = userObject;
 		
 		frame = new JFrame();
 		root = new FileTreeNode(ROOT_NAME);
@@ -87,9 +85,9 @@ public final class FileTree extends AbstractListenerContainer<IGuiController> {
 				tree.setSelectionPath(path);
 				
 				if (path != null) {
-					clickedNode = (FileTreeNode)path.getLastPathComponent();
+					nodeClicked = (FileTreeNode)path.getLastPathComponent();
 				} else {
-					clickedNode = null;
+					nodeClicked = null;
 				}
 			}
 		};
@@ -100,7 +98,7 @@ public final class FileTree extends AbstractListenerContainer<IGuiController> {
 		tree.setComponentPopupMenu(menu);
 		
 		frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-		frame.setPreferredSize(DEFAULT_SIZE);
+		frame.setPreferredSize(SIZE);
 		frame.setContentPane(scrollPane);
 		frame.setIconImages(RattyGui.GUI_ICONS);
 		frame.pack();
@@ -120,11 +118,15 @@ public final class FileTree extends AbstractListenerContainer<IGuiController> {
 	private void menuItemClicked(final ActionEvent a) {
 		final String command = a.getActionCommand();
 		
-		notifyListeners(controller -> controller.userInput(command, client));
+		notifyListeners(controller -> controller.userInput(command, userObject));
 	}
 	
 	public void reload() {
 		treeModel.reload();
+	}
+	
+	public void reload(final FileTreeNode node) {
+		treeModel.reload(node);
 	}
 	
 	public void addNodeStructure(final String... path) {
@@ -162,7 +164,7 @@ public final class FileTree extends AbstractListenerContainer<IGuiController> {
 		
 		treeModel.removeNodeFromParent(node);
 		
-		treeModel.reload(parent);
+		reload(parent);
 	}
 	
 	public void removeChildren(final FileTreeNode node) {
@@ -172,19 +174,26 @@ public final class FileTree extends AbstractListenerContainer<IGuiController> {
 			treeModel.removeNodeFromParent(child);
 		}
 		
-		treeModel.reload(node);
+		reload(node);
 	}
 	
 	public void setVisible(final boolean visible) {
-		frame.setVisible(true);
+		frame.setVisible(visible);
+	}
+	
+	public void close() {
+		root.removeAllChildren();
+		
+		frame.setVisible(false);
+		frame.dispose();
 	}
 	
 	public void setTitle(final String title) {
 		frame.setTitle(title);
 	}
 	
-	public FileTreeNode getClickedNode() {
-		return clickedNode;
+	public FileTreeNode getNodeClicked() {
+		return nodeClicked;
 	}
 	
 }

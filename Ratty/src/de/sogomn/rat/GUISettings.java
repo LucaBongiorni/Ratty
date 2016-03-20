@@ -68,6 +68,16 @@ final class GUISettings {
 		g.fillRect(0, 0, width, height);
 	};
 	
+	private static final Painter<?> SEPARATOR_PAINTER = (g, object, width, height) -> {
+		g.setColor(DARKER);
+		g.fillRect(0, height / 2, width, height / 4);
+	};
+	
+	private static final Painter<?> BACKGROUND_PAINTER = (g, object, width, height) -> {
+		g.setColor(BACKGROUND);
+		g.fillRect(0, 0, width, height);
+	};
+	
 	static {
 		Font newFont;
 		
@@ -87,8 +97,13 @@ final class GUISettings {
 	}
 	
 	public static void setDefaults(final UIDefaults defaults) {
-		defaults.put("nimbusBase", Color.GRAY);
+		defaults.put("nimbusSelection", Color.WHITE);
+		defaults.put("nimbusFocus", Color.WHITE);
+		defaults.put("textHighlight", SELECTION);
 		defaults.put("control", BACKGROUND);
+		
+		defaults.put("TextArea[Enabled].backgroundPainter", BACKGROUND_PAINTER);
+		defaults.put("TextField[Enabled].backgroundPainter", BACKGROUND_PAINTER);
 		
 		defaults.put("Button[Enabled].backgroundPainter", BASE_PAINTER);
 		defaults.put("Button[Default].backgroundPainter", BASE_PAINTER);
@@ -133,6 +148,7 @@ final class GUISettings {
 		defaults.put("PopupMenu[Enabled].backgroundPainter", BASE_PAINTER);
 		defaults.put("MenuItem[MouseOver].backgroundPainter", SELECTION_PAINTER);
 		defaults.put("MenuBar[Enabled].backgroundPainter", BASE_PAINTER);
+		defaults.put("PopupMenuSeparator[Enabled].backgroundPainter", SEPARATOR_PAINTER);
 		
 		defaults.put("Tree:TreeCell[Enabled+Selected].backgroundPainter", SELECTION_PAINTER);
 		defaults.put("Tree:TreeCell[Focused+Selected].backgroundPainter", SELECTION_PAINTER);
@@ -153,6 +169,7 @@ final class GUISettings {
 		defaults.put("TableHeader.font", FONT);
 		defaults.put("FileChooser.font", FONT);
 		defaults.put("TextField.font", FONT);
+		defaults.put("TextArea.font", FONT);
 		defaults.put("FormattedTextField.font", FONT);
 		defaults.put("PopupMenu.font", FONT);
 		defaults.put("Menu.font", FONT);

