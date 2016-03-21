@@ -12,6 +12,7 @@ import javax.swing.JTextField;
 import javax.swing.text.DefaultCaret;
 
 import de.sogomn.engine.util.AbstractListenerContainer;
+import de.sogomn.engine.util.ImageUtils;
 
 public final class ChatWindow extends AbstractListenerContainer<IGuiController> {
 	
@@ -51,6 +52,7 @@ public final class ChatWindow extends AbstractListenerContainer<IGuiController> 
 		contentPane.add(scrollPane, BorderLayout.CENTER);
 		contentPane.add(submit, BorderLayout.SOUTH);
 		
+		frame.setIconImage(ImageUtils.EMPTY_IMAGE);
 		frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		frame.setPreferredSize(SIZE);
 		frame.pack();

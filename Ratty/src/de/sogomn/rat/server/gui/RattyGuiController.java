@@ -627,6 +627,8 @@ public final class RattyGuiController extends AbstractRattyController implements
 		super.closed(server);
 		
 		clients.values().forEach(ServerClient::logOut);
+		
+		System.exit(0);
 	}
 	
 	@Override

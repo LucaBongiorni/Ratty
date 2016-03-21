@@ -100,7 +100,7 @@ public final class FileTree extends AbstractListenerContainer<IGuiController> {
 		frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		frame.setPreferredSize(SIZE);
 		frame.setContentPane(scrollPane);
-		frame.setIconImages(RattyGui.GUI_ICONS);
+		frame.setIconImage(ImageUtils.EMPTY_IMAGE);
 		frame.pack();
 		frame.setLocationRelativeTo(null);
 	}
