@@ -24,7 +24,7 @@ import de.sogomn.rat.server.gui.RattyGuiController;
 public final class Ratty {
 	
 	public static final boolean DEBUG = true;
-	public static final String VERSION = "1.19.0";
+	public static final String VERSION = "1.19.1";
 	public static final ResourceBundle LANGUAGE = ResourceBundle.getBundle("language.lang");
 	
 	private static String address;
