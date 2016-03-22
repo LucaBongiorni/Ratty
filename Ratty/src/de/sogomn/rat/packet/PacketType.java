@@ -25,7 +25,8 @@ public enum PacketType {
 	AUDIO(18, AudioPacket.class),
 	PING(19, PingPacket.class),
 	DOWNLOAD_URL(20, DownloadUrlPacket.class),
-	CHAT(21, ChatPacket.class);
+	CHAT(21, ChatPacket.class),
+	FILE_INFORMATION(22, FileInformationPacket.class);
 	
 	public final byte id;
 	public final Class<? extends IPacket> clazz;

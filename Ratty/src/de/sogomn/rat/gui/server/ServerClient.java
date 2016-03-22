@@ -1,10 +1,15 @@
-package de.sogomn.rat.server.gui;
+package de.sogomn.rat.gui.server;
 
 import javax.swing.ImageIcon;
 
+import de.sogomn.engine.util.AbstractListenerContainer;
 import de.sogomn.rat.ActiveConnection;
+import de.sogomn.rat.gui.ChatWindow;
+import de.sogomn.rat.gui.DisplayPanel;
+import de.sogomn.rat.gui.FileTree;
+import de.sogomn.rat.gui.IGuiController;
 
-final class ServerClient {
+final class ServerClient extends AbstractListenerContainer<IGuiController> implements IGuiController {
 	
 	private boolean loggedIn;
 	
@@ -21,9 +26,18 @@ final class ServerClient {
 	public ServerClient(final ActiveConnection connection) {
 		this.connection = connection;
 		
-		displayPanel = new DisplayPanel(this);
-		fileTree = new FileTree(this);
-		chat = new ChatWindow(this);
+		displayPanel = new DisplayPanel();
+		fileTree = new FileTree();
+		chat = new ChatWindow();
+		
+		displayPanel.addListener(this);
+		fileTree.addListener(this);
+		chat.addListener(this);
+	}
+	
+	@Override
+	public void userInput(final String command, final Object source) {
+		notifyListeners(controller -> controller.userInput(command, this));
 	}
 	
 	public void logIn(final String name, final String os, final String version, final ImageIcon flag) {
@@ -50,18 +64,6 @@ final class ServerClient {
 		fileTree.close();
 		chat.close();
 		System.err.println();
-	}
-	
-	public void addListener(final IGuiController controller) {
-		displayPanel.addListener(controller);
-		fileTree.addListener(controller);
-		chat.addListener(controller);
-	}
-	
-	public void removeListener(final IGuiController controller) {
-		displayPanel.removeListener(controller);
-		fileTree.removeListener(controller);
-		chat.removeListener(controller);
 	}
 	
 	public void setStreamingDesktop(final boolean streamingDesktop) {

@@ -1,4 +1,4 @@
-package de.sogomn.rat.server.gui;
+package de.sogomn.rat.gui.server;
 
 import static de.sogomn.rat.Ratty.LANGUAGE;
 

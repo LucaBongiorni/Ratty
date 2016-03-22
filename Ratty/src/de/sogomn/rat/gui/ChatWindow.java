@@ -1,4 +1,4 @@
-package de.sogomn.rat.server.gui;
+package de.sogomn.rat.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -16,8 +16,6 @@ import de.sogomn.engine.util.ImageUtils;
 
 public final class ChatWindow extends AbstractListenerContainer<IGuiController> {
 	
-	private Object userObject;
-	
 	private JFrame frame;
 	private JTextArea chat;
 	private JTextField submit;
@@ -30,9 +28,7 @@ public final class ChatWindow extends AbstractListenerContainer<IGuiController> 
 	
 	public static final String MESSAGE_SENT = "Message sent";
 	
-	public ChatWindow(final Object userObject) {
-		this.userObject = userObject;
-		
+	public ChatWindow() {
 		frame = new JFrame();
 		chat = new JTextArea();
 		submit = new JTextField();
@@ -65,7 +61,7 @@ public final class ChatWindow extends AbstractListenerContainer<IGuiController> 
 		if (!message.isEmpty()) {
 			this.message = message;
 			
-			notifyListeners(controller -> controller.userInput(MESSAGE_SENT, userObject));
+			notifyListeners(controller -> controller.userInput(MESSAGE_SENT, this));
 			
 			addLine(USER_PREFIX + message);
 		}

@@ -1,4 +1,4 @@
-package de.sogomn.rat.server.gui;
+package de.sogomn.rat.gui;
 
 import javax.swing.Icon;
 import javax.swing.JDialog;

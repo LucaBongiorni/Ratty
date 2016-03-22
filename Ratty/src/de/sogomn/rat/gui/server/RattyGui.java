@@ -1,4 +1,4 @@
-package de.sogomn.rat.server.gui;
+package de.sogomn.rat.gui.server;
 
 import static de.sogomn.rat.Ratty.LANGUAGE;
 
@@ -40,6 +40,7 @@ import de.sogomn.engine.fx.SpriteSheet;
 import de.sogomn.engine.util.AbstractListenerContainer;
 import de.sogomn.engine.util.ImageUtils;
 import de.sogomn.rat.Ratty;
+import de.sogomn.rat.gui.IGuiController;
 
 public final class RattyGui extends AbstractListenerContainer<IGuiController> implements IRattyGui {
 	

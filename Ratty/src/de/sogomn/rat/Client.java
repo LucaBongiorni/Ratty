@@ -1,10 +1,10 @@
 package de.sogomn.rat;
 
+import de.sogomn.rat.gui.ChatWindow;
+import de.sogomn.rat.gui.IGuiController;
 import de.sogomn.rat.packet.ChatPacket;
 import de.sogomn.rat.packet.IPacket;
 import de.sogomn.rat.packet.VoicePacket;
-import de.sogomn.rat.server.gui.ChatWindow;
-import de.sogomn.rat.server.gui.IGuiController;
 import de.sogomn.rat.util.VoiceRecorder;
 
 public final class Client implements IConnectionObserver, IGuiController {
@@ -18,7 +18,7 @@ public final class Client implements IConnectionObserver, IGuiController {
 	public Client(final ActiveConnection connection) {
 		this.connection = connection;
 		
-		chat = new ChatWindow(this);
+		chat = new ChatWindow();
 		
 		chat.addListener(this);
 	}
