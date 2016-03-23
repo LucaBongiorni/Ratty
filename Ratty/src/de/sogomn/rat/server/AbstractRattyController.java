@@ -21,8 +21,8 @@ public abstract class AbstractRattyController implements IServerObserver, IConne
 		
 		connection.setObserver(this);
 		connection.start();
-		connection.addPacket(packet);
 		connections.add(connection);
+		connection.addPacket(packet);
 	}
 	
 	@Override
@@ -42,7 +42,7 @@ public abstract class AbstractRattyController implements IServerObserver, IConne
 	}
 	
 	public void broadcast(final IPacket packet) {
-		connections.stream().forEach(connection -> {
+		connections.forEach(connection -> {
 			connection.addPacket(packet);
 		});
 	}
