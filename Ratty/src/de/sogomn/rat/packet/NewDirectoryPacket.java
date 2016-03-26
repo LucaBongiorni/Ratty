@@ -52,7 +52,7 @@ public final class NewDirectoryPacket implements IPacket {
 		if (directoryPath != null) {
 			final String path = directoryPath + File.separator + name;
 			
-			FileUtils.createFolder(path);
+			FileUtils.createDirectory(path);
 		}
 	}
 	

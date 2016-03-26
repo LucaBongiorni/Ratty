@@ -29,7 +29,7 @@ public final class JarBuilder {
 		JAR_FILE = jarFile;
 	}
 	
-	private JarBuilder(final File file) {
+	private JarBuilder() {
 		//...
 	}
 	
