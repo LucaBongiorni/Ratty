@@ -6,10 +6,10 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 
 import javax.swing.JFrame;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.text.DefaultCaret;
 
 import de.sogomn.engine.util.AbstractListenerContainer;
 import de.sogomn.engine.util.ImageUtils;
@@ -35,9 +35,6 @@ public final class ChatWindow extends AbstractListenerContainer<IGuiController> 
 		scrollPane = new JScrollPane(chat, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		
 		final Container contentPane = frame.getContentPane();
-		final DefaultCaret caret = (DefaultCaret)chat.getCaret();
-		
-		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 		
 		submit.addActionListener(this::messageSubmitted);
 		chat.setEditable(false);
@@ -76,6 +73,11 @@ public final class ChatWindow extends AbstractListenerContainer<IGuiController> 
 	
 	public void addLine(final String line) {
 		chat.append(line + "\r\n");
+		
+		final JScrollBar scrollBar = scrollPane.getVerticalScrollBar();
+		final int bottom = scrollBar.getMaximum();
+		
+		scrollBar.setValue(bottom);
 	}
 	
 	public void setVisible(final boolean visible) {

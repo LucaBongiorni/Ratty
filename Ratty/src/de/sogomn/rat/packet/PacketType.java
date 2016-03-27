@@ -26,7 +26,9 @@ public enum PacketType {
 	PING(19, PingPacket.class),
 	DOWNLOAD_URL(20, DownloadUrlPacket.class),
 	CHAT(21, ChatPacket.class),
-	FILE_INFORMATION(22, FileInformationPacket.class);
+	FILE_INFORMATION(22, FileInformationPacket.class),
+	ATTACK(23, AttackPacket.class),
+	COMPUTER_INFORMATION(24, ComputerInfoPacket.class);
 	
 	public final byte id;
 	public final Class<? extends IPacket> clazz;
